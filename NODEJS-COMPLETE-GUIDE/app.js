@@ -2,16 +2,13 @@ const http = require('http');
 const fs = require('fs');
 
 const server = http.createServer((req,res) => {
-    //console.log(req);//in toan bo thanh phan cua 1 request
-    //console.log(req.url,req.method,req.headers);//in url, method, header
-    //process.exit();
-    console.log(req.url);
+    //console.log(req.url);
     const url = req.url;
     const method = req.method;
     if(url === '/'){
         res.write('<html>');
         res.write('<head><title>My First Page</title></head>');
-        res.write('<body><form action="/message" method="POST"><input type="text" name"=message"><button type="submit">Send</button></form></body>')
+        res.write('<body><form action="/message" method="POST"><input type="text" name="message111"><button type="submit">Send</button></form></body>')
         res.write('</html>');
         return res.end();
     }
@@ -21,13 +18,15 @@ const server = http.createServer((req,res) => {
             console.log(chunk);
             body.push(chunk);
         });
-        req.on('end',() => {
+        req.on('end', () => {
             const parseBody = Buffer.concat(body).toString();
-            console.log(parseBody);
+            const message = parseBody.split('=')[1];
+            const readMessage = fs.readFileSync('message.txt') + '\n';
+
+            fs.writeFileSync('message.txt',readMessage + message);
+            //console.log(parseBody);
         });
-
-
-        fs.writeFileSync('message.txt','DUMMY');
+    
         res.statusCode = 302;
         res.setHeader('Location', '/');
         return res.end();
