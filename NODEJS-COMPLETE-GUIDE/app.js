@@ -1,17 +1,22 @@
 const http = require('http');
 
+//npm install --save express
 const express = require('express');
+
+//npm install --save body-parser
+const bodyPaser = require('body-parser');
 
 const app = express();
 
-app.use("/",(req, res, next) => {
-    console.log('This always run!');
-    next();
-});
+app.use(bodyPaser.urlencoded({extended: false}));
 
 app.use('/add-product',(req, res, next) => {
-    console.log('In another midleware!');
-    res.send('<h1>The "Add Product" Page!</h1>');
+    res.send('<form action="/product" method="POST"><input type="text" name="title"><button type="submit">Add Prodcut</button></form>')
+});
+
+app.use('/product', (req, res, next) => {
+    console.log(req.body)
+    res.redirect('/');
 });
 
 app.use('/',(req, res, next) => {
