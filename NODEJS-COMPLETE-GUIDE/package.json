@@ -11,6 +11,7 @@
   "author": "Dang Minh Tu FX12838",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.17.2",
     "nodemon": "1.18"
   }
 }
