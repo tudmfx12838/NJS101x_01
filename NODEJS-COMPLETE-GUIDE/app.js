@@ -2,11 +2,21 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressHbs = require('express-handlebars');
 
 const app = express();
 
-//Thiet lap templating engine by pug
-app.set('view engine', 'pug');
+//Thiet lap templating engine by handlebars
+app.engine(
+    'hbs',
+    expressHbs()
+);
+// {
+//     layoutsDir: 'views/layouts/',
+//     defaultLayout: 'main-layout',
+//     extname: 'hbs'
+//   }
+app.set('view engine', 'hbs');
 //Thiet lap noi tim thay bo cuc thu muc views
 app.set('views', 'views');
 
