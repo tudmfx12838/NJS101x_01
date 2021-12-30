@@ -5,6 +5,9 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+//Thiet lap templating engine by pug
+app.set('view engine', 'pug');
+
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
