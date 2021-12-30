@@ -12,6 +12,7 @@ app.set('views', 'views');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const errorController = require('./controller/error');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -19,17 +20,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 
-app.use((req, res, next) => {
-    //res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-    console.log(req.url);
-    res.status(404).render('404',{
-        pageTitle: "Page Not Found",
-        path: req.url,
-        activeShop: false,
-        activeAddProduct: false,
-        productCSS: false,
-        formCSS: false,
-    });
-});
+app.use(errorController.getPageError);
 
 app.listen(3000);
