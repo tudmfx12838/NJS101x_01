@@ -25,7 +25,7 @@ exports.getProducts = (req, res, next) => {
     //console.log(adminData.products);
     //res.sendFile(path.join(rootDir, 'views', 'shop.html'));
     //const products = adminData.products;
-    const products = Product.fechAll();
+    const products = Product.fetchAll();
     res.render('shop', {
       prods: products, 
       docTitle: 'My Shop',
