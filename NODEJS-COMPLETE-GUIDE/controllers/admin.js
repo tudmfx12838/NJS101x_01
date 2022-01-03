@@ -1,9 +1,10 @@
 const Product = require('../models/product');
 
 exports.getAddProduct = (req, res, next) => {
-  res.render('admin/add-product', {
+  res.render('admin/edit-product', {
     pageTitle: 'Add Product',
     path: '/admin/add-product',
+    editing: false
   });
 };
 
@@ -29,14 +30,23 @@ exports.getProducts = (req, res, next) => {
 
 exports.getEditProduct = (req, res, next) => {
   //Checking edit mode
-  //http://localhost:3000/admin/edit-product/012?edit=true
+  //http://localhost:3000/admin/edit-product/0.123214?edit=true
   const editMode = req.query.edit;
   if(!editMode){
     return res.redirect('/');
   }
-  res.render('admin/edit-product', {
-    pageTitle: 'Edit Product',
-    path: '/admin/edit-product',
-    editing: editMode
+
+  //get productId from url's params
+  const prodId = req.params.productId;
+  Product.findById(prodId, product =>{
+    if(!product){
+      return res.redirect('/');
+    }
+    res.render('admin/edit-product', {
+      pageTitle: 'Edit Product',
+      path: '/admin/edit-product',
+      editing: editMode,
+      product: product
+    });
   });
 };
