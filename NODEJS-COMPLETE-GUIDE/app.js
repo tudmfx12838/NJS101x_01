@@ -16,6 +16,8 @@ const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -35,12 +37,17 @@ app.use(shopRoutes);
 
 app.use(errorController.getPageError);
 
+//Tao cac moi quan he
 Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, {through: CartItem});
+Product.belongsToMany(Cart, {through: CartItem});
 
 sequelize
-    // .sync({force: true})//force: true . Se tu dong Drop table va tao lai
-    .sync()
+    .sync({force: true})//force: true . Se tu dong Drop table va tao lai
+    // .sync()
     .then(result => {
         return User.findByPk(1);
     })
@@ -48,7 +55,6 @@ sequelize
         if(!user){
             return  User.create({name: 'Tu', email: 'tu@js.com'});
         }
-
         return user;
     })
     .then(user => {
