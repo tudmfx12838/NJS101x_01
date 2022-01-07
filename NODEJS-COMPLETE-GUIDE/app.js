@@ -46,8 +46,8 @@ Cart.belongsToMany(Product, {through: CartItem});
 Product.belongsToMany(Cart, {through: CartItem});
 
 sequelize
-    .sync({force: true})//force: true . Se tu dong Drop table va tao lai
-    // .sync()
+    // .sync({force: true})//force: true . Se tu dong Drop table va tao lai
+    .sync()
     .then(result => {
         return User.findByPk(1);
     })
