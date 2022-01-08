@@ -52,7 +52,7 @@ Order.belongsToMany(Product, {through: OrderItem});
 
 
 sequelize
-    // .sync({force: true})//force: true . Se tu dong Drop table va tao lai
+    // .sync({force: true})//force: true . Se tu dong Drop table va tao lai 
     .sync()
     .then(result => {
         return User.findByPk(1);
