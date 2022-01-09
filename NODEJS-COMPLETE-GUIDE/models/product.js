@@ -8,33 +8,16 @@ class Product {
     this.imageUrl = imageUrl;
   }
   svae(){
+    const db = getDb();
+    db.collection('product')
+      .insertOne()
+      .then(result => {
 
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 }
-
-
-//http://docs.sequelizejs.com/manual/
-//https://sequelize.org/v7/
-// const Product = sequelize.define('product', {
-//   id: {
-//     type: Sequelize.INTEGER,
-//     autoIncrement: true,
-//     allowNull: false,
-//     primaryKey: true
-//   },
-//   title: Sequelize.STRING,
-//   price: {
-//     type: Sequelize.DOUBLE,
-//     allowNull: false
-//   },
-//   imageUrl: {
-//     type: Sequelize.STRING,
-//     allowNull: false
-//   },
-//   description: {
-//     type: Sequelize.STRING,
-//     allowNull: false
-//   }
-// });
 
 module.exports = Product;
