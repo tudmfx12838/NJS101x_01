@@ -7,12 +7,13 @@ class Product {
     this.description = description;
     this.imageUrl = imageUrl;
   }
-  svae(){
+  save() {
     const db = getDb();
-    db.collection('product')
-      .insertOne()
+    return db
+      .collection('products')
+      .insertOne(this)
       .then(result => {
-
+        console.log(result);
       })
       .catch(err => {
         console.log(err);
