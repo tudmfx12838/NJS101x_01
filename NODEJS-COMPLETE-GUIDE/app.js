@@ -36,7 +36,6 @@ app.use('/admin', adminRoutes);
 
 app.use(errorController.getPageError);
 
-mongoConnect(client => {
-    console.log(client);
+mongoConnect(() => {
     app.listen(3000);
 });
