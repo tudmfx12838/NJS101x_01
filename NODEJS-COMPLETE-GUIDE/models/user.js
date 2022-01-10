@@ -17,33 +17,32 @@ class User {
   addToCart(product) {
     //Check existing product in Cart
     //findIndex will return -1 if not found/not exist product
-    const cartProductIndex = this.cart.item.findIndex((cp) => {
+    const cartProductIndex = this.cart.items.findIndex((cp) => {
       return cp.productId.toString() === product._id.toString();
     });
-    const newQuantity = 1;
-    const updateCartItems = [...this.cart.item];
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items];
+
     if (cartProductIndex >= 0) {
-      newQuantity = this.cart.item[cartProductIndex].quantity + 1;
-      updateCartItems[cartProductIndex] = newQuantity;
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
-      updateCartItems.push({
-        item: [
-          {
-            productId: new mongodb.ObjectId(product._id),
-            quantity: newQuantity,
-          },
-        ],
+      updatedCartItems.push({
+        productId: new mongodb.ObjectId(product._id),
+        quantity: newQuantity
       });
     }
 
-    const updateCart = {
-      item: updateCartItems,
+    const updatedCart = {
+      items: updatedCartItems
     };
     const db = getDb();
-    db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(this._id) },
-      { $set: { cart: updateCart } }
-    );
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
   }
 
   static findById(userId) {

@@ -33,18 +33,6 @@ exports.postAddProduct = (req, res, next) => {
     });
 };
 
-exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
-    .then((products) => {
-      res.render("admin/products", {
-        prods: products,
-        pageTitle: "Admin Products",
-        path: "/admin/products",
-      });
-    })
-    .catch((err) => console.log(err));
-};
-
 exports.getEditProduct = (req, res, next) => {
   //Checking edit mode
   //http://localhost:3000/admin/edit-product/0.123214?edit=true
@@ -91,6 +79,18 @@ exports.postEditProduct = (req, res, next) => {
     .then((result) => {
       console.log("Updated Product");
       res.redirect("/admin/products");
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getProducts = (req, res, next) => {
+  Product.fetchAll()
+    .then((products) => {
+      res.render("admin/products", {
+        prods: products,
+        pageTitle: "Admin Products",
+        path: "/admin/products",
+      });
     })
     .catch((err) => console.log(err));
 };
