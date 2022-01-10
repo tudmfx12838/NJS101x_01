@@ -25,7 +25,8 @@ app.use((req, res, next) => {
     User
         .findById('61dbe082ee456c981655d765')
         .then(user => {
-            req.user = user;
+            // req.user = user; //user lay tu database
+            req.user = new User(user.name, user.email, user.cart, user._id) //user lay tu database va khoi tao 1 doi tuong User de xu ly
             next();
         })
         .catch(err => console.log(err));

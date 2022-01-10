@@ -18,8 +18,8 @@ class User {
     // const cartProduct = this.cart.item.findIndex(cp => {
     //     return cp._id === product._id;
     // });
-
-    const updateCart = { item: [{ ...product, quantity: 1 }] };
+    // { item: [{ ...product, quantity: 1 }] };
+    const updateCart = { item: [{ productId: new mongodb.ObjectId(product._id), quantity: 1 }] };
     const db = getDb();
     db.collection("users").updateOne(
       { _id: new mongodb.ObjectId(this._id) }, 
