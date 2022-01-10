@@ -26,18 +26,18 @@ exports.postAddProduct = (req, res, next) => {
     });
 };
 
-// exports.getProducts = (req, res, next) => {
-//   req.user
-//     .getProducts()
-//     .then(products => {
-//       res.render('admin/products', {
-//         prods: products,
-//         pageTitle: 'Admin Products',
-//         path: '/admin/products'
-//       });
-//     })
-//     .catch(err => console.log(err));
-// };
+exports.getProducts = (req, res, next) => {
+  Product
+    .fetchAll()
+    .then(products => {
+      res.render('admin/products', {
+        prods: products,
+        pageTitle: 'Admin Products',
+        path: '/admin/products'
+      });
+    })
+    .catch(err => console.log(err));
+};
 
 // exports.getEditProduct = (req, res, next) => {
 //   //Checking edit mode
@@ -97,17 +97,17 @@ exports.postAddProduct = (req, res, next) => {
                     
 // };
 
-// exports.postDeleteProduct = (req, res, next) => {
-//   const prodId = req.body.productId;
+exports.postDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
 
-//   Product
-//     .findByPk(prodId)
-//     .then(product => {
-//       return product.destroy();
-//     })
-//     .then(() => {
-//       console.log('Destroyed Product');
-//       res.redirect('/admin/products');
-//     })
-//     .catch(err => console.log(err)); 
-// };
+  Product
+    .fetchAll(prodId)
+    .then(product => {
+      return product.destroy();
+    })
+    .then(() => {
+      console.log('Destroyed Product');
+      res.redirect('/admin/products');
+    })
+    .catch(err => console.log(err)); 
+};
