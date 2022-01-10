@@ -15,16 +15,35 @@ class User {
   }
 
   addToCart(product) {
-    // const cartProduct = this.cart.item.findIndex(cp => {
-    //     return cp._id === product._id;
-    // });
-    // { item: [{ ...product, quantity: 1 }] };
-    const updateCart = { item: [{ productId: new mongodb.ObjectId(product._id), quantity: 1 }] };
+    //Check existing product in Cart
+    //findIndex will return -1 if not found/not exist product
+    const cartProductIndex = this.cart.item.findIndex((cp) => {
+      return cp.productId.toString() === product._id.toString();
+    });
+    const newQuantity = 1;
+    const updateCartItems = [...this.cart.item];
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.item[cartProductIndex].quantity + 1;
+      updateCartItems[cartProductIndex] = newQuantity;
+    } else {
+      updateCartItems.push({
+        item: [
+          {
+            productId: new mongodb.ObjectId(product._id),
+            quantity: newQuantity,
+          },
+        ],
+      });
+    }
+
+    const updateCart = {
+      item: updateCartItems,
+    };
     const db = getDb();
     db.collection("users").updateOne(
-      { _id: new mongodb.ObjectId(this._id) }, 
-      {$set: {cart: updateCart}
-    });
+      { _id: new mongodb.ObjectId(this._id) },
+      { $set: { cart: updateCart } }
+    );
   }
 
   static findById(userId) {
