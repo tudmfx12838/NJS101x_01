@@ -22,10 +22,10 @@ class Product {
       dbOp = db.collection("products").insertOne(this);
     }
     return dbOp
-      .then((result) => {
+      .then(result => {
         console.log(result);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
@@ -36,11 +36,11 @@ class Product {
       .collection("products")
       .find()
       .toArray() //Yeu cau MongoDb tra ve mang cac du lieu
-      .then((products) => {
+      .then(products => {
         // console.log(products);
         return products;
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
   }
@@ -51,7 +51,7 @@ class Product {
       .collection("products")
       .find({ _id: new mongodb.ObjectId(prodId) }) //MongoDB quan ly Id trong ObjectId
       .next()
-      .then((product) => {
+      .then(product => {
         console.log(product);
         return product;
       })
@@ -62,7 +62,7 @@ class Product {
     const db = getDb();
     return db
     .collection("products")
-    .deleteOne({ _id: new mongodb.ObjectId(prodId) }, ) //MongoDB quan ly Id trong ObjectId
+    .deleteOne({ _id: new mongodb.ObjectId(prodId) }) //MongoDB quan ly Id trong ObjectId
     .then(result => {
       console.log('Deleted Product!');
       console.log(result);

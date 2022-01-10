@@ -24,10 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
     User
-        .findById('61dc2353ee456c981655d775')
+        .findById('61dc48a8ee456c981655d79a')
         .then(user => {
             // req.user = user; //user lay tu database
-            req.user = new User(user.name, user.email, user.cart, user._id) //user lay tu database va khoi tao 1 doi tuong User de xu ly
+            req.user = new User(user.name, user.email, user.cart, user._id); //user lay tu database va khoi tao 1 doi tuong User de xu ly
             next();
         })
         .catch(err => console.log(err));

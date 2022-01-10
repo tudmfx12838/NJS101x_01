@@ -1,11 +1,12 @@
 const mongodb = require("mongodb");
 const getDb = require("../util/database").getDb;
+const ObjectId = mongodb.ObjectId;
 
 class User {
   constructor(username, email, cart, id) {
     this.name = username;
     this.email = email;
-    this.cart = cart; // {item: []}
+    this.cart = cart; // {items: []}
     this._id = id;
   }
 
@@ -17,7 +18,7 @@ class User {
   addToCart(product) {
     //Check existing product in Cart
     //findIndex will return -1 if not found/not exist product
-    const cartProductIndex = this.cart.items.findIndex((cp) => {
+    const cartProductIndex = this.cart.items.findIndex(cp => {
       return cp.productId.toString() === product._id.toString();
     });
     let newQuantity = 1;
@@ -28,7 +29,7 @@ class User {
       updatedCartItems[cartProductIndex].quantity = newQuantity;
     } else {
       updatedCartItems.push({
-        productId: new mongodb.ObjectId(product._id),
+        productId: new ObjectId(product._id),
         quantity: newQuantity
       });
     }
@@ -38,18 +39,37 @@ class User {
     };
     const db = getDb();
     return db
-      .collection('users')
+      .collection("users")
       .updateOne(
-        { _id: new mongodb.ObjectId(this._id) },
+        { _id: new ObjectId(this._id) },
         { $set: { cart: updatedCart } }
       );
+  }
+
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((item) => {
+      return item.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map(p => {
+          return {...p, quantity: this.cart.items.find(i =>{
+            return i.productId.toString() === p._id.toString();
+            }).quantity
+          };
+        });
+      });
   }
 
   static findById(userId) {
     const db = getDb();
     return db
       .collection("users")
-      .findOne({ _id: new mongodb.ObjectId(userId) })
+      .findOne({ _id: new ObjectId(userId) })
       .then((user) => {
         console.log(user);
         return user;
