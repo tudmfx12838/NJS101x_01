@@ -40,7 +40,7 @@ app.use(shopRoutes);
 
 app.use(errorController.getPageError);
 
-mongoose.connect('mongodb+srv://admin:yYoPp04jYzN8lHf7@cluster0.gqluc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority')
+mongoose.connect('mongodb+srv://admin:yYoPp04jYzN8lHf7@cluster0.gqluc.mongodb.net/myShop?retryWrites=true&w=majority')
 .then(result => {
     app.listen(3000);
 })
