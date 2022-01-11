@@ -20,6 +20,8 @@ const productSchema = new Schema({
     required: true
   }
 });
+//mongoose.model() dong vai tro ket noi mot schema
+module.exports = mongoose.model('Product', productSchema);
 
 
 // const mongodb = require("mongodb");
