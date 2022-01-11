@@ -18,7 +18,7 @@ exports.getProducts = (req, res, next) => {
 exports.getProduct = (req, res, next) => {
     const prodId = req.params.productId;
     Product
-      .findById(prodId)
+      .findById(prodId) //findById() bay gio la ham mac dinh co trong mongodb mongoose, chu khong phai do ta tao ra
       .then(product => {
         res.render('shop/product-detail', {
           product: product,
