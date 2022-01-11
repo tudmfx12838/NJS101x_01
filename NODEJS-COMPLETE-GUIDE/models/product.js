@@ -22,6 +22,9 @@ const productSchema = new Schema({
 });
 //mongoose.model() dong vai tro ket noi mot schema
 module.exports = mongoose.model('Product', productSchema);
+//Sau khi add product thi trong MongoDb xuat hien collect "products", ly do la mongoose se lay model name ('Product')
+//sau do chuyen thanh chu thuong va them 's', sau do dung ham collection('products') de tao mot collection
+
 
 
 // const mongodb = require("mongodb");

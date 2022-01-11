@@ -2,7 +2,7 @@ const Product = require('../models/product');
 
 exports.getProducts = (req, res, next) => {
   Product
-  .fetchAll()
+  .find()//ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
   .then((products) => {
     res.render('shop/product-list', {
       prods: products,
@@ -31,9 +31,11 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   Product
-    .fetchAll()
+    .find()//ham find() su dung trong mongodb se khac voi find() goc trong JS
+          //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
-       res.render('shop/index', {
+      console.log(products);
+      res.render('shop/index', {
         prods: products,
         pageTitle: 'Shop',
         path: '/'
