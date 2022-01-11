@@ -17,7 +17,7 @@ exports.postAddProduct = (req, res, next) => {
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl
+    imageUrl: imageUrl,
   });
   product
     .save()
@@ -60,20 +60,19 @@ exports.getEditProduct = (req, res, next) => {
 
 exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  const updateTitle = req.body.title;
+  const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updateImageUrl = req.body.imageUrl;
-  const updateDescription = req.body.description;
+  const updatedImageUrl = req.body.imageUrl;
+  const updatedDescription = req.body.description;
 
-  const productData = new Product(
-    updateTitle,
-    updatedPrice,
-    updateDescription,
-    updateImageUrl,
-    prodId
-  );
-  productData
-    .save()
+  Product.findById(prodId)
+    .then((product) => {
+      product.title = updatedTitle;
+      product.price = updatedPrice;
+      product.description = updatedDescription;
+      product.imageUrl = updatedImageUrl;
+      return product.save(); //Ham save nay cua mongoose
+    })
     .then((result) => {
       console.log("Updated Product");
       res.redirect("/admin/products");
@@ -82,8 +81,7 @@ exports.postEditProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product
-    .find()//ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+  Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
       res.render("admin/products", {
         prods: products,
