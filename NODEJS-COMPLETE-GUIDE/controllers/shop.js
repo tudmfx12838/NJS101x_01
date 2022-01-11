@@ -112,7 +112,6 @@ exports.postOrder = (req, res, next) => {
   let fetchedCart;
   req.user
     .addOrder()
-    
     .then(result => {
       res.redirect('/orders');
     })

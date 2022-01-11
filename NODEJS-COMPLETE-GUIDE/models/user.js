@@ -82,8 +82,21 @@ class User {
 
   addOrder() {
     const db = getDb();
-    return db.collection('orders').insertOne(this.cart).then(result => { 
-      this.cart  = {item: []};
+    return this.getCart().then(products => {
+      const order = {
+        items: products,
+        user: {
+          _id: new ObjectId(this._id),
+          name: this.name,
+          email: this.email
+        }
+      }
+      return db
+      .collection('orders')
+      .insertOne(order)
+    })
+    .then(result => { 
+      this.cart  = {item: []};//clean cart after add order
       return db
       .collection("users")
       .updateOne(
