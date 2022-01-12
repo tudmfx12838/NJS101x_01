@@ -88,7 +88,7 @@ exports.postOrder = (req, res, next) => {
     .then((user) => {
       console.log(user.cart.items);
       const products = user.cart.items.map(i => {
-        return {product: i.productId, quantity: { ...i.quantity._doc }}; //Lab7.14 chi hien Id cua product, them ...i.quantity._doc se cho lay ra toan bo du lieu theo Id cua product
+        return {product: {...i.productId._doc}, quantity: i.quantity}; //Lab7.14 chi hien Id cua product, them ...i.productId._doc se cho lay ra toan bo du lieu theo Id cua product
       });
       const order = new Order({
         user: {
@@ -99,6 +99,9 @@ exports.postOrder = (req, res, next) => {
         products: products,
       });
       return order.save();
+    })
+    .then(() => {
+      return req.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
