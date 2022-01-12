@@ -83,7 +83,10 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+    // .select('title price -_id') //select trong key muon lay ra, va bo ra nhung key sau dau '-'
+    // .populate('userId', 'name') // populate se lay toan bo du lieu tu collection khac co quan he theo userId truyen vao
     .then((products) => {
+      console.log(products);
       res.render("admin/products", {
         prods: products,
         pageTitle: "Admin Products",
