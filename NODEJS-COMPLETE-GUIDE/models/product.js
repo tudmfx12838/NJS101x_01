@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { required } = require('nodemon/lib/config');
 
 const Schema = mongoose.Schema;
 
@@ -17,6 +18,11 @@ const productSchema = new Schema({
   },
   imageUrl: {
     type: String,
+    required: true
+  },
+  userId: { //add relation with User, moi quan he ngam dinh duoc quan ly trong mongoose
+    type: Schema.Types.ObjectId,
+    ref: 'User',  //User is name of model whish was created ./models./user.js
     required: true
   }
 });
