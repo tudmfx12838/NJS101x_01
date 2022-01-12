@@ -87,8 +87,8 @@ exports.postOrder = (req, res, next) => {
     .populate("cart.items.productId") //truy van ref den product
     .then((user) => {
       console.log(user.cart.items);
-      const products = user.cart.items.map(i => {
-        return {product: {...i.productId._doc}, quantity: i.quantity}; //Lab7.14 chi hien Id cua product, them ...i.productId._doc se cho lay ra toan bo du lieu theo Id cua product
+      const products = user.cart.items.map((i) => {
+        return { product: { ...i.productId._doc }, quantity: i.quantity }; //Lab7.14 chi hien Id cua product, them ...i.productId._doc se cho lay ra toan bo du lieu theo Id cua product
       });
       const order = new Order({
         user: {
@@ -110,8 +110,7 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  req.user
-    .getOrders()
+  Order.find({ "user.userId": req.user._id })
     .then((orders) => {
       console.log(orders);
       res.render("shop/orders", {
