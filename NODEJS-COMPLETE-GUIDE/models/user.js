@@ -21,6 +21,39 @@ const userSchema = new Schema({
   },
 });
 
+userSchema.methods.addToCart = function(product) { //tao function bang ownerShema du xu ly logic
+    //Check existing product in Cart
+    //findIndex will return -1 if not found/not exist product
+    const cartProductIndex = this.cart.items.findIndex(cp => {
+      return cp.productId.toString() === product._id.toString();
+    });
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items];
+
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({
+        productId: product._id, //Mongoose se tu boc _id trong new ObjectId(_id)
+        quantity: newQuantity
+      });
+    }
+
+    const updatedCart = {
+      items: updatedCartItems
+    };
+    this.cart = updatedCart;
+    return this.save(); //save() cua mongoose de update
+    // const db = getDb();   //update thu cong khi khong dung Mongoose
+    // return db
+    //   .collection("users")
+    //   .updateOne(
+    //     { _id: new ObjectId(this._id) },
+    //     { $set: { cart: updatedCart } }
+    //   );
+};
+
 module.exports = mongoose.model('User', userSchema);
 
 // const mongodb = require("mongodb");
