@@ -3,38 +3,48 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+
 const User = require('./models/user');
+const Staff = require('./models/staff');
+
 
 const app = express();
 
+app.set("view engine", "ejs");
+app.set("views", "views");
 
+// const loginRoutes = require('./routes/login');
+const staffRoutes = require('./routes/staff');
+const userRoutes = require('./routes/user');
 
-app.use('/admin', (req, res, next) => {
-    console.log('admin here !');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use((req, res, next) => {
+  User.findById("61e26ea6b5b6fe5e5e979334")
+    .then((user) => {
+      // req.user = user; //user lay tu database
+      // console.log(user);
+      req.user = user; //user nay tra ve tu findById (ham cua mongoose) lay tu database
+      next();
+    })
+    .catch((err) => console.log(err));
+  //    next();
 });
+
+// app.use(loginRoutes);
+app.use(userRoutes);
+app.use(staffRoutes);
+
 
 mongoose
     .connect(
         'mongodb+srv://admin:1234@cluster0.2tyxr.mongodb.net/myApp?retryWrites=true&w=majority'
     )
     .then((result) => {
-        User
-            .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-            .then((user) => {
-                if(!user){ //if user not exist, add new user.
-                    const user = new User({
-                        name: "Tu",
-                        email: "test@node",
-                        cart: {
-                          items: [],
-                        },
-                      });
-                    user.save();
-                }
-            });
-    
-        app.listen(3001);
+        app.listen(3002);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+    .catch((err) => {
+      console.log(err);
+    });

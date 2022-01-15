@@ -1,0 +1,24 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <!-- <link rel="stylesheet" href="/css/product.css"> -->
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+            <div>
+                <img src="<%= staff.image %>" alt="<%= staff.name %>">
+            </div>
+            <div>
+                <h2>Mã số: <%= staff.idNumber %></h2>
+                <h2>Tên nhân viên: <%= staff.name %></h2>
+                <h2>Ngày sinh: <%= staff.doB %></h2>
+                <h2>Ngày vào công ty: <%= staff.startDate %></h2>
+                <h2>Phòng ban: <%= staff.department %></h2>
+                <h2>Hệ số lương: <%= staff.salaryScale %></h2>
+                <h2>Số ngày nghỉ còn: <%= staff.annualLeave %></h2>
+            </div>
+        
+    </main>
+
+<%- include('../includes/end.ejs') %>

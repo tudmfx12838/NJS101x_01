@@ -3,24 +3,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
+  staffId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Staff',
+    required: true
   },
-  email: {
+  permission: {
     type: String,
-    required: true,
+    required: true
   }
-//   ,
-//   cart: {
-//     items: [
-//       { //Add relation with Product
-//         productId: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
-//         quantity: { type: Number, required: true },
-//       },
-//     ],
-//   },
 });
+
+module.exports = mongoose.model('User', userSchema);
+
 
 // userSchema.methods.addToCart = function(product) { //tao function bang ownerShema du xu ly logic
 //     //Check existing product in Cart
@@ -76,8 +71,6 @@ const userSchema = new Schema({
 //   // this.cart = {items: []};
 //   return this.save();
 // }
-
-module.exports = mongoose.model('User', userSchema);
 
 // const mongodb = require("mongodb");
 // const getDb = require("../util/database").getDb;

@@ -1,0 +1,73 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/modal.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+
+        <div>
+            <h2>Đăng Ký Thông Tin Thân Nhiệt</h2>
+            <form class="staff-form" action="/health-registry" method="POST">
+                <div class="form-control">
+                    <label for="tempInfo">Thân nhiệt: </label>
+                    <input type="text" name="tempInfo" id="tempInfo">
+                </div>
+                <div class="form-control">
+                    <label for="checkedTime">Ngày đo: </label>
+                    <input type="date" name="checkedTime" id="checkedTime" value="">
+                </div>
+
+                <input type="hidden" value="tempCovid" name="healthInfo">
+                <button class="btn" type="submit">Đăng Ký</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Đăng Ký Thông Tin Tiêm Vaccine</h2>
+            <form class="staff-form" action="/health-registry" method="POST">
+                <div class="form-control">
+                    <label for="vaccineInfo">Mũi thứ: </label>
+                    <input type="text" name="vaccineInfo" id="vaccineInfo">
+                </div>
+                <div class="form-control">
+                    <label for="vaccineDate">Ngày tiêm: </label>
+                    <input type="date" name="vaccineDate" id="vaccineDate">
+                </div>
+
+                <input type="hidden" value="vaccineCovid" name="healthInfo">
+                <button class="btn" type="submit">Đăng Ký</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Đăng Ký Thông Tin Nhiễm Covid</h2>
+            <form class="staff-form" action="/health-registry" method="POST">
+                <div class="form-control">
+                    <label for="infectCovid">Kết quả:</label>
+                    <select name="infectCovid" id="infectCovid">
+                        <option value="false">Âm Tính</option>
+                        <option value="true">Dương Tính</option>
+                    </select>
+                    <!-- <input type="text" name="infectCovid" id="infectCovid"> -->
+                </div>
+                <div class="form-control">
+                    <label for="infectedDate">Ngày nhiễm: </label>
+                    <input type="date" name="infectedDate" id="infectedDate">
+                </div>
+
+                <input type="hidden" value="infectCovid" name="healthInfo">
+                <button class="btn" type="submit">Đăng Ký</button>
+            </form>
+        </div>
+
+        <hr>
+
+    </main>
+
+<%- include('../includes/end.ejs') %>
