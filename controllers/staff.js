@@ -1,6 +1,8 @@
 const Staff = require('../models/staff');
 const Health = require('../models/health');
+const TimeSheet = require('../models/timesheet');
 const User = require('../models/user');
+const { redirect } = require('express/lib/response');
 
 // const dateformat = require('dateformat');
 // const dateFormat = require('date-and-time');
@@ -64,9 +66,9 @@ exports.getHealthInfo = ((req, res, next) => {
         .populate('staffId')
         .then(staff => {
             Health
-                .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+                .find({staffId: staff.staffId._id}) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
                 .then((health) => {
-                    if(!health){ //if user not exist, add new user.
+                    if(health.length <= 0){ //if user not exist, add new user.
                         const health = new Health({
                             staffId: staff.staffId._id,
                         });
@@ -74,18 +76,20 @@ exports.getHealthInfo = ((req, res, next) => {
                     } 
                 })
                 .catch(err => console.log(err));
+
+            return staff;
         })
-        .then(() => {
+        .then((staff) => {
             Health
-                .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+                .find({staffId: staff.staffId._id}) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
                 .then((health) => {
                     console.log(health);
                     res.render('staff/staff-health', {
                         pageTitle: "Thông Tin Sức Khỏe",
-                        path:'/staff-health',
-                        vaccineStatus: health.vaccineInfo.vaccineStatus,
-                        covidStatus: health.covidInfo.covidStatus,
-                        bodyStatus: health.bodyInfo.bodyStatus,
+                        path:'/health-info',
+                        vaccineStatus: health[0].vaccineInfo.vaccineStatus,
+                        covidStatus: health[0].covidInfo.covidStatus,
+                        bodyStatus: health[0].bodyInfo.bodyStatus,
                     });
                     // console.log(health);
                 })
@@ -124,3 +128,69 @@ exports.postHealthInfo = ((req, res, next) => {
         })
         .catch(err => console.log(err));
 });
+
+
+exports.getStaffTimeSheet = ((req, res, next) => {
+    req.user
+        .populate('staffId')
+        .then(staff => {
+            TimeSheet
+                .find({staffId: staff.staffId._id})
+                .then(timesheet => {
+                    console.log(timesheet);
+                    if(timesheet.length <= 0){ //if user not exist, add new user.
+                        const timesheet = new TimeSheet({
+                            staffId: staff.staffId._id,
+                            workInfo: [],
+                            timeTotal: [],
+                            workStatus: false
+                        });
+                        timesheet.save();
+                        return res.redirect('/');
+                    } else {
+
+                        res.render('staff/staff-timesheet', {
+                            pageTitle: "Chấm Công",
+                            path:'/',
+                            staff: staff
+                            // covidStatus: health.covidInfo.covidStatus,
+                            // bodyStatus: health.bodyInfo.bodyStatus,
+                        });
+                    }
+                })
+                .catch(err => console.log(err));
+        })
+        .then((staff) => {
+            //
+        })
+        .catch(err => console.log(err));
+});
+
+exports.postStartTime = ((req, res, next) => {
+    const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
+    const location = req.body.location;
+    const timeInfo = req.body.timeInfo;
+
+    TimeSheet
+        .find({staffId: req.user.staffId._id})
+        .then(timesheet => {
+            if(timeInfo == 'startTime'){
+                timesheet[0]
+                    .addStartTime({location: location, startTime: timeNow})
+                    .then(result => {
+                        res.redirect('/');
+                    })
+                    .catch(err => console.log(err));
+            } else if (timeInfo == 'endTime') {
+                timesheet[0]
+                    .addEndTime(timeNow)
+                    .then(result => {
+                        res.redirect('/');
+                    })
+                    .catch(err => console.log(err));
+            }
+
+        })
+        .catch(err => console.log(err));
+});
+

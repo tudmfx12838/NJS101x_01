@@ -10,20 +10,20 @@ const healthSchema = new Schema({
   },
   vaccineInfo: {
     vaccineStatus:[{
-            time: {type: Number, required: false},
-            date: {type: Date, required: false}
+            time: {type: Number, required: true},
+            date: {type: Date, required: true}
         }]
     },
   covidInfo: {
         covidStatus:[{
-            infect: {type: Boolean, required: false},
-            date: {type: Date, required: false}
+            infect: {type: Boolean, required: true},
+            date: {type: Date, required: true}
         }]
     },
   bodyInfo: {
         bodyStatus: [{
-           temp: {type: Number, required: false},
-           date: {type: Date, required: false}
+           temp: {type: Number, required: true},
+           date: {type: Date, required: true}
         }]
     },
 });

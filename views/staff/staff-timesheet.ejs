@@ -1,0 +1,84 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/modal.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div>
+            <h2>Trạng Thái Công Việc Hôm Nay</h2>
+            <article class="card product-item">
+                <div class="card__content">
+                    <h2 class="product__price">
+                        <b>Tên Nhân Viên:</b> 
+                    <p class="product__description">
+                        <b>Nơi làm việc:</b> 
+                    </p>
+                    <p class="product__description">
+                        <b>Trạng Thái:</b> 
+                    </p>
+                </div>
+            </article>
+        </div>
+
+        <hr>
+
+        <div class="staff-form" >
+            <!-- Trigger/Open The Modal -->
+            <button class="btn" id="myBtn">Điểm danh</button>
+            <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Đăng ký thông tin làm việc</h2>
+                    <form class="staff-form" action="/update-timesheet" method="POST">
+                        <div class="form-control">
+                            <label for="location">Nơi làm việc: </label>
+                            <select name="location" id="location" value="company">
+                                <option value="company">Công Ty</option>
+                                <option value="customer">Khách Hàng</option>
+                                <option value="home">Nhà</option>
+                            </select>
+                        </div>
+                        <input type="hidden" value="startTime" name="timeInfo">
+                        <button class="btn" type="submit">Bắt đầu làm</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="staff-form" >
+            <form class="staff-form" action="/update-timesheet" method="POST">
+                <input type="hidden" value="endTime" name="timeInfo">
+                <button class="btn" type="submit">Kết thúc làm</button>
+            </form>
+        </div>
+
+        <br>
+
+        <div class="staff-form" >
+            <!-- Trigger/Open The Modal -->
+            <button class="btn" id="myBtn1">Nghỉ Phép</button>
+            <!-- The Modal -->
+            <div id="myModal1" class="modal">
+                <div class="modal-content">
+                    <span class="close" id="span1">&times;</span>
+                    <h2>Đăng ký nghỉ phép</h2>
+                    <form class="staff-form" action="/add-timesheet" method="POST">
+                        <div class="form-control">
+                            <label for="checkedDateTime">Thời gian: </label>
+                            <input type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="">
+                        </div>
+                        <input type="hidden" value="leaveRegist" name="leaveRegist">
+                        <button class="btn" type="submit">Đăng Ký</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+<%- include('../includes/end.ejs') %>

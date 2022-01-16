@@ -15,4 +15,9 @@ router.get('/health-info', staffController.getHealthInfo);
 
 router.post('/health-registry', staffController.postHealthInfo);
 
+router.get('/', staffController.getStaffTimeSheet);
+
+router.post('/update-timesheet', staffController.postStartTime);
+
+
 module.exports = router;
