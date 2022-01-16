@@ -15,14 +15,9 @@
                     <input type="number" name="tempInfo" id="tempInfo">
                 </div>
                 <div class="form-control">
-                    <label for="checkedDate">Ngày đo: </label>
-                    <input type="date" name="checkedDate" id="checkedDate" value="">
+                    <label for="checkedDateTime">Thời gian đo: </label>
+                    <input type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="">
                 </div>
-                <div class="form-control">
-                    <label for="checkedTime">Giờ đo: </label>
-                    <input type="time" name="checkedTime" id="checkedTime" value="">
-                </div>
-
                 <input type="hidden" value="tempCovid" name="healthInfo">
                 <button class="btn" type="submit">Đăng Ký</button>
             </form>
@@ -90,7 +85,7 @@
                     <% } %>
                 </div>
             <% } else { %>
-                <h2>Chưa cập nhật thông tin thân nhiệt</h2>
+                <p>Chưa cập nhật thông tin thân nhiệt</p>
             <% } %>
         </div>
 
@@ -114,7 +109,7 @@
                     <% } %>
                 </div>
             <% } else { %>
-                <h2>Chưa cập nhật thông tin tiêm Vaccine</h2>
+                <p>Chưa cập nhật thông tin tiêm Vaccine</p>
             <% } %>
         </div>
 
@@ -138,7 +133,7 @@
                     <% } %>
                 </div>
             <% } else { %>
-                <h2>Chưa cập nhật thông tin nhiễm Covid</h2>
+                <p>Chưa cập nhật thông tin nhiễm Covid</p>
             <% } %>
         </div>
 

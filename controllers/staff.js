@@ -104,9 +104,10 @@ exports.postHealthInfo = ((req, res, next) => {
             if(healthInfo == 'tempCovid'){
                 //Format to ISOdate before update database
                 //https://docs.mongodb.com/manual/reference/method/Date/
-                const dateTime =  req.body.checkedDate + 'T' + req.body.checkedTime +'Z';
-                console.log(dateTime);
-                healthData = {temp: req.body.tempInfo, date: dateTime};
+                // const dateTime =  req.body.checkedDate + 'T' + req.body.checkedTime +'Z';
+                // console.log(dateTime);
+                // healthData = {temp: req.body.tempInfo, date: dateTime};
+                healthData = {temp: req.body.tempInfo, date: req.body.checkedDateTime};
             } else if(healthInfo == 'vaccineCovid') {
                 healthData = {time: req.body.vaccineInfo, date: req.body.vaccineDate};
                 
