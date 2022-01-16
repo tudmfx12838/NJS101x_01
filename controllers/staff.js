@@ -2,6 +2,9 @@ const Staff = require('../models/staff');
 const Health = require('../models/health');
 const User = require('../models/user');
 
+// const dateformat = require('dateformat');
+// const dateFormat = require('date-and-time');
+
 exports.getStaffs = ((req, res, next) => {
     res.render('admin/staff', {
         pageTitle: "Nhân Viên",
@@ -76,10 +79,13 @@ exports.getHealthInfo = ((req, res, next) => {
             Health
                 .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
                 .then((health) => {
+                    console.log(health);
                     res.render('staff/staff-health', {
                         pageTitle: "Thông Tin Sức Khỏe",
                         path:'/staff-health',
-                        // staff: staff
+                        vaccineStatus: health.vaccineInfo.vaccineStatus,
+                        covidStatus: health.covidInfo.covidStatus,
+                        bodyStatus: health.bodyInfo.bodyStatus,
                     });
                     // console.log(health);
                 })
@@ -90,48 +96,30 @@ exports.getHealthInfo = ((req, res, next) => {
 
 exports.postHealthInfo = ((req, res, next) => {
     const healthInfo = req.body.healthInfo;
+    let healthData = '';
     Health
         .find({staffId: req.user.staffId._id})
         .then(health => {
-            // console.log(req.user._id);
             console.log(health[0]);
-            // console.log(health.bodyInfo.bodyStatus);
             if(healthInfo == 'tempCovid'){
-                const bodyStatus = {temp: req.body.tempInfo, date: req.body.checkedTime};
-                console.log(bodyStatus);
-                // console.log({status: bodyInfo});
-                health[0]
-                    .addToBodyInfo(bodyStatus)
-                    .then(result => {
-                        res.redirect('/health-info');
-                        console.log('Đăng ký thân nhiệt thành công');
-                    })
-                    .catch(err => console.log(err));
+                //Format to ISOdate before update database
+                //https://docs.mongodb.com/manual/reference/method/Date/
+                const dateTime =  req.body.checkedDate + 'T' + req.body.checkedTime +'Z';
+                console.log(dateTime);
+                healthData = {temp: req.body.tempInfo, date: dateTime};
             } else if(healthInfo == 'vaccineCovid') {
-                const covidStatus = {time: req.body.vaccineInfo, date: req.body.vaccineDate};
-                console.log(covidStatus);
-                // console.log({status: bodyInfo});
-                health[0]
-                    .addToVaccineInfo(covidStatus)
-                    .then(result => {
-                        res.redirect('/health-info');
-                        console.log('Đăng ký thông tin vaccine thành công');
-                    })
-                    .catch(err => console.log(err));
+                healthData = {time: req.body.vaccineInfo, date: req.body.vaccineDate};
+                
             } else if(healthInfo == 'infectCovid') {
-                const covidStatus = {infect: req.body.infectCovid, date: req.body.infectedDate};
-                console.log(covidStatus);
-                // console.log({status: bodyInfo});
-                health[0]
-                    .addToCovidInfo(covidStatus)
-                    .then(result => {
-                        res.redirect('/health-info');
-                        console.log('Đăng ký thông tin nhiễm Covid thành công');
-                    })
-                    .catch(err => console.log(err));
+                healthData = {infect: req.body.infectCovid, date: req.body.infectedDate};
+
             } else {
                 console.log('Not found Registry')
             }
-
+            return health[0].updateHealthInfo(healthInfo, healthData);
         })
+        .then(result => {
+            res.redirect('/health-info');
+        })
+        .catch(err => console.log(err));
 });

@@ -12,11 +12,15 @@
             <form class="staff-form" action="/health-registry" method="POST">
                 <div class="form-control">
                     <label for="tempInfo">Thân nhiệt: </label>
-                    <input type="text" name="tempInfo" id="tempInfo">
+                    <input type="number" name="tempInfo" id="tempInfo">
                 </div>
                 <div class="form-control">
-                    <label for="checkedTime">Ngày đo: </label>
-                    <input type="date" name="checkedTime" id="checkedTime" value="">
+                    <label for="checkedDate">Ngày đo: </label>
+                    <input type="date" name="checkedDate" id="checkedDate" value="">
+                </div>
+                <div class="form-control">
+                    <label for="checkedTime">Giờ đo: </label>
+                    <input type="time" name="checkedTime" id="checkedTime" value="">
                 </div>
 
                 <input type="hidden" value="tempCovid" name="healthInfo">
@@ -31,7 +35,7 @@
             <form class="staff-form" action="/health-registry" method="POST">
                 <div class="form-control">
                     <label for="vaccineInfo">Mũi thứ: </label>
-                    <input type="text" name="vaccineInfo" id="vaccineInfo">
+                    <input type="number" name="vaccineInfo" id="vaccineInfo">
                 </div>
                 <div class="form-control">
                     <label for="vaccineDate">Ngày tiêm: </label>
@@ -64,6 +68,78 @@
                 <input type="hidden" value="infectCovid" name="healthInfo">
                 <button class="btn" type="submit">Đăng Ký</button>
             </form>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Thông Tin Thân Nhiệt</h2>
+            <% if (bodyStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let bst of bodyStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Nhiệt độ cơ thể:</b> <%= bst.temp %> độ C
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày đo:</b> <%= bst.date %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <h2>Chưa cập nhật thông tin thân nhiệt</h2>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Thông Tin Tiêm Vaccine</h2>
+            <% if (vaccineStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let vcs of vaccineStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Mũi thứ:</b> <%= vcs.time %>
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày tiêm:</b> <%= vcs.date %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <h2>Chưa cập nhật thông tin tiêm Vaccine</h2>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div>
+            <h2>Thông Tin Nhiễm Covid</h2>
+            <% if (covidStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let cds of covidStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Kết quả:</b> <%= cds.infect == true ? 'Dương Tính' : 'Âm Tính' %> 
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày nhiễm:</b> <%= cds.date %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <h2>Chưa cập nhật thông tin nhiễm Covid</h2>
+            <% } %>
         </div>
 
         <hr>

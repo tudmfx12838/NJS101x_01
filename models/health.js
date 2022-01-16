@@ -43,6 +43,40 @@ healthSchema.methods.addToBodyInfo = function(bodyStatus) {
   return this.save(); 
 };
 
+healthSchema.methods.updateHealthInfo = function(healthInfo, healthData) {
+  if(healthInfo == 'tempCovid'){
+      console.log(healthData);
+      // console.log({status: bodyInfo});
+      this
+          .addToBodyInfo(healthData)
+          .then(result => {
+              console.log('Đăng ký thân nhiệt thành công');
+          })
+          .catch(err => console.log(err));
+  } else if(healthInfo == 'vaccineCovid') {
+      console.log(healthData);
+      // console.log({status: bodyInfo});
+      this
+          .addToVaccineInfo(healthData)
+          .then(result => {
+              console.log('Đăng ký thông tin vaccine thành công');
+          })
+          .catch(err => console.log(err));
+  } else if(healthInfo == 'infectCovid') {
+      console.log(healthData);
+      // console.log({status: bodyInfo});
+      this
+          .addToCovidInfo(healthData)
+          .then(result => {
+              console.log('Đăng ký thông tin nhiễm Covid thành công');
+          })
+          .catch(err => console.log(err));
+  } else {
+      console.log('Not found Registry')
+  }
+};
+
+
 module.exports = mongoose.model('Health', healthSchema);
 
 /*
