@@ -68,3 +68,8 @@ window.onclick = function(event) {
     modal1.style.display = "none";
   }
 }
+
+
+document.getElementById("dateLeave").addEventListener("change", () => {
+	document.getElementById("timeConvert").innerHTML = document.getElementById("dateLeave").value/8;
+});

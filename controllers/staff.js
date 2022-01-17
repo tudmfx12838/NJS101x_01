@@ -148,11 +148,11 @@ exports.getStaffTimeSheet = ((req, res, next) => {
                         timesheet.save();
                         return res.redirect('/');
                     } else {
-
                         res.render('staff/staff-timesheet', {
                             pageTitle: "Chấm Công",
                             path:'/',
-                            staff: staff
+                            staff: staff.staffId,
+                            timesheet: timesheet[0]
                             // covidStatus: health.covidInfo.covidStatus,
                             // bodyStatus: health.bodyInfo.bodyStatus,
                         });
@@ -168,36 +168,71 @@ exports.getStaffTimeSheet = ((req, res, next) => {
 
 exports.postStartTime = ((req, res, next) => {
     // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
-    const location = req.body.location;
     const timeInfo = req.body.timeInfo;
     const timeNow = new Date();
-    TimeSheet
-        .find({staffId: req.user.staffId._id})
-        .then(timesheet => {
-            if(timeInfo == 'startTime'){
-                timesheet[0]
-                    .addStartTime({location: location, startTime: timeNow})
-                    .then(result => {
-                        res.redirect('/');
-                    })
-                    .catch(err => console.log(err));
-            } else if (timeInfo == 'endTime' && (timesheet[0].locations.length > 0) && (timesheet[0].startTimes.length > 0)) {
-                console.log(timesheet[0].locations);
-                console.log(timesheet[0].startTimes);//
-                timesheet[0]
-                    .addEndTime(timeNow)
-                    .then(result => {
-                        res.redirect('/');
-                    })
-                    .catch(err => console.log(err));
-            } else if (timeInfo == 'leaveRegist')
-            console.log('leaveRegist')
-                timesheet[0]
-                    .addTakeLeave({startDateTime: req.body.startDateTime, endtDateTime: req.body.endDateTime, dateLeave: req.body.dateLeave})
-                    .then(result => {
-                        res.redirect('/');
-                    })
-                    .catch(err => console.log(err));
+    console.log(timeInfo);
+    req.user
+        .populate('staffId')
+        .then(staff => {
+            TimeSheet
+            .find({staffId: req.user.staffId})
+            .then(timesheet => {
+                if(timeInfo == 'startTime'){
+                    timesheet[0]
+                        .addStartTime({location: req.body.location, startTime: timeNow})
+                        .then(result => {
+                            res.redirect('/');
+                        })
+                        .catch(err => console.log(err));
+                } else if (timeInfo == 'endTime' && (timesheet[0].locations.length > 0) && (timesheet[0].startTimes.length > 0)) {
+                    timesheet[0]
+                        .addEndTime(timeNow)
+                        .then(result => {
+                            res.redirect('/');
+                        })
+                        .catch(err => console.log(err));
+                } else if (timeInfo == 'leaveRegist') {
+                    const startDateTime = new Date(req.body.startDateTime);
+                    const endDateTime = new Date(req.body.endDateTime);
+                    const dateLeave = req.body.dateLeave;
+                    const annualLeave = staff.staffId.annualLeave;
+    
+                    //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);    
+                    let countWithoutSatAndSun = 0;
+                    const curDate = new Date(startDateTime.getTime());
+                    while (curDate <= endDateTime) {
+                        const dayOfWeek = curDate.getDay();
+                        if(dayOfWeek !== 0 && dayOfWeek !== 6) countWithoutSatAndSun++;
+                        curDate.setDate(curDate.getDate() + 1);
+                    }
+                    // console.log(countWithoutSatAndSun*8);
+                    // console.log('---------------');
+                    // console.log(dateLeave);
+                    // console.log(annualLeave);
+                    if(countWithoutSatAndSun > 1 && countWithoutSatAndSun*8 == dateLeave && dateLeave <= annualLeave){
+                        timesheet[0]
+                            .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
+                            .then(result => {
+                                staff.staffId.annualLeave = annualLeave - dateLeave;
+                                staff.staffId.save().then(() => {}).catch(err => console.log(err));
+                                res.redirect('/');
+                            })
+                            .catch(err => console.log(err));
+                    } else if (dateLeave <= 8 && dateLeave <= annualLeave){
+                        timesheet[0]
+                        .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
+                        .then(result => {
+                            staff.staffId.annualLeave = annualLeave - dateLeave;
+                            staff.staffId.save().then(() => {}).catch(err => console.log(err));
+                            res.redirect('/');
+                        })
+                        .catch(err => console.log(err));
+                    } else {
+                        console.log('Số ngày nghỉ lớn hơn ngày phép còn hoặc thời gian nghỉ vào số ngày chọn không phù hợp');
+                    }
+                }
+            })
+            .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
 });

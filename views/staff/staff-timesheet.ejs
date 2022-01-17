@@ -11,19 +11,17 @@
             <article class="card product-item">
                 <div class="card__content">
                     <h2 class="product__price">
-                        <b>Tên Nhân Viên:</b> 
+                        <b>Tên Nhân Viên: <%= staff.name %></b> 
                     <p class="product__description">
-                        <b>Nơi làm việc:</b> 
+                        <b>Nơi làm việc: <%= timesheet.locations.length <= 0 ? 'Chưa đăng ký nơi làm việc' : timesheet.locations[timesheet.locations.length - 1].location%> 
                     </p>
                     <p class="product__description">
-                        <b>Trạng Thái:</b> 
+                        <b>Trạng Thái: <%= timesheet.workStatus == true ? 'Đang làm việc' : 'Không làm việc'%></b> 
                     </p>
                 </div>
             </article>
         </div>
-
-        <hr>
-
+        <br>
         <div class="staff-form" >
             <!-- Trigger/Open The Modal -->
             <button class="btn staff-form" id="myBtn">Điểm danh</button>
@@ -36,9 +34,9 @@
                         <div class="form-control">
                             <label for="location">Nơi làm việc: </label>
                             <select name="location" id="location" value="company">
-                                <option value="company">Công Ty</option>
-                                <option value="customer">Khách Hàng</option>
-                                <option value="home">Nhà</option>
+                                <option value="Công Ty">Công Ty</option>
+                                <option value="Khách Hàng">Khách Hàng</option>
+                                <option value="Nhà">Nhà</option>
                             </select>
                         </div>
                         <input type="hidden" value="startTime" name="timeInfo">
@@ -69,22 +67,21 @@
                     <h2>Đăng ký nghỉ phép</h2>
                     <form class="staff-form" action="/update-timesheet" method="POST">
                         <div class="form-control">
-                            <label for="startDateTime">Nghỉ từ ngày/giờ: </label>
+                            <label for="startDateTime">Nghỉ từ ngày: </label>
                             <input type="date" name="startDateTime" id="startDateTime" value="">
                         </div>
                         <div class="form-control">
-                            <label for="endDateTime">Đến ngày ngày/giờ: </label>
+                            <label for="endDateTime">Đến hết ngày: </label>
                             <input type="date" name="endDateTime" id="endDateTime" value="">
                         </div>
                         <div class="form-control">
-                            <label for="dateLeave">Số ngày nghỉ: </label>
-                            <input type="number" value="dateLeave" name="dateLeave">
-                            <h3>--Chú ý</p>
-                            <p>--Chú ý nếu nghỉ 1 buổi(sáng hoặc chiều) thì điền 0.5</p>
-                            <p>--Chú ý nếu nghỉ 1 buổi(sáng hoặc chiều) thì điền 0.5</p>
+                            <label for="timeLeave">Số giờ nghỉ: </label>
+                            <input type="number" value="dateLeave" name="dateLeave" id="dateLeave" default=0>
+                            <span>Ngày quy đổi: </span><span id="timeConvert"></span><span> ngày</span>
+                            <p>--Chú ý: Thời gian nghỉ phép 8h/ngày (trừ thứ bảy và chúa nhật)</p>
                         </div>
 
-                        <input type="hidden" value="leaveRegist" name="leaveRegist">
+                        <input type="hidden" value="leaveRegist" name="timeInfo">
                         <button class="btn" type="submit">Đăng Ký</button>
                     </form>
                 </div>

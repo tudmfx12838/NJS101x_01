@@ -78,7 +78,7 @@
                                     <b>Nhiệt độ cơ thể:</b> <%= bst.temp %> độ C
                                 </h2>
                                 <p class="product__description">
-                                    <b>Ngày đo:</b> <%= bst.date %>
+                                    <b>Ngày đo:</b> <%= bst.date.toISOString().substring(0, 10) %>
                                 </p>
                             </div>
                         </article>
@@ -102,7 +102,7 @@
                                     <b>Mũi thứ:</b> <%= vcs.time %>
                                 </h2>
                                 <p class="product__description">
-                                    <b>Ngày tiêm:</b> <%= vcs.date %>
+                                    <b>Ngày tiêm:</b> <%= vcs.date.toISOString().substring(0, 10) %>
                                 </p>
                             </div>
                         </article>
@@ -126,7 +126,7 @@
                                     <b>Kết quả:</b> <%= cds.infect == true ? 'Dương Tính' : 'Âm Tính' %> 
                                 </h2>
                                 <p class="product__description">
-                                    <b>Ngày nhiễm:</b> <%= cds.date %>
+                                    <b>Ngày nhiễm:</b> <%= cds.date.toISOString().substring(0, 10) %>
                                 </p>
                             </div>
                         </article>
