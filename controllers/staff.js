@@ -167,10 +167,10 @@ exports.getStaffTimeSheet = ((req, res, next) => {
 });
 
 exports.postStartTime = ((req, res, next) => {
-    const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
+    // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
     const location = req.body.location;
     const timeInfo = req.body.timeInfo;
-
+    const timeNow = new Date();
     TimeSheet
         .find({staffId: req.user.staffId._id})
         .then(timesheet => {
@@ -181,15 +181,23 @@ exports.postStartTime = ((req, res, next) => {
                         res.redirect('/');
                     })
                     .catch(err => console.log(err));
-            } else if (timeInfo == 'endTime') {
+            } else if (timeInfo == 'endTime' && (timesheet[0].locations.length > 0) && (timesheet[0].startTimes.length > 0)) {
+                console.log(timesheet[0].locations);
+                console.log(timesheet[0].startTimes);//
                 timesheet[0]
                     .addEndTime(timeNow)
                     .then(result => {
                         res.redirect('/');
                     })
                     .catch(err => console.log(err));
-            }
-
+            } else if (timeInfo == 'leaveRegist')
+            console.log('leaveRegist')
+                timesheet[0]
+                    .addTakeLeave({startDateTime: req.body.startDateTime, endtDateTime: req.body.endDateTime, dateLeave: req.body.dateLeave})
+                    .then(result => {
+                        res.redirect('/');
+                    })
+                    .catch(err => console.log(err));
         })
         .catch(err => console.log(err));
 });

@@ -26,7 +26,7 @@
 
         <div class="staff-form" >
             <!-- Trigger/Open The Modal -->
-            <button class="btn" id="myBtn">Điểm danh</button>
+            <button class="btn staff-form" id="myBtn">Điểm danh</button>
             <!-- The Modal -->
             <div id="myModal" class="modal">
                 <div class="modal-content">
@@ -53,7 +53,7 @@
         <div class="staff-form" >
             <form class="staff-form" action="/update-timesheet" method="POST">
                 <input type="hidden" value="endTime" name="timeInfo">
-                <button class="btn" type="submit">Kết thúc làm</button>
+                <button class="btn staff-form" type="submit">Kết thúc làm</button>
             </form>
         </div>
 
@@ -61,17 +61,29 @@
 
         <div class="staff-form" >
             <!-- Trigger/Open The Modal -->
-            <button class="btn" id="myBtn1">Nghỉ Phép</button>
+            <button class="btn staff-form" id="myBtn1">Nghỉ Phép</button>
             <!-- The Modal -->
             <div id="myModal1" class="modal">
                 <div class="modal-content">
                     <span class="close" id="span1">&times;</span>
                     <h2>Đăng ký nghỉ phép</h2>
-                    <form class="staff-form" action="/add-timesheet" method="POST">
+                    <form class="staff-form" action="/update-timesheet" method="POST">
                         <div class="form-control">
-                            <label for="checkedDateTime">Thời gian: </label>
-                            <input type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="">
+                            <label for="startDateTime">Nghỉ từ ngày/giờ: </label>
+                            <input type="date" name="startDateTime" id="startDateTime" value="">
                         </div>
+                        <div class="form-control">
+                            <label for="endDateTime">Đến ngày ngày/giờ: </label>
+                            <input type="date" name="endDateTime" id="endDateTime" value="">
+                        </div>
+                        <div class="form-control">
+                            <label for="dateLeave">Số ngày nghỉ: </label>
+                            <input type="number" value="dateLeave" name="dateLeave">
+                            <h3>--Chú ý</p>
+                            <p>--Chú ý nếu nghỉ 1 buổi(sáng hoặc chiều) thì điền 0.5</p>
+                            <p>--Chú ý nếu nghỉ 1 buổi(sáng hoặc chiều) thì điền 0.5</p>
+                        </div>
+
                         <input type="hidden" value="leaveRegist" name="leaveRegist">
                         <button class="btn" type="submit">Đăng Ký</button>
                     </form>

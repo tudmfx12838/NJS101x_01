@@ -29,6 +29,13 @@ const timesheetSchema = new Schema({
     },
   ],
   workStatus: { type: Boolean, required: true },
+  takeLeaveInfo: [
+    {
+      startDateTime: { type: Date, required: false },
+      endtDateTime: { type: Date, required: false },
+      dateLeave: { type: Number, required: false }
+    }
+  ]
 });
 
 timesheetSchema.methods.addStartTime = function (workInfoData) {
@@ -42,7 +49,9 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   const locations = [...this.locations];
   const startTimes = [...this.startTimes];
   const endTime = workInfoData;
-  const timeTotal = 10;
+  const timeTotal = (endTime.getHours()*60 + endTime.getMinutes()) - ((startTimes[0].startTime.getHours()*60 + startTimes[0].startTime.getMinutes()));
+  console.log(timeTotal);
+
 
   const addtimeResult = {locations: locations, startTimes: startTimes, endTime: endTime, timeTotal: timeTotal}
   this.timeResults.push(addtimeResult);
@@ -54,6 +63,9 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   return this.save();
 };
 
-
+timesheetSchema.methods.addTakeLeave = function (leaveInfoData) {
+  this.takeLeaveInfo.push(leaveInfoData);
+  return this.save();
+};
 
 module.exports = mongoose.model("TimeSheet", timesheetSchema);
