@@ -178,6 +178,7 @@ exports.postStartTime = ((req, res, next) => {
             .find({staffId: req.user.staffId})
             .then(timesheet => {
                 if(timeInfo == 'startTime'){
+                    console.log(timeNow.getHours());
                     timesheet[0]
                         .addStartTime({location: req.body.location, startTime: timeNow})
                         .then(result => {
@@ -196,21 +197,31 @@ exports.postStartTime = ((req, res, next) => {
                     const endDateTime = new Date(req.body.endDateTime);
                     const dateLeave = req.body.dateLeave;
                     const annualLeave = staff.staffId.annualLeave;
-    
-                    //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);    
-                    let countWithoutSatAndSun = 0;
-                    const curDate = new Date(startDateTime.getTime());
-                    while (curDate <= endDateTime) {
-                        const dayOfWeek = curDate.getDay();
-                        if(dayOfWeek !== 0 && dayOfWeek !== 6) countWithoutSatAndSun++;
-                        curDate.setDate(curDate.getDate() + 1);
-                    }
-                    // console.log(countWithoutSatAndSun*8);
-                    // console.log('---------------');
-                    // console.log(dateLeave);
-                    // console.log(annualLeave);
-                    if(countWithoutSatAndSun > 1 && countWithoutSatAndSun*8 == dateLeave && dateLeave <= annualLeave){
-                        timesheet[0]
+
+                    if(startDateTime.getTime() <=  endDateTime.getTime()) {
+                        //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);    
+                        let countWithoutSatAndSun = 0;
+                        const curDate = new Date(startDateTime.getTime());
+                        while (curDate <= endDateTime) {
+                            const dayOfWeek = curDate.getDay();
+                            if(dayOfWeek !== 0 && dayOfWeek !== 6) countWithoutSatAndSun++;
+                            curDate.setDate(curDate.getDate() + 1);
+                        }
+                        // console.log(countWithoutSatAndSun*8);
+                        // console.log('---------------');
+                        // console.log(dateLeave);
+                        // console.log(annualLeave);
+                        if(countWithoutSatAndSun > 1 && countWithoutSatAndSun*8 == dateLeave && dateLeave <= annualLeave){
+                            timesheet[0]
+                                .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
+                                .then(result => {
+                                    staff.staffId.annualLeave = annualLeave - dateLeave;
+                                    staff.staffId.save().then(() => {}).catch(err => console.log(err));
+                                    res.redirect('/');
+                                })
+                                .catch(err => console.log(err));
+                        } else if (dateLeave <= 8 && dateLeave <= annualLeave){
+                            timesheet[0]
                             .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
                             .then(result => {
                                 staff.staffId.annualLeave = annualLeave - dateLeave;
@@ -218,17 +229,11 @@ exports.postStartTime = ((req, res, next) => {
                                 res.redirect('/');
                             })
                             .catch(err => console.log(err));
-                    } else if (dateLeave <= 8 && dateLeave <= annualLeave){
-                        timesheet[0]
-                        .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
-                        .then(result => {
-                            staff.staffId.annualLeave = annualLeave - dateLeave;
-                            staff.staffId.save().then(() => {}).catch(err => console.log(err));
-                            res.redirect('/');
-                        })
-                        .catch(err => console.log(err));
+                        } else {
+                            console.log('Số ngày nghỉ lớn hơn ngày phép còn hoặc thời gian nghỉ vào số ngày chọn không phù hợp');
+                        }
                     } else {
-                        console.log('Số ngày nghỉ lớn hơn ngày phép còn hoặc thời gian nghỉ vào số ngày chọn không phù hợp');
+                        console.log('Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày');
                     }
                 }
             })
