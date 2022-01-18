@@ -19,5 +19,7 @@ router.get('/', staffController.getStaffTimeSheet);
 
 router.post('/update-timesheet', staffController.postStartTime);
 
+router.get('/consultation', staffController.getConsultarion);
+
 
 module.exports = router;

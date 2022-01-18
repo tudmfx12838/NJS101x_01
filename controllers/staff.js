@@ -242,3 +242,30 @@ exports.postStartTime = ((req, res, next) => {
         .catch(err => console.log(err));
 });
 
+
+exports.getConsultarion = ((req, res, next) => {
+    TimeSheet
+    .find({staffId: req.user.staffId})
+    .then(timesheet => {
+        // console.log(timesheet[0].timeResults[0].locations[0].location);
+        // var data ="111";
+        // for (let timeResult of timesheet[0].timeResults) {
+        //     data++;
+        //     for (let i = 0; i < timeResult.startTimes.length; i++) {
+            
+        //         console.log( timeResult.locations[i].location +'('+ timeResult.startTimes[i].startTime + ')');
+        //     }
+        //     // console.log(timeResult.startTimes);
+        //     // console.log(data);
+        // }
+
+        res.render('staff/staff-consultation', {
+            pageTitle: "Tra Cứu",
+            path:'/consultation',
+            timeResults: timesheet[0].timeResults
+            // covidStatus: health.covidInfo.covidStatus,
+            // bodyStatus: health.bodyInfo.bodyStatus,
+        });
+    })
+    .catch(err => console.log(err));
+});

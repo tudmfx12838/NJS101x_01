@@ -1,0 +1,36 @@
+<%- include('../includes/head.ejs') %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/orders.css">
+    <!-- <link rel="stylesheet" href="/css/product.css"> -->
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+            <div>
+                <% for (let timeResult of timeResults) { %>
+
+                    <ul class="orders">
+                            <li class="orders__item">
+                                <h1>Ngày: <%= timeResult.startTimes[0].startTime.toISOString().substring(0, 10) %></h1>
+                                <ul class="orders__products">
+                                    <li class="orders__products-item">Địa điểm(giờ bắt đầu): 
+                                        <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
+                                            <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
+                                        <% } %>
+                                    </li>
+                                    <li class="orders__products-item">
+                                        Giờ kết thúc: <%= timeResult.endTime.toTimeString().substring(0, 8) %>
+                                    </li>
+                                    <li class="orders__products-item">
+                                        Tổng thời gian: <%= timeResult.timeTotal%> phút
+                                    </li>
+                                </ul>
+                            </li>
+                    </ul>
+                <% } %>
+            </div>
+
+    </main>
+
+<%- include('../includes/end.ejs') %>
