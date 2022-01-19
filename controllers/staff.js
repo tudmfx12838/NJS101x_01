@@ -202,12 +202,14 @@ exports.postStartTime = ((req, res, next) => {
                         //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);    
                         let countWithoutSatAndSun = 0;
                         const curDate = new Date(startDateTime.getTime());
+                        // console.log(curDate);
+                        // console.log(endDateTime);
                         while (curDate <= endDateTime) {
                             const dayOfWeek = curDate.getDay();
                             if(dayOfWeek !== 0 && dayOfWeek !== 6) countWithoutSatAndSun++;
                             curDate.setDate(curDate.getDate() + 1);
                         }
-                        // console.log(countWithoutSatAndSun*8);
+                        // console.log(countWithoutSatAndSun);
                         // console.log('---------------');
                         // console.log(dateLeave);
                         // console.log(annualLeave);
@@ -245,27 +247,49 @@ exports.postStartTime = ((req, res, next) => {
 
 exports.getConsultarion = ((req, res, next) => {
     TimeSheet
-    .find({staffId: req.user.staffId})
-    .then(timesheet => {
-        // console.log(timesheet[0].timeResults[0].locations[0].location);
-        // var data ="111";
-        // for (let timeResult of timesheet[0].timeResults) {
-        //     data++;
-        //     for (let i = 0; i < timeResult.startTimes.length; i++) {
-            
-        //         console.log( timeResult.locations[i].location +'('+ timeResult.startTimes[i].startTime + ')');
-        //     }
-        //     // console.log(timeResult.startTimes);
-        //     // console.log(data);
-        // }
+        .find({staffId: req.user.staffId})
+        .then(timesheet => {
+            // console.log(timesheet[0].timeResults[0].locations[0].location);
+            // var data ="111";
+            // for (let timeResult of timesheet[0].timeResults) {
+            //     data++;
+            //     for (let i = 0; i < timeResult.startTimes.length; i++) {
+                
+            //         console.log( timeResult.locations[i].location +'('+ timeResult.startTimes[i].startTime + ')');
+            //     }
+            //     // console.log(timeResult.startTimes);
+            //     // console.log(data);
+            // }
+            // const consultation = timesheet[0].timeSheetDatas.map(tsd => {
+               
+            // });
+            const caculLeaveInfo = timesheet[0].takeLeaveInfo.map(tlf => {
+                if(tlf.startDateTime.toISOString().substring(0, 10) == tlf.endtDateTime.toISOString().substring(0, 10)){
+                    return {date: tlf.startDateTime.toISOString().substring(0, 10), dateLeave: tlf.dateLeave};
+                }else{
+                    // let countWithoutSatAndSun = 0;
+                    // let dateTime_obj = [];
+                    //     const curDate = tlf.startDateTime.getTime();
+                    //     while (curDate <= tlf.endDateTime) {
+                    //         const dayOfWeek = curDate.getDay();
+                    //         if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+                    //             countWithoutSatAndSun++;
+                    //             //dateTime_obj.push({date: curDate.toISOString().substring(0, 10)});
+                    //         };
+                    //         curDate.setDate(curDate.getDate() + 1);
+                    //     }
+                    return {a: tlf.startDateTime, b: new Date(tlf.endDateTime)};
+                }
+            });
+            console.log(caculLeaveInfo);
 
-        res.render('staff/staff-consultation', {
-            pageTitle: "Tra Cứu",
-            path:'/consultation',
-            timeResults: timesheet[0].timeResults
-            // covidStatus: health.covidInfo.covidStatus,
-            // bodyStatus: health.bodyInfo.bodyStatus,
-        });
-    })
-    .catch(err => console.log(err));
+            res.render('staff/staff-consultation', {
+                pageTitle: "Tra Cứu",
+                path:'/consultation',
+                timeResults: timesheet[0].timeResults,
+                timeSheetDatas: timesheet[0].timeSheetDatas,
+                takeLeaveInfo: timesheet[0].takeLeaveInfo
+            });
+        })
+        .catch(err => console.log(err));
 });
