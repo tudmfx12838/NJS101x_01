@@ -22,11 +22,18 @@ const timesheetSchema = new Schema({
   //endTime:  { type: Date, required: false },
   timeResults: [
     {
-      locations: [{location: { type: String, required: false }}],
-      startTimes: [{ startTime: { type: Date, required: false }}],
-      endTime:  { type: Date, required: false },
+      locations: [{ location: { type: String, required: false } }],
+      startTimes: [{ startTime: { type: Date, required: false } }],
+      endTime: { type: Date, required: false },
       timeTotal: { type: Number, required: false },
     },
+  ],
+  timeSheetDatas: [
+    {
+      date: { type: String, required: false },
+      timeTotal: { type: Number, required: false },
+      overTime: { type: Number, required: false }
+    }
   ],
   workStatus: { type: Boolean, required: true },
   takeLeaveInfo: [
@@ -39,8 +46,8 @@ const timesheetSchema = new Schema({
 });
 
 timesheetSchema.methods.addStartTime = function (workInfoData) {
-  this.locations.push({location: workInfoData.location});
-  this.startTimes.push({startTime: workInfoData.startTime});
+  this.locations.push({ location: workInfoData.location });
+  this.startTimes.push({ startTime: workInfoData.startTime });
   this.workStatus = true;
   return this.save();
 };
@@ -49,12 +56,49 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   const locations = [...this.locations];
   const startTimes = [...this.startTimes];
   const endTime = workInfoData;
-  const timeTotal = (endTime.getHours()*60 + endTime.getMinutes()) - ((startTimes[0].startTime.getHours()*60 + startTimes[0].startTime.getMinutes()));
-  console.log(timeTotal);
+  const timeTotal = (endTime.getHours() * 60 + endTime.getMinutes()) - ((startTimes[0].startTime.getHours() * 60 + startTimes[0].startTime.getMinutes()));
+  // console.log(timeTotal);
 
-
-  const addtimeResult = {locations: locations, startTimes: startTimes, endTime: endTime, timeTotal: timeTotal}
+  //update timeResult
+  const addtimeResult = { locations: locations, startTimes: startTimes, endTime: endTime, timeTotal: timeTotal }
   this.timeResults.push(addtimeResult);
+
+
+
+
+  console.log(getCurentDateIndex);
+
+  if (this.timeSheetDatas.length <= 0) {
+    //get data form endTime's data
+    const date = endTime.toISOString().substring(0, 10);
+    const Total = timeTotal;
+    const overTime = (Total > 480) ? Total - 480 : 0; //8h = 480m
+    this.timeSheetDatas.push({ date: date, timeTotal: Total, overTime: overTime });
+
+  } else if (this.timeSheetDatas.length > 0) {
+
+    //update timeSheetData endTime.toISOString().substring(0, 10)
+    const getCurentDateIndex = this.timeSheetDatas.findIndex(tsd => {
+      return tsd.date == '2022-01-20';//////////////////////////////
+    });
+    //findIndex = -1 => not found
+    if (getCurentDateIndex < 0) { //Check existing array data of this date
+      const date = endTime.toISOString().substring(0, 10);
+      const Total = timeTotal;
+      const overTime = (Total > 480) ? Total - 480 : 0; //8h = 480m
+      this.timeSheetDatas.push({ date: date, timeTotal: Total, overTime: overTime });
+    } else {
+      //if has existing data, update data by got index
+      const timeSheetData = this.timeSheetDatas[getCurentDateIndex];
+      timeSheetData.timeTotal = timeSheetData.timeTotal + timeTotal;
+      timeSheetData.overTime = (timeSheetData.timeTotal > 480) ? timeSheetData.timeTotal - 480 : 0;
+      // date: { type: String, required: false }, 
+      // timeTotal:  { type: Number, required: false },
+      // overTime: { type: Number, required: false }
+    }
+
+
+  }
 
   this.locations = [];
   this.startTimes = [];

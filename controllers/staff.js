@@ -137,7 +137,7 @@ exports.getStaffTimeSheet = ((req, res, next) => {
             TimeSheet
                 .find({staffId: staff.staffId._id})
                 .then(timesheet => {
-                    console.log(timesheet);
+                    // console.log(timesheet);
                     if(timesheet.length <= 0){ //if user not exist, add new user.
                         const timesheet = new TimeSheet({
                             staffId: staff.staffId._id,
@@ -170,7 +170,7 @@ exports.postStartTime = ((req, res, next) => {
     // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
     const timeInfo = req.body.timeInfo;
     const timeNow = new Date();
-    console.log(timeInfo);
+    // console.log(timeInfo);
     req.user
         .populate('staffId')
         .then(staff => {
@@ -178,7 +178,7 @@ exports.postStartTime = ((req, res, next) => {
             .find({staffId: req.user.staffId})
             .then(timesheet => {
                 if(timeInfo == 'startTime'){
-                    console.log(timeNow.getHours());
+                    // console.log(timeNow.getHours());
                     timesheet[0]
                         .addStartTime({location: req.body.location, startTime: timeNow})
                         .then(result => {
