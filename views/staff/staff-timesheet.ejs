@@ -75,8 +75,18 @@
                             <input type="date" name="endDateTime" id="endDateTime" value="">
                         </div>
                         <div class="form-control">
-                            <label for="leaveTime">Số giờ nghỉ: </label>
-                            <input type="number" name="leaveTime" id="leaveTime" default=0>
+                            <label for="leaveTime">Số giờ nghỉ/ngày: </label>
+                            <!-- <input type="number" name="leaveTime" id="leaveTime" default=0> -->
+                            <select name="leaveTime" id="leaveTime">
+                                <option value="1">1h</option>
+                                <option value="2">2h</option>
+                                <option value="3">3h</option>
+                                <option value="4">4h</option>
+                                <option value="5">5h</option>
+                                <option value="6">6h</option>
+                                <option value="7">7h</option>
+                                <option value="8">8h</option>                
+                            </select>
                             <span>Ngày quy đổi: </span><span id="timeConvert"></span><span> ngày</span>
                             <p>--Chú ý: Thời gian nghỉ phép 8h/ngày (trừ thứ bảy và chúa nhật)</p>
                         </div>

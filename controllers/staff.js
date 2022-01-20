@@ -195,10 +195,10 @@ exports.postStartTime = ((req, res, next) => {
                 } else if (timeInfo == 'leaveRegist') {
                     const startDateTime = new Date(req.body.startDateTime);
                     const endDateTime = new Date(req.body.endDateTime);
-                    const leaveTime = req.body.leaveTime;
+                    const leaveTime = parseInt(req.body.leaveTime);
                     const annualLeave = staff.staffId.annualLeave;
-
-                    if((startDateTime.getTime() <=  endDateTime.getTime()) && (leaveTime <= 8)) {
+                    
+                    if((startDateTime.getTime() <=  endDateTime.getTime())) {
                         //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);     
                         let countWithoutSatAndSun = 0;
                         let leaveTime_ar = [];
@@ -211,32 +211,38 @@ exports.postStartTime = ((req, res, next) => {
                             }       
                             curDate.setDate(curDate.getDate() + 1);
                         }
-                        // console.log(leaveTime);
-                        // console.log(leaveTime_ar.length);
-                        // leaveTime_ar.forEach(tL => {
-                        //     sumTimeLeave += parseInt(tL.leaveTime);
-                        // });
                         const sumTimeLeave = leaveTime*leaveTime_ar.length;
 
-                        // console.log('sumTimeLeave ' + sumTimeLeave);
+                        let checkExist = [];
+                        timesheet[0].takeLeaveInfo.forEach(tlf => {
+                            leaveTime_ar.forEach(lt_item => {
+                                if(lt_item.date == tlf.date){
+                                    checkExist.push(tlf.date); //push existing date into array
+                                }
+                            });
+                        });
 
                         if(leaveTime_ar.length >= 1){
-                            if(sumTimeLeave <= annualLeave){
-                                timesheet[0]
-                                    .addTakeLeave(leaveTime_ar)
-                                    .then(result => {
-                                        staff.staffId.annualLeave = annualLeave - sumTimeLeave;
-                                        staff.staffId.save().then(() => {}).catch(err => console.log(err));
-                                        res.redirect('/');
-                                    })             
+                            if(checkExist.length <= 0){
+                                if(sumTimeLeave <= annualLeave){
+                                    timesheet[0]
+                                        .addTakeLeave(leaveTime_ar)
+                                        .then(result => {
+                                            staff.staffId.annualLeave = annualLeave - sumTimeLeave;
+                                            staff.staffId.save().then(() => {}).catch(err => console.log(err));
+                                            res.redirect('/');
+                                        })             
+                                } else {
+                                    console.log('Vui lòng chọn số giờ nghỉ phép trong khoảng hiện có: ' + annualLeave + ' giờ');
+                                }
                             } else {
-                                console.log('Vui lòng chọn số giờ nghỉ phép trong khoảng hiện có: ' + annualLeave + ' giờ');
+                                console.log(`Ngày ${checkExist} đã đăng ký nghỉ phép, vui lòng kiểm tra lại`);
                             }
                         } else { //leaveTime_ar.length < 1
                             console.log('Vui lòng chọn ngày khác T7 và CN(2 ngày nghỉ cố định)');
                         }
                     } else {
-                        console.log('Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày và thời gian nghỉ tối đa 8h/ngày');
+                        console.log('Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày');
                     }
                 }
             })
@@ -247,50 +253,21 @@ exports.postStartTime = ((req, res, next) => {
 
 
 exports.getConsultarion = ((req, res, next) => {
-    TimeSheet
-        .find({staffId: req.user.staffId})
-        .then(timesheet => {
-            // console.log(timesheet[0].timeResults[0].locations[0].location);
-            // var data ="111";
-            // for (let timeResult of timesheet[0].timeResults) {
-            //     data++;
-            //     for (let i = 0; i < timeResult.startTimes.length; i++) {
-                
-            //         console.log( timeResult.locations[i].location +'('+ timeResult.startTimes[i].startTime + ')');
-            //     }
-            //     // console.log(timeResult.startTimes);
-            //     // console.log(data);
-            // }
-            // const consultation = timesheet[0].timeSheetDatas.map(tsd => {
-               
-            // });
-            const caculLeaveInfo = timesheet[0].takeLeaveInfo.map(tlf => {
-                if(tlf.startDateTime.toISOString().substring(0, 10) == tlf.endtDateTime.toISOString().substring(0, 10)){
-                    return {date: tlf.startDateTime.toISOString().substring(0, 10), dateLeave: tlf.dateLeave};
-                }else{
-                    // let countWithoutSatAndSun = 0;
-                    // let dateTime_obj = [];
-                    //     const curDate = tlf.startDateTime.getTime();
-                    //     while (curDate <= tlf.endDateTime) {
-                    //         const dayOfWeek = curDate.getDay();
-                    //         if(dayOfWeek !== 0 && dayOfWeek !== 6) {
-                    //             countWithoutSatAndSun++;
-                    //             //dateTime_obj.push({date: curDate.toISOString().substring(0, 10)});
-                    //         };
-                    //         curDate.setDate(curDate.getDate() + 1);
-                    //     }
-                    return {a: tlf.startDateTime, b: new Date(tlf.endDateTime)};
-                }
-            });
-            console.log(caculLeaveInfo);
-
-            res.render('staff/staff-consultation', {
-                pageTitle: "Tra Cứu",
-                path:'/consultation',
-                timeResults: timesheet[0].timeResults,
-                timeSheetDatas: timesheet[0].timeSheetDatas,
-                takeLeaveInfo: timesheet[0].takeLeaveInfo
-            });
-        })
-        .catch(err => console.log(err));
+    req.user
+    .populate('staffId')
+    .then(staff => {
+        TimeSheet
+            .find({staffId: staff.staffId._id})
+            .then(timesheet => {
+                res.render('staff/staff-consultation', {
+                    pageTitle: "Tra Cứu",
+                    path:'/consultation',
+                    timeResults: timesheet[0].timeResults,
+                    timeSheetDatas: timesheet[0].timeSheetDatas,
+                    takeLeaveInfo: timesheet[0].takeLeaveInfo
+                });
+            })
+            .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
 });

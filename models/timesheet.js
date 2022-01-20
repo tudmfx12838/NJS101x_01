@@ -131,7 +131,15 @@ timesheetSchema.methods.addTakeLeave = function (leaveInfoData) {
   const _takeLeaveInfo = [...this.takeLeaveInfo];
   this.takeLeaveInfo = [..._takeLeaveInfo, ...leaveInfoData];
   // this.takeLeaveInfo.push(leaveInfoData);
-  return this.save();
+  
+  return this
+          .save()
+          .then(result => {
+            leaveInfoData.forEach(item => {
+              console.log(`Ngày ${item.date} và số giờ nghỉ phép là ${item.leaveTime}h đã đăng ký thành công.`);
+            });
+            console.log()
+          });
 };
 
 module.exports = mongoose.model("TimeSheet", timesheetSchema);

@@ -27,10 +27,16 @@
                                 <% } %>
                             <% } %>
 
-                        <h5>Tổng thời gian đã làm: <%= timeSheetData.timeTotal %> phút</h5>
+                            <% var tlf_temp = 0 %>
+                            <% for (let tlf of takeLeaveInfo) { %>
+                                <% if(timeSheetData.date == tlf.date) { %> 
+                                    <% tlf_temp = tlf.leaveTime %>
+                                <% } %>
+                            <% } %>
+                        <h5>Tổng thời gian đã làm: <%= (tlf_temp == 0) ? timeSheetData.timeTotal : (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
                         <h5>Thời  gian làm thiếu giờ: <%= timeSheetData.incompleteTime %> phút</h5>
                         <h5>Thời gian làm thêm giờ: <%= timeSheetData.overTime %> phút</h5>
-                        <h5>Số giờ nghỉ phép: <%= %> phút</h5>
+                        <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
                         </li>
                     <% } %>
                     <li class="orders__item">
