@@ -195,47 +195,48 @@ exports.postStartTime = ((req, res, next) => {
                 } else if (timeInfo == 'leaveRegist') {
                     const startDateTime = new Date(req.body.startDateTime);
                     const endDateTime = new Date(req.body.endDateTime);
-                    const dateLeave = req.body.dateLeave;
+                    const leaveTime = req.body.leaveTime;
                     const annualLeave = staff.staffId.annualLeave;
 
-                    if(startDateTime.getTime() <=  endDateTime.getTime()) {
-                        //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);    
+                    if((startDateTime.getTime() <=  endDateTime.getTime()) && (leaveTime <= 8)) {
+                        //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);     
                         let countWithoutSatAndSun = 0;
-                        const curDate = new Date(startDateTime.getTime());
-                        // console.log(curDate);
-                        // console.log(endDateTime);
+                        let leaveTime_ar = [];
+                        const curDate = startDateTime;
                         while (curDate <= endDateTime) {
                             const dayOfWeek = curDate.getDay();
-                            if(dayOfWeek !== 0 && dayOfWeek !== 6) countWithoutSatAndSun++;
+                            if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+                                countWithoutSatAndSun++;
+                                leaveTime_ar.push({date: curDate.toISOString().substring(0, 10), leaveTime: leaveTime});
+                            }       
                             curDate.setDate(curDate.getDate() + 1);
                         }
-                        // console.log(countWithoutSatAndSun);
-                        // console.log('---------------');
-                        // console.log(dateLeave);
-                        // console.log(annualLeave);
-                        if(countWithoutSatAndSun > 1 && countWithoutSatAndSun*8 == dateLeave && dateLeave <= annualLeave){
-                            timesheet[0]
-                                .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
-                                .then(result => {
-                                    staff.staffId.annualLeave = annualLeave - dateLeave;
-                                    staff.staffId.save().then(() => {}).catch(err => console.log(err));
-                                    res.redirect('/');
-                                })
-                                .catch(err => console.log(err));
-                        } else if (dateLeave <= 8 && dateLeave <= annualLeave){
-                            timesheet[0]
-                            .addTakeLeave({startDateTime: new Date(req.body.startDateTime), endtDateTime: new Date(req.body.endDateTime), dateLeave: dateLeave})
-                            .then(result => {
-                                staff.staffId.annualLeave = annualLeave - dateLeave;
-                                staff.staffId.save().then(() => {}).catch(err => console.log(err));
-                                res.redirect('/');
-                            })
-                            .catch(err => console.log(err));
-                        } else {
-                            console.log('Số ngày nghỉ lớn hơn ngày phép còn hoặc thời gian nghỉ vào số ngày chọn không phù hợp');
+                        // console.log(leaveTime);
+                        // console.log(leaveTime_ar.length);
+                        // leaveTime_ar.forEach(tL => {
+                        //     sumTimeLeave += parseInt(tL.leaveTime);
+                        // });
+                        const sumTimeLeave = leaveTime*leaveTime_ar.length;
+
+                        // console.log('sumTimeLeave ' + sumTimeLeave);
+
+                        if(leaveTime_ar.length >= 1){
+                            if(sumTimeLeave <= annualLeave){
+                                timesheet[0]
+                                    .addTakeLeave(leaveTime_ar)
+                                    .then(result => {
+                                        staff.staffId.annualLeave = annualLeave - sumTimeLeave;
+                                        staff.staffId.save().then(() => {}).catch(err => console.log(err));
+                                        res.redirect('/');
+                                    })             
+                            } else {
+                                console.log('Vui lòng chọn số giờ nghỉ phép trong khoảng hiện có: ' + annualLeave + ' giờ');
+                            }
+                        } else { //leaveTime_ar.length < 1
+                            console.log('Vui lòng chọn ngày khác T7 và CN(2 ngày nghỉ cố định)');
                         }
                     } else {
-                        console.log('Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày');
+                        console.log('Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày và thời gian nghỉ tối đa 8h/ngày');
                     }
                 }
             })

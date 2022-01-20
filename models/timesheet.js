@@ -39,9 +39,8 @@ const timesheetSchema = new Schema({
   workStatus: { type: Boolean, required: true },
   takeLeaveInfo: [
     {
-      startDateTime: { type: Date, required: false },
-      endtDateTime: { type: Date, required: false },
-      dateLeave: { type: Number, required: false },
+      date: { type: String, required: false },
+      leaveTime: { type: String, required: false }
     },
   ],
 });
@@ -129,7 +128,9 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
 };
 
 timesheetSchema.methods.addTakeLeave = function (leaveInfoData) {
-  this.takeLeaveInfo.push(leaveInfoData);
+  const _takeLeaveInfo = [...this.takeLeaveInfo];
+  this.takeLeaveInfo = [..._takeLeaveInfo, ...leaveInfoData];
+  // this.takeLeaveInfo.push(leaveInfoData);
   return this.save();
 };
 

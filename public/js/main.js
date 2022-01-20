@@ -70,6 +70,6 @@ window.onclick = function(event) {
 }
 
 
-document.getElementById("dateLeave").addEventListener("change", () => {
-	document.getElementById("timeConvert").innerHTML = document.getElementById("dateLeave").value/8;
+document.getElementById("leaveTime").addEventListener("change", () => {
+	document.getElementById("timeConvert").innerHTML = document.getElementById("leaveTime").value/8;
 });
