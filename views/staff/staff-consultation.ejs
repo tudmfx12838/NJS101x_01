@@ -39,12 +39,18 @@
                         <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
                         </li>
                     <% } %>
-                    <li class="orders__item">
-
-                    </li>
                 </ul>
             </div>
+            <br>
+ 
 
+            <div class="staff-form" >
+                <form class="staff-form" action="/cal-salary" method="POST">
+                    <label for="monthSalary">Tra cứu thông tin lương theo tháng: </label>
+                    <input type="month" id="monthSalary" name="monthSalary">
+                    <button class="btn" type="submit">Xem</button>
+                </form>
+            </div>
     </main>
 
 <%- include('../includes/end.ejs') %>

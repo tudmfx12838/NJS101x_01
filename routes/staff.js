@@ -21,5 +21,8 @@ router.post('/update-timesheet', staffController.postStartTime);
 
 router.get('/consultation', staffController.getConsultarion);
 
+router.post('/cal-salary', staffController.postCalSalary);
+
+
 
 module.exports = router;

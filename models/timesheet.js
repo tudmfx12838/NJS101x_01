@@ -43,6 +43,12 @@ const timesheetSchema = new Schema({
       leaveTime: { type: String, required: false }
     },
   ],
+  monthSalaries: [
+    {
+      month: { type: String, required: false },
+      salary: { type: Number, required: false }
+    }
+  ]
 });
 
 timesheetSchema.methods.addStartTime = function (workInfoData) {
