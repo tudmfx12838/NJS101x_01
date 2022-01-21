@@ -11,6 +11,8 @@ router.post('/add-staff', staffController.postAddStaff);
 
 router.get('/staff-info', staffController.getStaffInfo);
 
+router.post('/staff-info', staffController.postStaffInfo);
+
 router.get('/health-info', staffController.getHealthInfo);
 
 router.post('/health-registry', staffController.postHealthInfo);

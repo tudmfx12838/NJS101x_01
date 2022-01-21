@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/modal.css">
     <!-- <link rel="stylesheet" href="/css/product.css"> -->
 </head>
 
@@ -16,9 +17,31 @@
                 <h2>Ngày vào công ty: <%= staff.startDate.toISOString().substring(0, 10) %></h2>
                 <h2>Phòng ban: <%= staff.department %></h2>
                 <h2>Hệ số lương: <%= staff.salaryScale %></h2>
-                <h2>Số ngày nghỉ còn: <%= staff.annualLeave %></h2>
+                <h2>Số giờ nghỉ phép còn: <%= staff.annualLeave %> giờ</h2>
             </div>
-        
+
+            <div class="staff-form" >
+                <!-- Trigger/Open The Modal -->
+                <button class="btn staff-form" id="myBtn">Chỉnh sửa</button>
+                <!-- The Modal -->
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" id="close">&times;</span>
+                        <h2>Đăng ký nghỉ phép</h2>
+                        <form class="staff-form" action="/update-timesheet" method="POST">
+                            <div class="form-control">
+                                <label for="startDateTime">Thêm Url ảnh: </label>
+                                <input type="text" name="startDateTime" id="startDateTime" value="">
+                            </div>
+                            
+                            <input type="hidden" value="leaveRegist" name="timeInfo">
+                            <button class="btn" type="submit">Đăng Ký</button>
+                        </form>
+                    </div>
+                </div>
+
+                
+            </div>
     </main>
 
 <%- include('../includes/end.ejs') %>

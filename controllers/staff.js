@@ -60,6 +60,15 @@ exports.getStaffInfo = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+exports.postStaffInfo = (req, res, next) => {
+  req.user
+  .populate("staffId")
+  .then((staff) => {
+
+  })
+  .catch((err) => console.log(err));
+};
+
 exports.getHealthInfo = (req, res, next) => {
   req.user
     .populate("staffId")
@@ -313,22 +322,21 @@ exports.postConsultarion = (req, res, next) => {
               calSalary =
               300000 * staff.staffId.salaryScale +
               (sumData.overTime - sumData.incompleteTime) * 200000;
-  
-              timesheet[0].monthSalary.month = monthSalary;
-              timesheet[0].monthSalary.salary = calSalary;
-              return timesheet[0]
-                .save()
-                .then((result) => {
-                    console.log(calSalary);
-                  res.redirect("/consultation");
-                })
-                .catch((err) => console.log(err));
           } else {
             calSalary = 0;
             // res.redirect("/consultation");
           }
-
-          
+            
+          timesheet[0].monthSalary.month = monthSalary;
+          timesheet[0].monthSalary.salary = calSalary;
+          return timesheet[0]
+            .save()
+            .then((result) => {
+                console.log(calSalary);
+              res.redirect("/consultation");
+            })
+            .catch((err) => console.log(err));
+ 
 
         //   if (timesheet[0].monthSalaries.length <= 0) {
         //     timesheet[0].monthSalaries.push({

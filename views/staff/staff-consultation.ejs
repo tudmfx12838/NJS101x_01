@@ -22,9 +22,8 @@
                 </form>
             </div>
             <div>
-                <h2>
-                    <%= monthSalary %>
-                </h2>
+                <h2>Tháng lương: <%= monthSalary.month %></h2>
+                <h3>Lương:  <%= monthSalary.salary == 0 ? 'Chưa cập nhật' : monthSalary.salary + ' vnd'%> </h3>
             </div>
             <div>
                 <ul class="orders">
