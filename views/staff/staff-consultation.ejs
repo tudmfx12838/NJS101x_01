@@ -7,9 +7,29 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
+            <div class="staff-form" >
+                <form class="staff-form" action="/consultation" method="POST">
+                    <label for="monthSalary">Tra cứu: </label>
+                    <input type="text" id="searchValue" name="searchValue">
+                    <button class="btn" type="submit">Tìm</button>
+                </form>
+            </div>
+            <div class="staff-form" >
+                <form class="staff-form" action="/consultation" method="POST">
+                    <label for="monthSalary">Tra cứu thông tin theo tháng: </label>
+                    <input type="month" id="monthSalary" name="monthSalary">
+                    <button class="btn" type="submit">Xem</button>
+                </form>
+            </div>
+            <div>
+                <h2>
+                    <%= monthSalary %>
+                </h2>
+            </div>
             <div>
                 <ul class="orders">
                     <% for (let timeSheetData of timeSheetDatas) { %>
+                        <% if (monthSalary.month == timeSheetData.date.substring(0, 7) ) { %>
                         <li class="orders__item">
                         <h1>Ngày: <%= timeSheetData.date %></h1>
                             <% for (let timeResult of timeResults) { %>
@@ -38,19 +58,12 @@
                         <h5>Thời gian làm thêm giờ: <%= timeSheetData.overTime %> phút</h5>
                         <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
                         </li>
+                        <% } %>
                     <% } %>
                 </ul>
             </div>
             <br>
- 
 
-            <div class="staff-form" >
-                <form class="staff-form" action="/cal-salary" method="POST">
-                    <label for="monthSalary">Tra cứu thông tin lương theo tháng: </label>
-                    <input type="month" id="monthSalary" name="monthSalary">
-                    <button class="btn" type="submit">Xem</button>
-                </form>
-            </div>
     </main>
 
 <%- include('../includes/end.ejs') %>

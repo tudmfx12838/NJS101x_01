@@ -268,10 +268,10 @@ exports.postStartTime = (req, res, next) => {
 };
 
 exports.getConsultarion = (req, res, next) => {
+    
   req.user
     .populate("staffId")
     .then((staff) => {
-      // console.log(staff);
       //calSalary
       TimeSheet.find({ staffId: staff.staffId._id })
         .then((timesheet) => {
@@ -281,7 +281,7 @@ exports.getConsultarion = (req, res, next) => {
             timeResults: timesheet[0].timeResults,
             timeSheetDatas: timesheet[0].timeSheetDatas,
             takeLeaveInfo: timesheet[0].takeLeaveInfo,
-            monthSalaries: timesheet[0].monthSalaries
+            monthSalary: timesheet[0].monthSalary
           });
         })
         .catch((err) => console.log(err));
@@ -289,7 +289,7 @@ exports.getConsultarion = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
-exports.postCalSalary = (req, res, next) => {
+exports.postConsultarion = (req, res, next) => {
   const monthSalary = req.body.monthSalary;
 
   req.user
@@ -298,55 +298,76 @@ exports.postCalSalary = (req, res, next) => {
       TimeSheet.find({ staffId: staff.staffId._id })
         .then((timesheet) => {
           let calSalary = 0;
+          let countDate = 0;
           let sumData = { overTime: 0, incompleteTime: 0 };
           timesheet[0].timeSheetDatas.forEach((tsd) => {
             if (tsd.date.substring(0, 7) == monthSalary) {
               sumData.overTime += tsd.overTime;
               sumData.incompleteTime += tsd.incompleteTime;
+              countDate += 1;
             }
           });
-          calSalary =
-            300000 * staff.staffId.salaryScale +
-            (sumData.overTime - sumData.incompleteTime) * 200000;
-
-          if (timesheet[0].monthSalaries <= 0) {
-            timesheet[0].monthSalaries.push({
-              month: monthSalary,
-              salary: calSalary,
-            });
-            return timesheet[0]
-              .save()
-              .then((result) => {
-                res.redirect("/consultation");
-              })
-              .catch((err) => console.log(err));
+          
+          console.log(countDate);
+          if(countDate > 0){
+              calSalary =
+              300000 * staff.staffId.salaryScale +
+              (sumData.overTime - sumData.incompleteTime) * 200000;
+  
+              timesheet[0].monthSalary.month = monthSalary;
+              timesheet[0].monthSalary.salary = calSalary;
+              return timesheet[0]
+                .save()
+                .then((result) => {
+                    console.log(calSalary);
+                  res.redirect("/consultation");
+                })
+                .catch((err) => console.log(err));
           } else {
-            const monthSalarieIndex = timesheet[0].monthSalaries.findIndex(
-              (monthSalarie) => {
-                return monthSalarie.month == monthSalary;
-              }
-            );
-            if (monthSalarieIndex < 0) {
-              timesheet[0].monthSalaries.push({
-                month: monthSalary,
-                salary: calSalary,
-              });
-              return timesheet[0]
-                .save()
-                .then((result) => {
-                  res.redirect("/consultation");
-                })
-                .catch((err) => console.log(err));
-            } else {
-              timesheet[0].monthSalaries[monthSalarieIndex].salary = calSalary;
-              return timesheet[0]
-                .save()
-                .then((result) => {
-                  res.redirect("/consultation");
-                })
-                .catch((err) => console.log(err));
-            }
+            calSalary = 0;
+            // res.redirect("/consultation");
           }
+
+          
+
+        //   if (timesheet[0].monthSalaries.length <= 0) {
+        //     timesheet[0].monthSalaries.push({
+        //       month: monthSalary,
+        //       salary: calSalary,
+        //     });
+        //     return timesheet[0]
+        //       .save()
+        //       .then((result) => {
+        //         // res.redirect("/consultation");
+        //       })
+        //       .catch((err) => console.log(err));
+        //   } else {
+        //     const monthSalarieIndex = timesheet[0].monthSalaries.findIndex(
+        //       (monthSalarie) => {
+        //         return monthSalarie.month == monthSalary;
+        //       }
+        //     );
+        //     if (monthSalarieIndex < 0) {
+        //       timesheet[0].monthSalaries.push({
+        //         month: monthSalary,
+        //         salary: calSalary,
+        //       });
+        //       return timesheet[0]
+        //         .save()
+        //         .then((result) => {
+        //         //   res.redirect("/consultation");
+        //         })
+        //         .catch((err) => console.log(err));
+        //     } else {
+        //       timesheet[0].monthSalaries[monthSalarieIndex].salary = calSalary;
+        //       return timesheet[0]
+        //         .save()
+        //         .then((result) => {
+        //         //   res.redirect("/consultation");
+        //         })
+        //         .catch((err) => console.log(err));
+        //     }
+        //   }
         })
         .catch((err) => console.log(err));
     })

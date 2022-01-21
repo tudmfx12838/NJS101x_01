@@ -21,7 +21,7 @@ router.post('/update-timesheet', staffController.postStartTime);
 
 router.get('/consultation', staffController.getConsultarion);
 
-router.post('/cal-salary', staffController.postCalSalary);
+router.post('/consultation', staffController.postConsultarion);
 
 
 
