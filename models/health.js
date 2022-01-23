@@ -1,7 +1,14 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-
+/*
+# Schema name: healthSchema
+# Define: info
+# - staffId: ref form staff id to make relaiton
+# - vaccineInfo: store date and time that's got vaccination
+# - covidInfo: store date and infect status
+# - bodyInfo: store date and body temperate
+*/
 const healthSchema = new Schema({
   staffId: {
     type: Schema.Types.ObjectId,
@@ -28,21 +35,42 @@ const healthSchema = new Schema({
     },
 });
 
+
+/*
+# Method name: addToVaccineInfo
+# Implementation: store new resgisted vaccine Info to database
+*/
 healthSchema.methods.addToVaccineInfo = function(vaccineStatus) {
     this.vaccineInfo.vaccineStatus.push(vaccineStatus);
     return this.save(); 
 };
 
+/*
+# Method name: addToCovidInfo
+# Implementation: store new resgisted infect covid Info to database
+*/
 healthSchema.methods.addToCovidInfo = function(covidStatus) {
   this.covidInfo.covidStatus.push(covidStatus);
   return this.save(); 
 };
 
+/*
+# Method name: addToBodyInfo
+# Implementation: store new resgisted body temperate Info to database
+*/
 healthSchema.methods.addToBodyInfo = function(bodyStatus) {
   this.bodyInfo.bodyStatus.push(bodyStatus);
   return this.save(); 
 };
 
+/*
+# Method name: updateHealthInfo
+# Implementation: 
+# store new resgisted body temperate Info to database
+# store new resgisted body temperate Info to database
+# store new resgisted vaccine Info to database
+# following got condition from input
+*/
 healthSchema.methods.updateHealthInfo = function(healthInfo, healthData) {
   if(healthInfo == 'tempCovid'){
       console.log(healthData);

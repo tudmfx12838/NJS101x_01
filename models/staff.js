@@ -1,7 +1,20 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-
+/*
+# Schema name: staffSchema
+# Define: info
+# - idNumber: staff id number
+# - password: password to login
+# - permission: user or admin
+# - name: staff name
+# - doB: date of bith
+# - salaryScale: salary scale
+# - startDate: fisrt working time 
+# - department: department
+# - annualLeave: annual leave
+# - image: image url link
+*/
 const staffSchema = new Schema({
   idNumber: {
     type: String,

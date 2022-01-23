@@ -27,8 +27,16 @@ router.post('/health-registry', staffController.postHealthInfo);
 //route to get staff's timesheet of view
 router.get('/', staffController.getStaffTimeSheet);
 
+
+// router.post('/update-timesheet', staffController.postStartTime);
 //route to post working time is begin
-router.post('/update-timesheet', staffController.postStartTime);
+router.post('/timesheet-starttime', staffController.postStartTime);
+
+//route to post working time is end
+router.post('/timesheet-endtime', staffController.postEndTime);
+
+//route to post taking a leave
+router.post('/timesheet-takeleave', staffController.postTakeLeave);
 
 //route to get staff's consultation of view
 router.get('/consultation', staffController.getConsultation);

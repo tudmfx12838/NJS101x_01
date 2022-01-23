@@ -1,7 +1,18 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-
+/*
+# Schema name: timesheetSchema
+# Define: info
+# - staffId: ref form staff id to make relaiton
+# - locations: store working place after checkin and fill empty after checkout
+# - startTimes: store start working time after checkin and fill empty after checkout
+# - timeResults: store working place and start working time after checkout
+# - timeSheetDatas: store working time data in a day.
+# - workStatus: will be set true after checkin and set false after checkout
+# - takeLeaveInfo: store take leave information
+# - monthSalary: store month salary information
+*/
 const timesheetSchema = new Schema({
   staffId: {
     type: Schema.Types.ObjectId,
@@ -18,7 +29,7 @@ const timesheetSchema = new Schema({
       startTime: { type: Date, required: false },
     },
   ],
-  startCount: { type: Number, required: false },
+  // startCount: { type: Number, required: false },
   //endTime:  { type: Date, required: false },
   timeResults: [
     {
@@ -50,6 +61,10 @@ const timesheetSchema = new Schema({
     }
 });
 
+/*
+# Method name: addStartTime
+# Implementation: store new start working time Info to database
+*/
 timesheetSchema.methods.addStartTime = function (workInfoData) {
   this.locations.push({ location: workInfoData.location });
   this.startTimes.push({ startTime: workInfoData.startTime });
@@ -57,10 +72,26 @@ timesheetSchema.methods.addStartTime = function (workInfoData) {
   return this.save();
 };
 
+/*
+# Method name: addEndTime
+# Implementation: 
+# 1. store new end working time Info to database
+#   -store all registed checking location and start time
+#   -Caculate total of time between checkin and checkout for once time and convert to minute
+# 2. store result working time on a day to database
+#   -Caculate total of time a day
+#   -Caculate in complete time a day
+#   -Caculate over time a day
+# 3. Delete registed checking location and start time and set working status as not working
+# 4. Update database
+*/
 timesheetSchema.methods.addEndTime = function (workInfoData) {
+  const WORKINGTIMEONDAY = 480 //8hour = 480 minute
   const locations = [...this.locations];
   const startTimes = [...this.startTimes];
   const endTime = workInfoData;
+
+  //Implement udapte timeResults
   const timeTotal =
     endTime.getHours() * 60 +
     endTime.getMinutes() -
@@ -69,7 +100,6 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   //Test case: const timeTotal = 600;
   // console.log(timeTotal);
 
-  //update timeResult
   const addtimeResult = {
     locations: locations,
     startTimes: startTimes,
@@ -78,14 +108,14 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   };
   this.timeResults.push(addtimeResult);
 
-
-  //update timeSheetData
+  //Implement udapte timeSheetDatas
+  //Check timeSheetDatas are exsisting or not, if not create new
   if (this.timeSheetDatas.length <= 0) {
     //get data form endTime's data
     const date = endTime.toISOString().substring(0, 10);
     const Total = timeTotal;
-    const incompleteTime =  (Total < 480) ? (480 - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0
-    const overTime = Total > 480 ? Total - 480 : 0; //8h = 480m
+    const incompleteTime =  (Total < WORKINGTIMEONDAY) ? (WORKINGTIMEONDAY - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0
+    const overTime = Total > WORKINGTIMEONDAY ? Total - WORKINGTIMEONDAY : 0;
     this.timeSheetDatas.push({
       date: date,
       timeTotal: Total,
@@ -95,43 +125,46 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   } else if (this.timeSheetDatas.length > 0) {
     //update timeSheetData endTime.toISOString().substring(0, 10)
     const getCurentDateIndex = this.timeSheetDatas.findIndex((tsd) => {
-      //Test case: return tsd.date == '2022-01-21';//////////////////////////////
+      //Test case: return tsd.date == '2022-01-21';
       return tsd.date == endTime.toISOString().substring(0, 10);
     });
-    console.log(getCurentDateIndex);
-    //findIndex = -1 => not found
+    // console.log(getCurentDateIndex);
+
+    //findIndex = -1 is not found, create new time sheet data
     if (getCurentDateIndex < 0) {
       //Check existing array data of this date
       const date = endTime.toISOString().substring(0, 10);
       //Test case: const date = '2022-01-21';
       const Total = timeTotal;
-      const incompleteTime =  (Total < 480) ? (480 - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0
-      const overTime = Total > 480 ? Total - 480 : 0; //8h = 480m
+      const incompleteTime =  (Total < WORKINGTIMEONDAY) ? (WORKINGTIMEONDAY - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0
+      const overTime = Total > WORKINGTIMEONDAY ? Total - WORKINGTIMEONDAY : 0; //8h = 480m
       this.timeSheetDatas.push({
         date: date,
         timeTotal: Total,
         incompleteTime: incompleteTime,
         overTime: overTime,
       });
-    } else {
-      //if has existing data, update data by got index
+    } else { //if has existing data, update data by got index above
       const timeSheetData = this.timeSheetDatas[getCurentDateIndex];
       timeSheetData.timeTotal = timeSheetData.timeTotal + timeTotal;
-      timeSheetData.incompleteTime = (timeSheetData.timeTotal < 480) ? (480 - timeSheetData.timeTotal) : 0;
-      timeSheetData.overTime = timeSheetData.timeTotal > 480 ? timeSheetData.timeTotal - 480 : 0;
-      // date: { type: String, required: false },
-      // timeTotal:  { type: Number, required: false },
-      // overTime: { type: Number, required: false }
+      timeSheetData.incompleteTime = (timeSheetData.timeTotal < WORKINGTIMEONDAY) ? (WORKINGTIMEONDAY - timeSheetData.timeTotal) : 0;
+      timeSheetData.overTime = timeSheetData.timeTotal > WORKINGTIMEONDAY ? timeSheetData.timeTotal - WORKINGTIMEONDAY : 0;
     }
   }
 
+  //Delete registed checking location and start time and set working status as not working
   this.locations = [];
   this.startTimes = [];
   this.workStatus = false;
 
+  //Update database
   return this.save();
 };
 
+/*
+# Method name: addTakeLeave
+# Implementation: store new regsisted leave Info to database
+*/
 timesheetSchema.methods.addTakeLeave = function (leaveInfoData) {
   const _takeLeaveInfo = [...this.takeLeaveInfo];
   this.takeLeaveInfo = [..._takeLeaveInfo, ...leaveInfoData];

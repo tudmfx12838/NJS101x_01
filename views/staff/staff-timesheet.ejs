@@ -30,7 +30,7 @@
                 <div class="modal-content">
                     <span class="close" id="close">&times;</span>
                     <h2>Đăng ký thông tin làm việc</h2>
-                    <form class="staff-form" action="/update-timesheet" method="POST">
+                    <form class="staff-form" action="/timesheet-starttime" method="POST">
                         <div class="form-control">
                             <label for="location">Nơi làm việc: </label>
                             <select name="location" id="location" value="company">
@@ -39,7 +39,6 @@
                                 <option value="Nhà">Nhà</option>
                             </select>
                         </div>
-                        <input type="hidden" value="startTime" name="timeInfo">
                         <button class="btn" type="submit">Bắt đầu làm</button>
                     </form>
                 </div>
@@ -49,8 +48,7 @@
         <br>
 
         <div class="staff-form" >
-            <form class="staff-form" action="/update-timesheet" method="POST">
-                <input type="hidden" value="endTime" name="timeInfo">
+            <form class="staff-form" action="/timesheet-endtime" method="POST">
                 <button class="btn staff-form" type="submit">Kết thúc làm</button>
             </form>
         </div>
@@ -65,7 +63,7 @@
                 <div class="modal-content">
                     <span class="close" id="close1">&times;</span>
                     <h2>Đăng ký nghỉ phép</h2>
-                    <form class="staff-form" action="/update-timesheet" method="POST">
+                    <form class="staff-form" action="/timesheet-takeleave" method="POST">
                         <div class="form-control">
                             <label for="startDateTime">Nghỉ từ ngày: </label>
                             <input type="date" name="startDateTime" id="startDateTime" value="">
@@ -91,7 +89,6 @@
                             <p>--Chú ý: Thời gian nghỉ phép 8h/ngày (trừ thứ bảy và chúa nhật)</p>
                         </div>
 
-                        <input type="hidden" value="leaveRegist" name="timeInfo">
                         <button class="btn" type="submit">Đăng Ký</button>
                     </form>
                 </div>
