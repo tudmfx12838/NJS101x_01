@@ -24,23 +24,50 @@
                 <!-- Trigger/Open The Modal -->
                 <button class="btn staff-form" id="myBtn">Chỉnh sửa</button>
                 <!-- The Modal -->
+
                 <div id="myModal" class="modal">
                     <div class="modal-content">
                         <span class="close" id="close">&times;</span>
-                        <h2>Đăng ký nghỉ phép</h2>
-                        <form class="staff-form" action="/update-timesheet" method="POST">
+                        <h2>Chỉnh sửa thông tin Nhân Viên</h2>
+                        <form class="staff-form" action="/staff-info" method="POST">
                             <div class="form-control">
-                                <label for="startDateTime">Thêm Url ảnh: </label>
-                                <input type="text" name="startDateTime" id="startDateTime" value="">
+                                <label for="idNumber">MSNV: </label>
+                                <input type="text" name="idNumber" id="idNumber" value="<%= staff.idNumber %>" disabled>
                             </div>
-                            
-                            <input type="hidden" value="leaveRegist" name="timeInfo">
-                            <button class="btn" type="submit">Đăng Ký</button>
+                            <div class="form-control">
+                                <label for="name">Tên Nhân Viên: </label>
+                                <input type="text" name="name" id="name" value="<%= staff.name %>" disabled>
+                            </div>
+                            <div class="form-control">
+                                <label for="doB">Ngày sinh: </label>
+                                <input type="date" name="doB" id="doB" value="<%= staff.doB.toISOString().substring(0, 10) %>" disabled>
+                            </div>
+                            <div class="form-control">
+                                <label for="startDate">Ngày vào công ty: </label>
+                                <input type="date" name="startDate" id="startDate" value="<%= staff.startDate.toISOString().substring(0, 10) %>" disabled>
+                            </div>
+                            <div class="form-control">
+                                <label for="salaryScale">Hệ số lương: </label>
+                                <input type="number" name="salaryScale" id="salaryScale" value="<%= staff.salaryScale %>" disabled>
+                            </div>
+                            <div class="form-control">
+                                <label for="department">Phòng ban: </label>
+                                <select name="department" id="department" value="staff" disabled>
+                                    <option value="IT">IT</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Sale">Sale</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Finance">Finance</option>
+                                </select>
+                            </div>
+                            <div class="form-control">
+                                <label for="image">Link Ảnh: </label>
+                                <input type="text" name="image" id="image" value="<%= staff.image %>">
+                            </div>
+                            <button class="btn" type="submit">Thêm</button>
                         </form>
                     </div>
                 </div>
-
-                
             </div>
     </main>
 

@@ -11,9 +11,12 @@ const Staff = require('./models/staff');
 
 const app = express();
 
+//Templace Engine EJS
+//And point to views's folder
 app.set("view engine", "ejs");
 app.set("views", "views");
 
+//Import Router
 // const loginRoutes = require('./routes/login');
 const staffRoutes = require('./routes/staff');
 const userRoutes = require('./routes/user');
@@ -21,6 +24,7 @@ const userRoutes = require('./routes/user');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
+//Registry a user
 app.use((req, res, next) => {
   User.findById("61e26ea6b5b6fe5e5e979334")
     .then((user) => {
@@ -33,11 +37,11 @@ app.use((req, res, next) => {
   //    next();
 });
 
-// app.use(loginRoutes);
+//Connect to Routers
 app.use(userRoutes);
 app.use(staffRoutes);
 
-
+//Connect to db by mongoose
 mongoose
     .connect(
         'mongodb+srv://admin:1234@cluster0.2tyxr.mongodb.net/myApp?retryWrites=true&w=majority'

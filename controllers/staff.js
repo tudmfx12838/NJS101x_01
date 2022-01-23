@@ -7,6 +7,11 @@ const { redirect } = require("express/lib/response");
 // const dateformat = require('dateformat');
 // const dateFormat = require('date-and-time');
 
+/*
+# Method name: getStaffs
+# Implementation: render staff management page
+# Description: show add staff feature
+*/
 exports.getStaffs = (req, res, next) => {
   res.render("admin/staff", {
     pageTitle: "Nhân Viên",
@@ -14,6 +19,14 @@ exports.getStaffs = (req, res, next) => {
   });
 };
 
+/*
+# Method name: postAddStaff
+# Implementation: add new staff
+# Description: post new staff's data to database
+# Staff's data: staff'id, password, permission, name, 
+  date of birth, salary scale, start date, department,
+  annualLeave, image
+*/
 exports.postAddStaff = (req, res, next) => {
   const idNumber = req.body.idNumber;
   const password = req.body.password;
@@ -60,15 +73,35 @@ exports.getStaffInfo = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+/*
+# Method name: postStaffInfo
+# Implementation: post edited staff's info to database
+# Description: user is only edit image Url
+# 
+*/
 exports.postStaffInfo = (req, res, next) => {
+  const imageUrl = req.body.image;
   req.user
-  .populate("staffId")
-  .then((staff) => {
-
-  })
-  .catch((err) => console.log(err));
+    .populate("staffId")
+    .then((staff) => {
+      console.log(staff.staffId.image);
+      staff.staffId.image = imageUrl;
+      return staff.staffId
+        .save()
+        .then((result) => {
+          res.redirect("/staff-info");
+        })
+        .catch((err) => console.log(err));
+    })
+    .catch((err) => console.log(err));
 };
 
+/*
+# Method name: getHealthInfo
+# Implementation: render staff health infomation page
+# Description: page consist of body temperate, vaccine and infect covid of resistry features
+  list infomation after registied.
+*/
 exports.getHealthInfo = (req, res, next) => {
   req.user
     .populate("staffId")
@@ -84,7 +117,6 @@ exports.getHealthInfo = (req, res, next) => {
           }
         })
         .catch((err) => console.log(err));
-
       return staff;
     })
     .then((staff) => {
@@ -105,6 +137,11 @@ exports.getHealthInfo = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+/*
+# Method name: postHealthInfo
+# Implementation: post staff's registed health infomation to database
+# Description: from staff's health infomation view, input data and regsistry
+*/
 exports.postHealthInfo = (req, res, next) => {
   const healthInfo = req.body.healthInfo;
   let healthData = "";
@@ -122,7 +159,10 @@ exports.postHealthInfo = (req, res, next) => {
           date: req.body.checkedDateTime,
         };
       } else if (healthInfo == "vaccineCovid") {
-        healthData = { time: req.body.vaccineInfo, date: req.body.vaccineDate };
+        healthData = { 
+          time: req.body.vaccineInfo, 
+          date: req.body.vaccineDate 
+        };
       } else if (healthInfo == "infectCovid") {
         healthData = {
           infect: req.body.infectCovid,
@@ -139,6 +179,11 @@ exports.postHealthInfo = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+/*
+# Method name: getStaffTimeSheet
+# Implementation: render staff time sheet registion page
+# Description: show working status, start time working, end time working and take leave feature
+*/
 exports.getStaffTimeSheet = (req, res, next) => {
   req.user
     .populate("staffId")
@@ -174,6 +219,12 @@ exports.getStaffTimeSheet = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+/*
+# Method name: getStaffTimeSheet
+# Implementation: render staff time sheet registion page
+# Description: show working status, start time working, end time working and take leave feature
+// */
 
 exports.postStartTime = (req, res, next) => {
   // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
@@ -275,12 +326,121 @@ exports.postStartTime = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+// exports.postStartTime = (req, res, next) => {
+//   // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
+//   const timeInfo = req.body.timeInfo;
+//   const timeNow = new Date();
+//   // console.log(timeInfo);
+//   req.user
+//     .populate("staffId")
+//     .then((staff) => {
+//       TimeSheet.find({ staffId: req.user.staffId })
+//         .then((timesheet) => {
+//           if (timeInfo == "startTime") {
+//             // console.log(timeNow.getHours());
+//             timesheet[0]
+//               .addStartTime({ location: req.body.location, startTime: timeNow })
+//               .then((result) => {
+//                 res.redirect("/");
+//               })
+//               .catch((err) => console.log(err));
+//           } else if (
+//             timeInfo == "endTime" &&
+//             timesheet[0].locations.length > 0 &&
+//             timesheet[0].startTimes.length > 0
+//           ) {
+//             timesheet[0]
+//               .addEndTime(timeNow)
+//               .then((result) => {
+//                 res.redirect("/");
+//               })
+//               .catch((err) => console.log(err));
+//           } else if (timeInfo == "leaveRegist") {
+//             const startDateTime = new Date(req.body.startDateTime);
+//             const endDateTime = new Date(req.body.endDateTime);
+//             const leaveTime = parseInt(req.body.leaveTime);
+//             const annualLeave = staff.staffId.annualLeave;
 
-exports.getConsultarion = (req, res, next) => {
-    
+//             if (startDateTime.getTime() <= endDateTime.getTime()) {
+//               //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);
+//               let countWithoutSatAndSun = 0;
+//               let leaveTime_ar = [];
+//               const curDate = startDateTime;
+//               while (curDate <= endDateTime) {
+//                 const dayOfWeek = curDate.getDay();
+//                 if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+//                   countWithoutSatAndSun++;
+//                   leaveTime_ar.push({
+//                     date: curDate.toISOString().substring(0, 10),
+//                     leaveTime: leaveTime,
+//                   });
+//                 }
+//                 curDate.setDate(curDate.getDate() + 1);
+//               }
+//               const sumTimeLeave = leaveTime * leaveTime_ar.length;
+
+//               let checkExist = [];
+//               timesheet[0].takeLeaveInfo.forEach((tlf) => {
+//                 leaveTime_ar.forEach((lt_item) => {
+//                   if (lt_item.date == tlf.date) {
+//                     checkExist.push(tlf.date); //push existing date into array
+//                   }
+//                 });
+//               });
+
+//               if (leaveTime_ar.length >= 1) {
+//                 if (checkExist.length <= 0) {
+//                   if (sumTimeLeave <= annualLeave) {
+//                     timesheet[0].addTakeLeave(leaveTime_ar).then((result) => {
+//                       staff.staffId.annualLeave = annualLeave - sumTimeLeave;
+//                       staff.staffId
+//                         .save()
+//                         .then(() => {})
+//                         .catch((err) => console.log(err));
+//                       res.redirect("/");
+//                     });
+//                   } else {
+//                     console.log(
+//                       "Vui lòng chọn số giờ nghỉ phép trong khoảng hiện có: " +
+//                         annualLeave +
+//                         " giờ"
+//                     );
+//                   }
+//                 } else {
+//                   console.log(
+//                     `Ngày ${checkExist} đã đăng ký nghỉ phép, vui lòng kiểm tra lại`
+//                   );
+//                 }
+//               } else {
+//                 //leaveTime_ar.length < 1
+//                 console.log(
+//                   "Vui lòng chọn ngày khác T7 và CN(2 ngày nghỉ cố định)"
+//                 );
+//               }
+//             } else {
+//               console.log("Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày");
+//             }
+//           }
+//         })
+//         .catch((err) => console.log(err));
+//     })
+//     .catch((err) => console.log(err));
+// };
+
+/*
+# Method name: getConsultation
+# Implementation: render staff consultation page
+# Description: show recored timesheet, can select date to view
+*/
+exports.getConsultation = (req, res, next) => {
   req.user
     .populate("staffId")
     .then((staff) => {
+      // TimeSheet.find({ location: 'Côn*' })
+      // .then((timesheet) => {
+      //   console.log(timesheet);
+      // })
+      // .catch((err) => console.log(err));
       //calSalary
       TimeSheet.find({ staffId: staff.staffId._id })
         .then((timesheet) => {
@@ -290,7 +450,7 @@ exports.getConsultarion = (req, res, next) => {
             timeResults: timesheet[0].timeResults,
             timeSheetDatas: timesheet[0].timeSheetDatas,
             takeLeaveInfo: timesheet[0].takeLeaveInfo,
-            monthSalary: timesheet[0].monthSalary
+            monthSalary: timesheet[0].monthSalary,
           });
         })
         .catch((err) => console.log(err));
@@ -298,6 +458,11 @@ exports.getConsultarion = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+/*
+# Method name: postConsultarion
+# Implementation: post month salary info to database which want to show out consultation page
+# Description: following selected date to show timesheet information
+*/
 exports.postConsultarion = (req, res, next) => {
   const monthSalary = req.body.monthSalary;
 
@@ -316,66 +481,65 @@ exports.postConsultarion = (req, res, next) => {
               countDate += 1;
             }
           });
-          
+
           console.log(countDate);
-          if(countDate > 0){
-              calSalary =
+          if (countDate > 0) {
+            calSalary =
               300000 * staff.staffId.salaryScale +
               (sumData.overTime - sumData.incompleteTime) * 200000;
           } else {
             calSalary = 0;
             // res.redirect("/consultation");
           }
-            
+
           timesheet[0].monthSalary.month = monthSalary;
           timesheet[0].monthSalary.salary = calSalary;
           return timesheet[0]
             .save()
             .then((result) => {
-                console.log(calSalary);
+              console.log(calSalary);
               res.redirect("/consultation");
             })
             .catch((err) => console.log(err));
- 
 
-        //   if (timesheet[0].monthSalaries.length <= 0) {
-        //     timesheet[0].monthSalaries.push({
-        //       month: monthSalary,
-        //       salary: calSalary,
-        //     });
-        //     return timesheet[0]
-        //       .save()
-        //       .then((result) => {
-        //         // res.redirect("/consultation");
-        //       })
-        //       .catch((err) => console.log(err));
-        //   } else {
-        //     const monthSalarieIndex = timesheet[0].monthSalaries.findIndex(
-        //       (monthSalarie) => {
-        //         return monthSalarie.month == monthSalary;
-        //       }
-        //     );
-        //     if (monthSalarieIndex < 0) {
-        //       timesheet[0].monthSalaries.push({
-        //         month: monthSalary,
-        //         salary: calSalary,
-        //       });
-        //       return timesheet[0]
-        //         .save()
-        //         .then((result) => {
-        //         //   res.redirect("/consultation");
-        //         })
-        //         .catch((err) => console.log(err));
-        //     } else {
-        //       timesheet[0].monthSalaries[monthSalarieIndex].salary = calSalary;
-        //       return timesheet[0]
-        //         .save()
-        //         .then((result) => {
-        //         //   res.redirect("/consultation");
-        //         })
-        //         .catch((err) => console.log(err));
-        //     }
-        //   }
+          //   if (timesheet[0].monthSalaries.length <= 0) {
+          //     timesheet[0].monthSalaries.push({
+          //       month: monthSalary,
+          //       salary: calSalary,
+          //     });
+          //     return timesheet[0]
+          //       .save()
+          //       .then((result) => {
+          //         // res.redirect("/consultation");
+          //       })
+          //       .catch((err) => console.log(err));
+          //   } else {
+          //     const monthSalarieIndex = timesheet[0].monthSalaries.findIndex(
+          //       (monthSalarie) => {
+          //         return monthSalarie.month == monthSalary;
+          //       }
+          //     );
+          //     if (monthSalarieIndex < 0) {
+          //       timesheet[0].monthSalaries.push({
+          //         month: monthSalary,
+          //         salary: calSalary,
+          //       });
+          //       return timesheet[0]
+          //         .save()
+          //         .then((result) => {
+          //         //   res.redirect("/consultation");
+          //         })
+          //         .catch((err) => console.log(err));
+          //     } else {
+          //       timesheet[0].monthSalaries[monthSalarieIndex].salary = calSalary;
+          //       return timesheet[0]
+          //         .save()
+          //         .then((result) => {
+          //         //   res.redirect("/consultation");
+          //         })
+          //         .catch((err) => console.log(err));
+          //     }
+          //   }
         })
         .catch((err) => console.log(err));
     })
