@@ -7,6 +7,13 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
+            <div class="staff-form" >
+                <form class="staff-form" action="/staff-info" method="GET">
+                    <label for="monthSalary">Tra cứu: </label>
+                    <input type="text" id="search" name="search">
+                    <button class="btn" type="submit">Tìm</button>
+                </form>
+            </div>
             <div>
                 <img src="<%= staff.image %>" alt="<%= staff.name %>">
             </div>

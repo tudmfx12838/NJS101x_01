@@ -2,7 +2,6 @@ const Staff = require("../models/staff");
 const Health = require("../models/health");
 const TimeSheet = require("../models/timesheet");
 const User = require("../models/user");
-const { redirect } = require("express/lib/response");
 
 // const dateformat = require('dateformat');
 // const dateFormat = require('date-and-time');
@@ -59,18 +58,45 @@ exports.postAddStaff = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+function escapeRegex(text) {
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 exports.getStaffInfo = (req, res, next) => {
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      res.render("staff/staff-info", {
-        pageTitle: "Thông Tin Nhân Viên",
-        path: "/staff-info",
-        staff: staff.staffId,
+  // https://www.youtube.com/watch?v=9_lKMTXVk64
+  var noMatch = null;
+  if(req.query.search) {
+      const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+      // Get all campgrounds from DB
+      Staff.find({name: regex}, function(err, staff){
+          if(err){
+              console.log(err);
+          } else {
+            if(staff.length < 1) {
+                noMatch = "No campgrounds match that query, please try again.";
+            }
+            // res.render("campgrounds/index",{campgrounds:allCampgrounds, noMatch: noMatch});
+            console.log(staff);
+            res.render("staff/staff-info", {
+              pageTitle: "Thông Tin Nhân Viên",
+              path: "/staff-info",
+              staff: staff[0],
+            });
+            console.log(req.user);
+          }
       });
-      console.log(req.user);
-    })
-    .catch((err) => console.log(err));
+  } else {
+    req.user
+      .populate("staffId")
+      .then((staff) => {
+        res.render("staff/staff-info", {
+          pageTitle: "Thông Tin Nhân Viên",
+          path: "/staff-info",
+          staff: staff.staffId,
+        });
+        console.log(req.user);
+      })
+      .catch((err) => console.log(err));
+  }
 };
 
 /*
@@ -337,7 +363,8 @@ exports.postTakeLeave = (req, res, next) => {
           //Checking chose date leave valid or not
           //Checking chose date leave has being existed in database or not
           //Checking user chose leave time <= user's annual leave or not
-          //if chose data leave valid and they've not existed yet and leave time <= user's annual leave, add new take leave to database
+          //if chose data leave valid, they've not existed yet and leave time <= user's annual leave, add new take leave to database
+          //update staff annual leave
           if (leaveTime_ar.length >= 1) {
             if (checkExist.length <= 0) {
               if (sumTimeLeave <= annualLeave) {
@@ -374,106 +401,6 @@ exports.postTakeLeave = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
-// exports.postStartTime = (req, res, next) => {
-//   // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
-//   const timeInfo = req.body.timeInfo;
-//   const timeNow = new Date();
-//   // console.log(timeInfo);
-//   req.user
-//     .populate("staffId")
-//     .then((staff) => {
-//       TimeSheet.find({ staffId: req.user.staffId })
-//         .then((timesheet) => {
-//           if (timeInfo == "startTime") {
-//             // console.log(timeNow.getHours());
-//             timesheet[0]
-//               .addStartTime({ location: req.body.location, startTime: timeNow })
-//               .then((result) => {
-//                 res.redirect("/");
-//               })
-//               .catch((err) => console.log(err));
-//           } else if (
-//             timeInfo == "endTime" &&
-//             timesheet[0].locations.length > 0 &&
-//             timesheet[0].startTimes.length > 0
-//           ) {
-//             timesheet[0]
-//               .addEndTime(timeNow)
-//               .then((result) => {
-//                 res.redirect("/");
-//               })
-//               .catch((err) => console.log(err));
-//           } else if (timeInfo == "leaveRegist") {
-//             const startDateTime = new Date(req.body.startDateTime);
-//             const endDateTime = new Date(req.body.endDateTime);
-//             const leaveTime = parseInt(req.body.leaveTime);
-//             const annualLeave = staff.staffId.annualLeave;
-
-//             if (startDateTime.getTime() <= endDateTime.getTime()) {
-//               //console.log((endDateTime.getTime() - startDateTime.getTime())/(1000*60*60*24) + 24);
-//               let countWithoutSatAndSun = 0;
-//               let leaveTime_ar = [];
-//               const curDate = startDateTime;
-//               while (curDate <= endDateTime) {
-//                 const dayOfWeek = curDate.getDay();
-//                 if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-//                   countWithoutSatAndSun++;
-//                   leaveTime_ar.push({
-//                     date: curDate.toISOString().substring(0, 10),
-//                     leaveTime: leaveTime,
-//                   });
-//                 }
-//                 curDate.setDate(curDate.getDate() + 1);
-//               }
-//               const sumTimeLeave = leaveTime * leaveTime_ar.length;
-
-//               let checkExist = [];
-//               timesheet[0].takeLeaveInfo.forEach((tlf) => {
-//                 leaveTime_ar.forEach((lt_item) => {
-//                   if (lt_item.date == tlf.date) {
-//                     checkExist.push(tlf.date); //push existing date into array
-//                   }
-//                 });
-//               });
-
-//               if (leaveTime_ar.length >= 1) {
-//                 if (checkExist.length <= 0) {
-//                   if (sumTimeLeave <= annualLeave) {
-//                     timesheet[0].addTakeLeave(leaveTime_ar).then((result) => {
-//                       staff.staffId.annualLeave = annualLeave - sumTimeLeave;
-//                       staff.staffId
-//                         .save()
-//                         .then(() => {})
-//                         .catch((err) => console.log(err));
-//                       res.redirect("/");
-//                     });
-//                   } else {
-//                     console.log(
-//                       "Vui lòng chọn số giờ nghỉ phép trong khoảng hiện có: " +
-//                         annualLeave +
-//                         " giờ"
-//                     );
-//                   }
-//                 } else {
-//                   console.log(
-//                     `Ngày ${checkExist} đã đăng ký nghỉ phép, vui lòng kiểm tra lại`
-//                   );
-//                 }
-//               } else {
-//                 //leaveTime_ar.length < 1
-//                 console.log(
-//                   "Vui lòng chọn ngày khác T7 và CN(2 ngày nghỉ cố định)"
-//                 );
-//               }
-//             } else {
-//               console.log("Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày");
-//             }
-//           }
-//         })
-//         .catch((err) => console.log(err));
-//     })
-//     .catch((err) => console.log(err));
-// };
 
 /*
 # Method name: getConsultation
@@ -481,6 +408,7 @@ exports.postTakeLeave = (req, res, next) => {
 # Description: show recored timesheet, can select date to view
 */
 exports.getConsultation = (req, res, next) => {
+
   req.user
     .populate("staffId")
     .then((staff) => {
@@ -593,3 +521,4 @@ exports.postConsultarion = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
