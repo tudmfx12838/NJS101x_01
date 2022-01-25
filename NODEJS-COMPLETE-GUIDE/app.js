@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const session = require("express-session");
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -21,6 +22,11 @@ const authRoutes = require("./routes/auth");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(session({
+  secret: 'my secret', //secret dc su dung de dang ky ma bam bi mat ID trong cookie
+  resave: false, //session se khong duoc luu doi voi moi req dc thuc hien
+  saveUninitialized: false //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
+})); 
 
 app.use((req, res, next) => {
   User.findById("61de3047734cb18074b8da08")
