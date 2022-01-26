@@ -1,3 +1,5 @@
+const User = require("../models/user");
+
 exports.getLogin = (req, res, next) => {
   //   const isLoggedIn = req
   //     .get("Cookie")
@@ -14,10 +16,14 @@ exports.getLogin = (req, res, next) => {
 };
 
 exports.postLogin = (req, res, next) => {
-  //Cau hinh HttpOnly tao co che bao mat thi phia client khong the sua cookie trong code hay tren trinh duyet
-  //   res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
-  req.session.isLoggedIn = true;
-  res.redirect("/");
+  User.findById("61de3047734cb18074b8da08")
+  .then((user) => {
+    req.session.isLoggedIn = true;
+    req.session.user = user;
+    res.redirect("/");
+
+  })
+  .catch((err) => console.log(err)); 
 };
 
 // exports.postLogout = (req, res, next) => {

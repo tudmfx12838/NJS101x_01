@@ -8,7 +8,7 @@ exports.getProducts = (req, res, next) => {
         prods: products,
         pageTitle: "All Products",
         path: "/products",
-        isAuthenticated: req.isAuthenticated
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -33,12 +33,12 @@ exports.getIndex = (req, res, next) => {
   Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS
     //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
-      console.log(products);
+      // console.log(products);
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
-        isAuthenticated: req.isAuthenticated
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => {
@@ -47,7 +47,7 @@ exports.getIndex = (req, res, next) => {
 };
 
 exports.getCart = (req, res, next) => {
-  req.user
+  req.session.user
     .populate("cart.items.productId") //truy van ref den product
     .then((user) => {
       console.log(user.cart.items);
@@ -56,7 +56,7 @@ exports.getCart = (req, res, next) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: products,
-        isAuthenticated: req.isAuthenticated
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => console.log(err));
@@ -66,7 +66,7 @@ exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
   Product.findById(prodId)
     .then((product) => {
-      return req.user.addToCart(product); //addToCart minh tao trong user model bang Schema.methods
+      return req.session.user.addToCart(product); //addToCart minh tao trong user model bang Schema.methods
     })
     .then((result) => {
       console.log(result);
@@ -77,7 +77,7 @@ exports.postCart = (req, res, next) => {
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.user
+  req.session.user
     .removeFromCart(prodId)
     .then((result) => {
       res.redirect("/cart");
@@ -86,7 +86,7 @@ exports.postCartDeleteProduct = (req, res, next) => {
 };
 
 exports.postOrder = (req, res, next) => {
-  req.user
+  req.session.user
     .populate("cart.items.productId") //truy van ref den product
     .then((user) => {
       console.log(user.cart.items);
@@ -95,16 +95,16 @@ exports.postOrder = (req, res, next) => {
       });
       const order = new Order({
         user: {
-          name: req.user.name,
-          email: req.user.email,
-          userId: req.user, //khong can req.user._id ma Mongoose se tu dong chon
+          name: req.session.user.name,
+          email: req.session.user.email,
+          userId: req.session.user, //khong can req.session.user._id ma Mongoose se tu dong chon
         },
         products: products,
       });
       return order.save();
     })
     .then(() => {
-      return req.user.clearCart();
+      return req.session.user.clearCart();
     })
     .then(() => {
       res.redirect("/orders");
@@ -113,14 +113,14 @@ exports.postOrder = (req, res, next) => {
 };
 
 exports.getOrders = (req, res, next) => {
-  Order.find({ "user.userId": req.user._id })
+  Order.find({ "user.userId": req.session.user._id })
     .then((orders) => {
       console.log(orders);
       res.render("shop/orders", {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
-        isAuthenticated: req.isAuthenticated
+        isAuthenticated: req.session.isLoggedIn
       });
     })
     .catch((err) => console.log(err));

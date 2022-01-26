@@ -7,6 +7,6 @@ exports.getPageError = (req, res, next) => {
         activeAddProduct: false,
         productCSS: false,
         formCSS: false,
-        isAuthenticated: req.isAuthenticated
+        isAuthenticated: req.session.isLoggedIn
     });
 };

@@ -37,21 +37,9 @@ app.use(session({
   store: store //Thiet lap store de luu truu session tren mongodb
 })); 
 
-app.use((req, res, next) => {
-  User.findById("61de3047734cb18074b8da08")
-    .then((user) => {
-      // req.user = user; //user lay tu database
-      req.user = user; //user nay tra ve tu findById (ham cua mongoose) lay tu database
-      next();
-    })
-    .catch((err) => console.log(err));
-  //    next();
-});
-
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
-
 
 app.use(errorController.getPageError);
 
