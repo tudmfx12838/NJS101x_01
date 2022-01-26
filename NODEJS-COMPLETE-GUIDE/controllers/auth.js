@@ -14,7 +14,10 @@ exports.postLogin = (req, res, next) => {
   .then((user) => {
     req.session.isLoggedIn = true;
     req.session.user = user;
-    res.redirect("/");
+    req.session.save((err) => {  //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
+      console.log(err);
+      res.redirect("/");
+    });
   })
   .catch((err) => console.log(err)); 
 };

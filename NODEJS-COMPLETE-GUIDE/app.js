@@ -37,6 +37,20 @@ app.use(session({
   store: store //Thiet lap store de luu truu session tren mongodb
 })); 
 
+app.use((req, res, next) => {
+  if(!req.session.user){
+    next();
+  } else {
+
+    User.findById(req.session.user._id)
+    .then((user) => {
+      req.user = user;
+      next();
+    })
+    .catch((err) => console.log(err)); 
+  }
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
