@@ -16,7 +16,7 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   //Cau hinh HttpOnly tao co che bao mat thi phia client khong the sua cookie trong code hay tren trinh duyet
   //   res.setHeader("Set-Cookie", "loggedIn=true; HttpOnly");
-  req.session.isLoggedIn_1 = true;
+  req.session.isLoggedIn = true;
   res.redirect("/");
 };
 

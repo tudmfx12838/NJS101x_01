@@ -4,11 +4,19 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
+const MongoDbStote = require("connect-mongodb-session")(session);
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
 
+const MONGODB_URL = "mongodb+srv://admin:yYoPp04jYzN8lHf7@cluster0.gqluc.mongodb.net/myShop?retryWrites=true&w=majority";
+
 const app = express();
+const store = new MongoDbStote({
+  uri: MONGODB_URL,
+  collection: "sessions",
+  // expires  them vao de tu xoa sau het phien
+});
 
 //Thiet lap templating engine by EJS
 app.set("view engine", "ejs");
@@ -25,7 +33,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(session({
   secret: 'my secret', //secret dc su dung de dang ky ma bam bi mat ID trong cookie
   resave: false, //session se khong duoc luu doi voi moi req dc thuc hien
-  saveUninitialized: false //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
+  saveUninitialized: false, //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
+  store: store //Thiet lap store de luu truu session tren mongodb
 })); 
 
 app.use((req, res, next) => {
@@ -48,7 +57,7 @@ app.use(errorController.getPageError);
 
 mongoose
   .connect(
-    "mongodb+srv://admin:yYoPp04jYzN8lHf7@cluster0.gqluc.mongodb.net/myShop?retryWrites=true&w=majority"
+    MONGODB_URL
   )
   .then((result) => {
     User
