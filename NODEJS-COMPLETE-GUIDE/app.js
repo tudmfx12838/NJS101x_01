@@ -62,20 +62,20 @@ mongoose
     MONGODB_URL
   )
   .then((result) => {
-    User
-        .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-        .then((user) => {
-            if(!user){ //if user not exist, add new user.
-                const user = new User({
-                    name: "Tu",
-                    email: "test@node",
-                    cart: {
-                      items: [],
-                    },
-                  });
-                user.save();
-            }
-        });
+    // User
+    //     .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+    //     .then((user) => {
+    //         if(!user){ //if user not exist, add new user.
+    //             const user = new User({
+    //                 name: "Tu",
+    //                 email: "test@node",
+    //                 cart: {
+    //                   items: [],
+    //                 },
+    //               });
+    //             user.save();
+    //         }
+    //     });
 
     app.listen(3000);
   })
