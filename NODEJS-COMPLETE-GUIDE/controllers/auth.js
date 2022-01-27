@@ -18,14 +18,30 @@ exports.getSignup = (req, res, next) => {
   });
 };
 exports.postLogin = (req, res, next) => {
-  User.findById("61de3047734cb18074b8da08")
+  const email = req.body.email;
+  const password = req.body.password;
+  
+  User.findOne({email: email})
     .then((user) => {
-      req.session.isLoggedIn = true;
-      req.session.user = user;
-      req.session.save((err) => {
-        //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
+      if(!user){
+        return res.redirect('/login');
+      }
+      bcrypt.compare(password, user.password)
+      .then(doMatch => {
+        if(doMatch){
+          req.session.isLoggedIn = true;
+          req.session.user = user;
+          return req.session.save((err) => {
+            //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
+            console.log(err);
+            res.redirect('/');
+          });
+        }
+        res.redirect('/login');
+      })
+      .catch(err => {
         console.log(err);
-        res.redirect("/");
+        res.redirect('/login');
       });
     })
     .catch((err) => console.log(err));
@@ -49,7 +65,7 @@ exports.postSignup = (req, res, next) => {
             name: name,
             email: email,
             password: hashedPassword,
-            cart: { item: [] }
+            cart: { items: [] }
           });
           return user.save();
         })
