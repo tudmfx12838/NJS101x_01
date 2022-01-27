@@ -38,23 +38,24 @@ exports.postSignup = (req, res, next) => {
   const confrimPassord = req.body.confirmPassword;
   User.findOne({ email: email })
     .then((userDoc) => {
-      if(userDoc){
+      if (userDoc) {
         return res.redirect('/signup');
       }
 
-      return bcrypt.hash(password, 12); //Ma hoa pw thanh ma hash, agr2 la so vong bam, gia tri cang cao cang ton tgian nhung  cang an toan, 12 la du 
-    })
-    .then((hashedPassword) => {
-      const user = new User({
-        name: name,
-        email: email,
-        password: hashedPassword,
-        cart: { item: [] }
-      });
-      return user.save();
-    })
-    .then(result => {
-      res.redirect('/login');
+      return bcrypt
+        .hash(password, 12)  //Ma hoa pw thanh ma hash, agr2 la so vong bam, gia tri cang cao cang ton tgian nhung  cang an toan, 12 la du 
+        .then((hashedPassword) => {
+          const user = new User({
+            name: name,
+            email: email,
+            password: hashedPassword,
+            cart: { item: [] }
+          });
+          return user.save();
+        })
+        .then(result => {
+          res.redirect('/login');
+        });
     })
     .catch((err) => console.log(err));
 };
