@@ -40,6 +40,7 @@ app.use(session({
   saveUninitialized: false, //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
   store: store //Thiet lap store de luu truu session tren mongodb
 })); 
+
 app.use(csrfProtection);
 
 app.use((req, res, next) => {
@@ -54,14 +55,6 @@ app.use((req, res, next) => {
     })
     .catch((err) => console.log(err)); 
   }
-});
-
-
-
-app.use((req, res, next) =>{
-  res.locals.isAuthenticated = req.session.isLoggedIn; //tinh nang dac biet res.locals. cua expessjs dung de thiet lap cac bien cuc bo truyen vao cac view
-  res.locals.csrfToken = req.csrfToken();
-  next();
 });
 
 app.use("/admin", adminRoutes);
