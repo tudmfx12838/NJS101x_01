@@ -2,11 +2,13 @@ const User = require("../models/user");
 const bcrypt = require('bcryptjs');
 
 exports.getLogin = (req, res, next) => {
+  console.log(req.flash('error'));
   console.log(req.session.isLoggedIn);
   res.render("auth/login", {
     path: "/login",
     pageTitle: "Login",
-    isAuthenticated: false,
+    errorMessage: req.flash('error'),
+    abc: 'debugging errorMessage'
   });
 };
 
@@ -14,7 +16,6 @@ exports.getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
     pageTitle: "Signup",
-    isAuthenticated: false,
   });
 };
 exports.postLogin = (req, res, next) => {
@@ -24,6 +25,7 @@ exports.postLogin = (req, res, next) => {
   User.findOne({email: email})
     .then((user) => {
       if(!user){
+        req.flash('error','Invalid email or password!');
         return res.redirect('/login');
       }
       bcrypt.compare(password, user.password)
