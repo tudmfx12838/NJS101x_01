@@ -56,8 +56,6 @@ app.use((req, res, next) => {
   }
 });
 
-
-
 app.use((req, res, next) =>{
   res.locals.isAuthenticated = req.session.isLoggedIn; //tinh nang dac biet res.locals. cua expessjs dung de thiet lap cac bien cuc bo truyen vao cac view
   res.locals.csrfToken = req.csrfToken();
