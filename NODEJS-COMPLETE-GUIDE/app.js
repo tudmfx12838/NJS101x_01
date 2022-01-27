@@ -4,7 +4,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const session = require("express-session");
-const MongoDbStote = require("connect-mongodb-session")(session);
+const MongoDbStore = require("connect-mongodb-session")(session);
+const csrf = require('csurf');
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -12,11 +13,14 @@ const User = require("./models/user");
 const MONGODB_URL = "mongodb+srv://admin:yYoPp04jYzN8lHf7@cluster0.gqluc.mongodb.net/myShop?retryWrites=true&w=majority";
 
 const app = express();
-const store = new MongoDbStote({
+
+const store = new MongoDbStore({
   uri: MONGODB_URL,
   collection: "sessions",
   // expires  them vao de tu xoa sau het phien
 });
+
+const csrfProtection = csrf();
 
 //Thiet lap templating engine by EJS
 app.set("view engine", "ejs");
@@ -36,6 +40,7 @@ app.use(session({
   saveUninitialized: false, //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
   store: store //Thiet lap store de luu truu session tren mongodb
 })); 
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if(!req.session.user){
@@ -51,6 +56,14 @@ app.use((req, res, next) => {
   }
 });
 
+
+
+app.use((req, res, next) =>{
+  res.locals.isAuthenticated = req.session.isLoggedIn; //tinh nang dac biet res.locals. cua expessjs dung de thiet lap cac bien cuc bo truyen vao cac view
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -62,21 +75,6 @@ mongoose
     MONGODB_URL
   )
   .then((result) => {
-    // User
-    //     .findOne() //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-    //     .then((user) => {
-    //         if(!user){ //if user not exist, add new user.
-    //             const user = new User({
-    //                 name: "Tu",
-    //                 email: "test@node",
-    //                 cart: {
-    //                   items: [],
-    //                 },
-    //               });
-    //             user.save();
-    //         }
-    //     });
-
     app.listen(3000);
   })
   .catch((err) => {
