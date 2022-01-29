@@ -68,21 +68,27 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findById(prodId)
     .then((product) => {
+      if (prodId.userId.toString() !== req.user._id.toString()) {
+        return res.redirect('/');
+      }
+
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
       product.imageUrl = updatedImageUrl;
-      return product.save(); //Ham save nay cua mongoose
+      return product
+            .save()
+            .then((result) => {
+              console.log("Updated Product");
+              res.redirect("/admin/products");
+            }); //Ham save nay cua mongoose
     })
-    .then((result) => {
-      console.log("Updated Product");
-      res.redirect("/admin/products");
-    })
+
     .catch((err) => console.log(err));
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+  Product.find({userId: req.user._id}) //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     // .select('title price -_id') //select trong key muon lay ra, va bo ra nhung key sau dau '-'
     // .populate('userId', 'name') // populate se lay toan bo du lieu tu collection khac co quan he theo userId truyen vao
     .then((products) => {
@@ -99,7 +105,7 @@ exports.getProducts = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
 
-  Product.findByIdAndRemove(prodId)//Ham findByIdAndRemove cua Mongoose
+  Product.deleteOne({_id: prodId, userId: req.user._id})//Ham findByIdAndRemove cua Mongoose
     .then(() => {
       console.log("Destroyed Product");
       res.redirect("/admin/products");
