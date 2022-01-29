@@ -1,7 +1,17 @@
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const sendGridTransport = require('nodemailer-sendgrid-transport');
 
 const User = require("../models/user");
 const bcrypt = require('bcryptjs');
+
+const transporter = nodemailer.createTransport(
+sendGridTransport({
+  auth: {
+    api_key: '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'
+  }
+})
+);
 
 exports.getLogin = (req, res, next) => {
   // console.log(req.flash('error'));
@@ -53,6 +63,7 @@ exports.postLogin = (req, res, next) => {
             res.redirect('/');
           });
         }
+        req.flash('error', 'Invalid email or password.');
         res.redirect('/login');
       })
       .catch(err => {
@@ -88,7 +99,15 @@ exports.postSignup = (req, res, next) => {
         })
         .then(result => {
           res.redirect('/login');
-        });
+          console.log(email);
+          return transporter.sendMail({
+            to: email,
+            from: 'tudmfx12838@funix.edu.vn',
+            subject: 'Signup succeeded!',
+            html: '<h1>You successfully signed up!</h1>'
+          }); 
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -134,7 +153,7 @@ exports.postReset = (req, res, next) => {
       return user.save();
     })
     .then(result => {
-      
+
     })
     .catch(err => {
       console.log(err);
