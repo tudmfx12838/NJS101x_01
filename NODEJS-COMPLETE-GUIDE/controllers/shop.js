@@ -2,7 +2,7 @@ const Product = require("../models/product");
 const Order = require("../models/order");
 
 exports.getProducts = (req, res, next) => {
-  Product.find({userId: req.user._id}) //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+  Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,

@@ -1,12 +1,17 @@
 exports.getPageError = (req, res, next) => {
-    console.log(req.url);
+    // console.log(req.url);
     res.status(404).render('404',{
         pageTitle: "Page Not Found",
-        path: req.url,
-        activeShop: false,
-        activeAddProduct: false,
-        productCSS: false,
-        formCSS: false,
+        path: '/404',
+        isAuthenticated: req.session.isLoggedIn
+    });
+};
+
+exports.get500 = (req, res, next) => {
+    // console.log(req.url);
+    res.status(500).render('500',{
+        pageTitle: "Error!",
+        path: '/500',
         isAuthenticated: req.session.isLoggedIn
     });
 };
