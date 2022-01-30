@@ -42,7 +42,8 @@ exports.getSignup = (req, res, next) => {
     path: "/signup",
     pageTitle: "Signup",
     errorMessage: message,
-    oldInput: {email: "", password: ""}
+    oldInput: {email: "", password: ""},
+    validationErrors:  []
   });
 };
 exports.postLogin = (req, res, next) => {
@@ -102,7 +103,8 @@ exports.postSignup = (req, res, next) => {
       path: "/signup",
       pageTitle: "Signup",
       errorMessage: errors.array()[0].msg,
-      oldInput: {email: email, password: password}
+      oldInput: {email: email, password: password},
+      validationErrors:  errors.array()
     });
   }
 
