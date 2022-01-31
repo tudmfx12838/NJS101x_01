@@ -7,6 +7,7 @@ const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const errorController = require("./controllers/error");
 const User = require("./models/user");
@@ -34,13 +35,17 @@ const authRoutes = require("./routes/auth");
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(multer({dest: 'images'}).single('image'));  //image a name of image file at view edit-produt.ejs, {dest: 'images'} them folder luu tru
+
 app.use(express.static(path.join(__dirname, "public")));
+
 app.use(session({
   secret: 'my secret', //secret dc su dung de dang ky ma bam bi mat ID trong cookie
   resave: false, //session se khong duoc luu doi voi moi req dc thuc hien
   saveUninitialized: false, //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
   store: store //Thiet lap store de luu truu session tren mongodb
 })); 
+
 app.use(csrfProtection);
 app.use(flash());
 

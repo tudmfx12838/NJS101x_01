@@ -17,9 +17,11 @@ exports.getAddProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.image; //changed name from view
+  const imageUrl = req.file; //changed name from view
   const price = req.body.price;
   const description = req.body.description;
+
+  console.log(imageUrl);
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) { //catched error
