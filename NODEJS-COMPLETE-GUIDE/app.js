@@ -21,27 +21,29 @@ const store = new MongoDbStore({
   collection: "sessions",
   // expires  them vao de tu xoa sau het phien
 });
+const csrfProtection = csrf();
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString() + '-' + file.originalname);
+    // const date = new Date().now();
+    cb(null, 'Is image' + '-' + file.originalname); //(new Date().toISOString())
   }
 });
 
 const fileFilter = (req, file, cb) => {
-  if (file.mimtype === 'image/png' || 
-      file.mimtype === 'image/jpg' || 
-      file.mimtype === 'image/jpeg') {
+  if (file.mimetype === 'image/png' || 
+      file.mimetype === 'image/jpg' || 
+      file.mimetype === 'image/jpeg') {
     cb(null, true);
   } else {
     cb(null, false);
   }
-}
+};
 
-const csrfProtection = csrf();
+
 
 //Thiet lap templating engine by EJS
 app.set("view engine", "ejs");
@@ -98,7 +100,7 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
-app.use('/500', errorController.get500);
+app.get('/500', errorController.get500);
 app.use(errorController.getPageError);
 
 app.use((error, req, res, next) => {
