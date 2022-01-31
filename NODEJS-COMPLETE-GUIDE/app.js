@@ -29,7 +29,9 @@ const fileStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // const date = new Date().now();
-    cb(null, 'Is image' + '-' + file.originalname); //(new Date().toISOString())
+    // console.log(new Date().toISOString());
+    cb(null, file.originalname);
+    // cb(null, (new Date().toISOString()) + '-' + file.originalname); //(new Date().toISOString())
   }
 });
 
@@ -59,6 +61,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));  //image a name of image file at view edit-produt.ejs, {dest: 'images'} them folder luu tru
 
 app.use(express.static(path.join(__dirname, "public")));
+app.use('/images', express.static(path.join(__dirname, "images")));// Khac voi tep css tinh o public, images phai kem path vi gi thi xem video 326
 
 app.use(session({
   secret: 'my secret', //secret dc su dung de dang ky ma bam bi mat ID trong cookie
