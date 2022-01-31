@@ -4,6 +4,8 @@ const path = require('path');
 const Product = require("../models/product");
 const Order = require("../models/order");
 
+const PDFDocument = require('pdfkit');
+
 exports.getProducts = (req, res, next) => {
   Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
@@ -178,7 +180,19 @@ exports.getInvoice = (req, res, next) => {
 
       const invoiceName = 'invoice-' + orderId + '.pdf';
       const pathInvoice = path.join('data', 'invoices', invoiceName);
-    
+      
+      const pdfDoc = new PDFDocument();
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
+
+      pdfDoc.pipe(fs.createWriteStream(pathInvoice)); //Khoi tao write Stream
+      pdfDoc.pipe(res);
+
+      pdfDoc.text('Hello World!');
+
+      pdfDoc.end();
+
       // fs.readFile(pathInvoice, (err, data) => {
       //   if (err) {
       //     return next(err);
@@ -190,11 +204,11 @@ exports.getInvoice = (req, res, next) => {
       //fs.readFile se doc tiep luu vao vung nho roi moi phan hoi ve client
       //voi nhung tep kich thuoc lon, vao xu ly nhieu req thi viec nay gay cham va hao bo nho
 
-      const file = fs.createReadStream(pathInvoice);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
+      // const file = fs.createReadStream(pathInvoice);
+      // res.setHeader('Content-Type', 'application/pdf');
+      // res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
 
-      file.pipe(res); //chuyen truc tiep thanh file ve client bang luong steam nhanh chong
+      // file.pipe(res); //chuyen truc tiep thanh file ve client bang luong steam nhanh chong
       
     })
     .catch(err => next(err));
