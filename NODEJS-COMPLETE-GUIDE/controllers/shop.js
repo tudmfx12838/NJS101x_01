@@ -175,19 +175,27 @@ exports.getInvoice = (req, res, next) => {
       if (order.user.userId.toString() !== req.user._id.toString()){
         return  next(new Error('Unauthorized.'));
       }
-      
+
       const invoiceName = 'invoice-' + orderId + '.pdf';
       const pathInvoice = path.join('data', 'invoices', invoiceName);
     
-      fs.readFile(pathInvoice, (err, data) => {
-        if (err) {
-          return next(err);
-        }
-        res.setHeader('Content-Type', 'application/pdf');
-        res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
-        res.send(data);
-    
-      });
+      // fs.readFile(pathInvoice, (err, data) => {
+      //   if (err) {
+      //     return next(err);
+      //   }
+      //   res.setHeader('Content-Type', 'application/pdf');
+      //   res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
+      //   res.send(data);
+      // });
+      //fs.readFile se doc tiep luu vao vung nho roi moi phan hoi ve client
+      //voi nhung tep kich thuoc lon, vao xu ly nhieu req thi viec nay gay cham va hao bo nho
+
+      const file = fs.createReadStream(pathInvoice);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="'+ invoiceName +'"'); //inline
+
+      file.pipe(res); //chuyen truc tiep thanh file ve client bang luong steam nhanh chong
+      
     })
     .catch(err => next(err));
 };
