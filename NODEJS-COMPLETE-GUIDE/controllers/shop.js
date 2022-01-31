@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const Product = require("../models/product");
 const Order = require("../models/order");
 
@@ -158,3 +161,19 @@ exports.getOrders = (req, res, next) => {
 //     pageTitle: 'Checkout'
 //   });
 // };
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = 'invoice-' + orderId + '.pdf';
+  const pathInvoice = path.join('data', 'invoices', invoiceName);
+
+
+  fs.readFile(pathInvoice, (err, data) => {
+    if (err) {
+      return next(err);
+    }
+
+    res.send(data);
+
+  });
+};
