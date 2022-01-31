@@ -31,6 +31,16 @@ const fileStorage = multer.diskStorage({
   }
 });
 
+const fileFilter = (req, file, cb) => {
+  if (file.mimtype === 'image/png' || 
+      file.mimtype === 'image/jpg' || 
+      file.mimtype === 'image/jpeg') {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
 const csrfProtection = csrf();
 
 //Thiet lap templating engine by EJS
@@ -44,7 +54,7 @@ const authRoutes = require("./routes/auth");
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(multer({storage: fileStorage}).single('image'));  //image a name of image file at view edit-produt.ejs, {dest: 'images'} them folder luu tru
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'));  //image a name of image file at view edit-produt.ejs, {dest: 'images'} them folder luu tru
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -53,25 +63,25 @@ app.use(session({
   resave: false, //session se khong duoc luu doi voi moi req dc thuc hien
   saveUninitialized: false, //dam bao khong co session nao duoc luu cho 1 req khi khong can thiet
   store: store //Thiet lap store de luu truu session tren mongodb
-})); 
+}));
 
 app.use(csrfProtection);
 app.use(flash());
 
-app.use((req, res, next) =>{
+app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn; //tinh nang dac biet res.locals. cua expessjs dung de thiet lap cac bien cuc bo truyen vao cac view
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
 app.use((req, res, next) => {
-  if(!req.session.user){
+  if (!req.session.user) {
     return next();
   }
-    User.findById(req.session.user._id)
+  User.findById(req.session.user._id)
     .then((user) => {
       // throw new Error('aaaaaaaa');
-      if(!user){
+      if (!user) {
         return next();
       }
       req.user = user;
@@ -80,7 +90,7 @@ app.use((req, res, next) => {
     .catch((err) => {
       next(new Error(err));
       // throw new Error('aaaaaaaa');
-    }); 
+    });
 
 });
 
@@ -94,11 +104,11 @@ app.use(errorController.getPageError);
 app.use((error, req, res, next) => {
   // console.log('Hello');
   // res.redirect('/500');
-  res.status(500).render('500',{
+  res.status(500).render('500', {
     pageTitle: "Error!",
     path: '/500',
     isAuthenticated: req.session.isLoggedIn
-});
+  });
 });
 
 mongoose
