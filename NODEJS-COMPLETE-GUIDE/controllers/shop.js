@@ -6,6 +6,8 @@ const Order = require("../models/order");
 
 const PDFDocument = require("pdfkit");
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
   Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS. find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
     .then((products) => {
@@ -40,8 +42,12 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.getIndex = (req, res, next) => {
+  const page = req.query.page; // .../?page=1...
+
   Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS
     //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+    .skip((page - 1) * ITEMS_PER_PAGE) // bo qua con tro thu
+    .limit(ITEMS_PER_PAGE) //gioi han so product nhan ve
     .then((products) => {
       // console.log(products);
       res.render("shop/index", {
