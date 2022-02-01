@@ -43,17 +43,30 @@ exports.getProduct = (req, res, next) => {
 
 exports.getIndex = (req, res, next) => {
   const page = req.query.page; // .../?page=1...
+  let totalItems;
 
-  Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS
-    //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
-    .skip((page - 1) * ITEMS_PER_PAGE) // bo qua con tro thu
-    .limit(ITEMS_PER_PAGE) //gioi han so product nhan ve
+  Product.find()
+    .count()
+    .then((numProducts) => {
+      totalItems = numProducts;
+
+      return Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS
+      //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
+      .skip((page - 1) * ITEMS_PER_PAGE) // bo qua con tro thu
+      .limit(ITEMS_PER_PAGE) //gioi han so product nhan ve
+    })
     .then((products) => {
       // console.log(products);
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
         path: "/",
+        totalProducts: totalItems,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
         // isAuthenticated: req.session.isLoggedIn,
         // csrfToken: req.csrfToken() //duoc cung cap boi goi csrfProtection trong middleware app.js
       });
