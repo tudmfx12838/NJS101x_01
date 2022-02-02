@@ -60,6 +60,7 @@ exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1; // .../?page=1...
   let totalItems;
 
+  console.log(page);
   Product.find()
     .countDocuments()
     .then((numProducts) => {
@@ -67,7 +68,7 @@ exports.getIndex = (req, res, next) => {
 
       return Product.find() //ham find() su dung trong mongodb se khac voi find() goc trong JS
       //find() trong mongodb neu khong truyen dieu kien thi se tra ve toan bo du lieu
-      .skip((page - 1) * ITEMS_PER_PAGE) // bo qua con tro thu
+      .skip((page - 1) * ITEMS_PER_PAGE) // so document muon skip
       .limit(ITEMS_PER_PAGE) //gioi han so product nhan ve
     })
     .then((products) => {
