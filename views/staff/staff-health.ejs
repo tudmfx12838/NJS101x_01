@@ -1,0 +1,143 @@
+<%- include('../includes/head.ejs') %>
+
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main class="container">
+
+        <div class="row">
+                <h2>Đăng Ký Thông Tin Thân Nhiệt</h2>
+                <form action="/health-registry" method="POST">
+                    <div class="mb-3 mt-3">
+                        <label class="form-label" for="tempInfo">Thân nhiệt: </label>
+                        <input class="form-control" type="number" name="tempInfo" id="tempInfo">
+                    </div>
+                    <div class="mb-3 mt-3">
+                        <label class="form-label" for="checkedDateTime">Thời gian đo: </label>
+                        <input class="form-control" type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="">
+                    </div>
+                    <input type="hidden" value="tempCovid" name="healthInfo">
+                    <button class="btn btn-primary" type="submit">Đăng Ký</button>
+                </form>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <h2>Đăng Ký Thông Tin Tiêm Vaccine</h2>
+            <form action="/health-registry" method="POST">
+                <div class="mb-3 mt-3">
+                    <label class="form-label" for="vaccineInfo">Mũi thứ: </label>
+                    <input class="form-control" type="number" name="vaccineInfo" id="vaccineInfo">
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label" for="vaccineDate">Ngày tiêm: </label>
+                    <input class="form-control" type="date" name="vaccineDate" id="vaccineDate">
+                </div>
+
+                <input type="hidden" value="vaccineCovid" name="healthInfo">
+                <button class="btn btn-primary" type="submit">Đăng Ký</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <h2>Đăng Ký Thông Tin Nhiễm Covid</h2>
+            <form action="/health-registry" method="POST">
+                <div class="mb-3 mt-3">
+                    <label class="form-label" for="infectCovid">Kết quả:</label>
+                    <select class="form-select" name="infectCovid" id="infectCovid">
+                        <option value="false">Âm Tính</option>
+                        <option value="true">Dương Tính</option>
+                    </select>
+                    <!-- <input type="text" name="infectCovid" id="infectCovid"> -->
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label" for="infectedDate">Ngày nhiễm: </label>
+                    <input class="form-control" type="date" name="infectedDate" id="infectedDate">
+                </div>
+
+                <input type="hidden" value="infectCovid" name="healthInfo">
+                <button class="btn btn btn-primary" type="submit">Đăng Ký</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <h2>Thông Tin Thân Nhiệt</h2>
+            <% if (bodyStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let bst of bodyStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Nhiệt độ cơ thể:</b> <%= bst.temp %> độ C
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày đo:</b> <%= bst.date.toISOString().substring(0, 10) %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin thân nhiệt</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <h2>Thông Tin Tiêm Vaccine</h2>
+            <% if (vaccineStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let vcs of vaccineStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Mũi thứ:</b> <%= vcs.time %>
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày tiêm:</b> <%= vcs.date.toISOString().substring(0, 10) %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin tiêm Vaccine</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <h2>Thông Tin Nhiễm Covid</h2>
+            <% if (covidStatus.length > 0) { %>
+                <div class="grid">
+                    <% for (let cds of covidStatus) { %>
+                        <article class="card product-item">
+                            <div class="card__content">
+                                <h2 class="product__price">
+                                    <b>Kết quả:</b> <%= cds.infect == true ? 'Dương Tính' : 'Âm Tính' %> 
+                                </h2>
+                                <p class="product__description">
+                                    <b>Ngày nhiễm:</b> <%= cds.date.toISOString().substring(0, 10) %>
+                                </p>
+                            </div>
+                        </article>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin nhiễm Covid</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+    </main>
+
+<%- include('../includes/end.ejs') %>

@@ -1,0 +1,101 @@
+<%- include('../includes/head.ejs') %>
+
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-12 col-sm-7 col-lg-9"></div>
+                <div class="col-12 col-sm-5 col-lg-3">
+                    <form class="input-group" action="/staff-info" method="GET">
+                        <input class="form-control" type="text" id="search" name="search" placeholder="Nhập dữ liệu cần tìm">
+                        <button class="btn btn-primary" type="submit">Tìm</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-12 col-sm-12 col-lg-5">
+                    <img class="card-img-top" src="<%= staff.image %>" alt="<%= staff.name %>" style="height:max-height;">
+                </div>
+                <div class="col-12 col-sm-12 col-lg-7">
+                    <div class="card">
+                        <div class="card-body">
+                        <h4 class="card-title"><%= staff.name %></h4>
+                        <p class="card-text">Mã số: <%= staff.idNumber %></p>
+                        <p class="card-text">Tên nhân viên: <%= staff.name %></p>
+                        <p class="card-text">Ngày sinh: <%= staff.doB.toISOString().substring(0, 10) %></p>
+                        <p class="card-text">Ngày vào công ty: <%= staff.startDate.toISOString().substring(0, 10) %></p>
+                        <p class="card-text">Phòng ban: <%= staff.department %></p>
+                        <p class="card-text">Hệ số lương: <%= staff.salaryScale %></p>
+                        <p class="card-text">Số giờ nghỉ phép còn: <%= staff.annualLeave %> giờ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" >
+                <!-- Trigger/Open The Modal -->
+                <div class="col-sm-3">
+		            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Chỉnh sửa</button>
+                </div>
+                <!-- The Modal -->
+            </div>
+            <div>
+                <div id="myModal" class="modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Chỉnh sửa thông tin Nhân Viên</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/staff-info" method="POST">
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="idNumber">MSNV: </label>
+                                        <input class="form-control" type="text" name="idNumber" id="idNumber" value="<%= staff.idNumber %>" disabled>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="name">Tên Nhân Viên: </label>
+                                        <input class="form-control" type="text" name="name" id="name" value="<%= staff.name %>" disabled>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="doB">Ngày sinh: </label>
+                                        <input class="form-control" type="date" name="doB" id="doB" value="<%= staff.doB.toISOString().substring(0, 10) %>" disabled>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="startDate">Ngày vào công ty: </label>
+                                        <input class="form-control" type="date" name="startDate" id="startDate" value="<%= staff.startDate.toISOString().substring(0, 10) %>" disabled>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="salaryScale">Hệ số lương: </label>
+                                        <input class="form-control" type="number" name="salaryScale" id="salaryScale" value="<%= staff.salaryScale %>" disabled>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="department">Phòng ban: </label>
+                                        <select class="form-select" name="department" id="department" value="staff" disabled>
+                                            <option value="IT">IT</option>
+                                            <option value="HR">HR</option>
+                                            <option value="Sale">Sale</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="Finance">Finance</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="image">Link Ảnh: </label>
+                                        <input class="form-control" type="text" name="image" id="image" value="<%= staff.image %>">
+                                    </div>
+                                    <button class="btn btn-primary" type="submit">Cập nhật</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy cập nhật</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<%- include('../includes/end.ejs') %>

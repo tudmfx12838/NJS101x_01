@@ -1,0 +1,81 @@
+<%- include('../includes/head.ejs') %>
+    <!-- <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/modal.css"> -->
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main>
+        <div class="container mt-3" >
+            <!-- Trigger/Open The Modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Thêm Nhân Viên</button>
+                <!-- The Modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Thêm Nhân Viên Mới</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form class="staff-form" action="/add-staff" method="POST">
+                                <div class="form-control">
+                                    <label for="idNumber">MSNV: </label>
+                                    <input type="text" name="idNumber" id="idNumber" value="" placeholder="Nhập mã số nhân viên">
+                                </div>
+                                <div class="form-control">
+                                    <label for="password">Mật khẩu: </label>
+                                    <input type="password" name="password" id="password">
+                                </div>
+                                <div class="form-control">
+                                    <label for="permission">Quyền truy cập: </label>
+                                    <select name="permission" id="permission" value="user">
+                                        <option value="user">user</option>
+                                        <option value="admin">admin</option>
+                                    </select>
+                                </div>
+                                <div class="form-control">
+                                    <label for="name">Tên Nhân Viên: </label>
+                                    <input type="text" name="name" id="name" value="">
+                                </div>
+                                <div class="form-control">
+                                    <label for="doB">Ngày sinh: </label>
+                                    <input type="date" name="doB" id="doB" value="">
+                                </div>
+                                <div class="form-control">
+                                    <label for="startDate">Ngày vào công ty: </label>
+                                    <input type="date" name="startDate" id="startDate" value="">
+                                </div>
+                                <div class="form-control">
+                                    <label for="salaryScale">Hệ số lương: </label>
+                                    <input type="number" name="salaryScale" id="salaryScale" value="">
+                                </div>
+                                <div class="form-control">
+                                    <label for="department">Phòng ban: </label>
+                                    <select name="department" id="department">
+                                        <option value="IT">IT</option>
+                                        <option value="HR">HR</option>
+                                        <option value="Sale">Sale</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Finance">Finance</option>
+                                    </select>
+                                </div>
+                                <div class="form-control">
+                                    <label for="annualLeave">Ngày phép còn: </label>
+                                    <input type="number" name="annualLeave" id="annualLeave" value="">
+                                </div>
+                                <div class="form-control">
+                                    <label for="image">Link Ảnh: </label>
+                                    <input type="text" name="image" id="image" value="">
+                                </div>
+                                <button class="btn btn-primary" type="submit">Thêm</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </main>
+
+<%- include('../includes/end.ejs') %>

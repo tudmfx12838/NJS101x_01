@@ -1,0 +1,34 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">
+          <img style="width:40px;" class="rounded-pill" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIJut8gagS0JcjxhNzg5we4F49AgTCsSDlng&usqp=CAU" alt="Logo">
+        </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mynavbar">
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">Chấm Công</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= path === '/staff-info' ? 'active' : '' %>" href="/staff-info">Thông Tin</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= path === '/consultation' ? 'active' : '' %>" href="/consultation">Tra Cứu</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= path === '/health-info' ? 'active' : '' %>" href="/health-info">Sức Khỏe</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link <%= path === '/staffs' ? 'active' : '' %>" href="/staffs">Nhân Viên</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav"> 
+            <li>
+                <a class="nav-link <%= path === '/login' ? 'active' : '' %>" href="/login">Đăng Nhập</a>
+            </li>      
+        </ul>
+      </div>
+    </div>
+  </nav>
