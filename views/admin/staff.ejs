@@ -19,40 +19,40 @@
                         </div>
                         <div class="modal-body">
                             <form class="staff-form" action="/add-staff" method="POST">
-                                <div class="form-control">
-                                    <label for="idNumber">MSNV: </label>
-                                    <input type="text" name="idNumber" id="idNumber" value="" placeholder="Nhập mã số nhân viên">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="idNumber">MSNV: </label>
+                                    <input class="form-control" type="text" name="idNumber" id="idNumber" value="" placeholder="Nhập mã số nhân viên">
                                 </div>
-                                <div class="form-control">
-                                    <label for="password">Mật khẩu: </label>
-                                    <input type="password" name="password" id="password">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="password">Mật khẩu: </label>
+                                    <input class="form-control" type="password" name="password" id="password">
                                 </div>
-                                <div class="form-control">
-                                    <label for="permission">Quyền truy cập: </label>
-                                    <select name="permission" id="permission" value="user">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="permission">Quyền truy cập: </label>
+                                    <select class="form-select" name="permission" id="permission" value="user">
                                         <option value="user">user</option>
                                         <option value="admin">admin</option>
                                     </select>
                                 </div>
-                                <div class="form-control">
-                                    <label for="name">Tên Nhân Viên: </label>
-                                    <input type="text" name="name" id="name" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="name">Tên Nhân Viên: </label>
+                                    <input class="form-control" type="text" name="name" id="name" value="">
                                 </div>
-                                <div class="form-control">
-                                    <label for="doB">Ngày sinh: </label>
-                                    <input type="date" name="doB" id="doB" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="doB">Ngày sinh: </label>
+                                    <input class="form-control" type="date" name="doB" id="doB" value="">
                                 </div>
-                                <div class="form-control">
-                                    <label for="startDate">Ngày vào công ty: </label>
-                                    <input type="date" name="startDate" id="startDate" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="startDate">Ngày vào công ty: </label>
+                                    <input class="form-control" type="date" name="startDate" id="startDate" value="">
                                 </div>
-                                <div class="form-control">
-                                    <label for="salaryScale">Hệ số lương: </label>
-                                    <input type="number" name="salaryScale" id="salaryScale" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="salaryScale">Hệ số lương: </label>
+                                    <input class="form-control" type="number" name="salaryScale" id="salaryScale" value="">
                                 </div>
-                                <div class="form-control">
-                                    <label for="department">Phòng ban: </label>
-                                    <select name="department" id="department">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="department">Phòng ban: </label>
+                                    <select class="form-select" name="department" id="department">
                                         <option value="IT">IT</option>
                                         <option value="HR">HR</option>
                                         <option value="Sale">Sale</option>
@@ -60,13 +60,13 @@
                                         <option value="Finance">Finance</option>
                                     </select>
                                 </div>
-                                <div class="form-control">
-                                    <label for="annualLeave">Ngày phép còn: </label>
-                                    <input type="number" name="annualLeave" id="annualLeave" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="annualLeave">Ngày phép còn: </label>
+                                    <input class="form-control" type="number" name="annualLeave" id="annualLeave" value="">
                                 </div>
-                                <div class="form-control">
-                                    <label for="image">Link Ảnh: </label>
-                                    <input type="text" name="image" id="image" value="">
+                                <div class="mb-3 mt-3">
+                                    <label class="form-label" for="image">Link Ảnh: </label>
+                                    <input class="form-control" type="text" name="image" id="image" value="">
                                 </div>
                                 <button class="btn btn-primary" type="submit">Thêm</button>
                             </form>
