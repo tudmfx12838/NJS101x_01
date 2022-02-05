@@ -3,12 +3,21 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const session = require("express-session");
+const MongoDbStore = require("connect-mongodb-session")(session);
 
 const User = require('./models/user');
 const Staff = require('./models/staff');
 
-
+const MONGODB_URL = "mongodb+srv://admin:1234@cluster0.2tyxr.mongodb.net/myApp?retryWrites=true&w=majority";
 const app = express();
+
+//Configure to store session in db
+const store = new MongoDbStore({
+  uri: MONGODB_URL,
+  collection: "sessions",
+  // expires  them vao de tu xoa sau het phien
+});
 
 //Templace Engine EJS
 //And point to views's folder
@@ -23,6 +32,14 @@ const adminRouter = require('./routes/admin');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+  store: store
+}));
+
 
 //Registry a user
 app.use((req, res, next) => {
@@ -45,7 +62,7 @@ app.use(adminRouter);
 //Connect to db by mongoose
 mongoose
     .connect(
-        'mongodb+srv://admin:1234@cluster0.2tyxr.mongodb.net/myApp?retryWrites=true&w=majority'
+      MONGODB_URL
     )
     .then((result) => {
         app.listen(3002);

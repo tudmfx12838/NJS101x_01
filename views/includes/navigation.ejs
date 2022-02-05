@@ -25,9 +25,17 @@
             </li>
         </ul>
         <ul class="navbar-nav"> 
+          <% if (!isAuthenticated) { %> 
             <li>
                 <a class="nav-link <%= path === '/login' ? 'active' : '' %>" href="/login">Đăng Nhập</a>
-            </li>      
+            </li>
+          <% } else { %>     
+            <li>
+              <form class="nav-link" action="/logout" method="POST">
+                  <button class="btn-dark" type="submit">Đăng Xuất</button>
+              </form>
+            </li>
+          <% } %>
         </ul>
       </div>
     </div>
