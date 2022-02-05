@@ -6,12 +6,6 @@ const staffController = require('../controllers/staff');
 const router = express.Router();
 
 
-//route to get add staff feature
-router.get('/staffs', staffController.getStaffs);
-
-//route to post added new staff data to database
-router.post('/add-staff', staffController.postAddStaff);
-
 //route to get staff information of view
 router.get('/staff-info', staffController.getStaffInfo);
 
@@ -43,7 +37,6 @@ router.get('/consultation', staffController.getConsultation);
 
 //route to post staff's consultation to database
 router.post('/consultation', staffController.postConsultarion);
-
 
 
 module.exports = router;

@@ -3,7 +3,6 @@ const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
 const User = require('./models/user');
 const Staff = require('./models/staff');
@@ -19,7 +18,8 @@ app.set("views", "views");
 //Import Router
 // const loginRoutes = require('./routes/login');
 const staffRoutes = require('./routes/staff');
-const userRoutes = require('./routes/user');
+const authRoutes = require('./routes/auth');
+const adminRouter = require('./routes/admin');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -38,8 +38,9 @@ app.use((req, res, next) => {
 });
 
 //Connect to Routers
-app.use(userRoutes);
+app.use(authRoutes);
 app.use(staffRoutes);
+app.use(adminRouter);
 
 //Connect to db by mongoose
 mongoose
