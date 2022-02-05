@@ -8,7 +8,9 @@ const userController = require('../controllers/auth');
 router.get('/login', userController.getUserLogin);
 
 //post user login
-router.post('/logging', userController.postUserLogin);
+router.post('/login', userController.postUserLogin);
+
+router.post('/logout', userController.postUserLogout);
 
 
 module.exports = router;

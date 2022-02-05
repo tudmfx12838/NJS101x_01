@@ -1,7 +1,6 @@
 const Staff = require("../models/staff");
 const Health = require("../models/health");
 const TimeSheet = require("../models/timesheet");
-const User = require("../models/user");
 
 // const dateformat = require('dateformat');
 // const dateFormat = require('date-and-time');
@@ -34,17 +33,12 @@ exports.getStaffInfo = (req, res, next) => {
           }
       });
   } else {
-    req.user
-      .populate("staffId")
-      .then((staff) => {
-        res.render("staff/staff-info", {
-          pageTitle: "Thông Tin Nhân Viên",
-          path: "/staff-info",
-          staff: staff.staffId,
-        });
-        console.log(req.user);
-      })
-      .catch((err) => console.log(err));
+      res.render("staff/staff-info", {
+        pageTitle: "Thông Tin Nhân Viên",
+        path: "/staff-info",
+        isAuthenticated: req.session.isLoggedIn,
+        staff: req.user,
+      });
   }
 };
 

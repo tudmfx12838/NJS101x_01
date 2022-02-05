@@ -6,7 +6,6 @@ const mongoose = require('mongoose');
 const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
 
-const User = require('./models/user');
 const Staff = require('./models/staff');
 
 const MONGODB_URL = "mongodb+srv://admin:1234@cluster0.2tyxr.mongodb.net/myApp?retryWrites=true&w=majority";
@@ -41,17 +40,31 @@ app.use(session({
 }));
 
 
-//Registry a user
+// //Registry a user
+// app.use((req, res, next) => {
+//   Staff.findById("61e26ea6b5b6fe5e5e979334")
+//     .then((user) => {
+//       // req.user = user; //user lay tu database
+//       // console.log(user);
+//       req.user = user; //user nay tra ve tu findById (ham cua mongoose) lay tu database
+//       next();
+//     })
+//     .catch((err) => console.log(err));
+//   //    next();
+// });
+
 app.use((req, res, next) => {
-  User.findById("61e26ea6b5b6fe5e5e979334")
+  if(!req.session.user){
+    next();
+  } else {
+    
+    Staff.findById(req.session.user._id)
     .then((user) => {
-      // req.user = user; //user lay tu database
-      // console.log(user);
-      req.user = user; //user nay tra ve tu findById (ham cua mongoose) lay tu database
+      req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
-  //    next();
+    .catch((err) => console.log(err)); 
+  }
 });
 
 //Connect to Routers

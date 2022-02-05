@@ -9,6 +9,7 @@ exports.getStaffs = (req, res, next) => {
     res.render("admin/staff", {
       pageTitle: "Nhân Viên",
       path: "/staffs",
+      isAuthenticated: req.session.isLoggedIn
     });
   };
   
