@@ -1,5 +1,6 @@
 const Staff = require('../models/staff');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 exports.getUserLogin = ((req, res, next) => {
     res.render('auth/user-login', {
@@ -14,29 +15,32 @@ exports.postUserLogin = ((req, res, next) => {
     const password = req.body.password;
 
     Staff
-        .find({idNumber: loginId, password: password})
+        .findOne({idNumber: loginId})
         .then(staff => {
-            // console.log(mongoose.Types.ObjectId(staff._id));
-            // console.log(staff[0]);
-            if(staff[0]){
-                req.session.isLoggedIn = true;
-                req.session.user = staff[0];
-                return req.session.save((err) => {
-                    //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
-                    console.log(err);
-                    res.redirect("/staffs");
-                });
-                
-            }else{
-                console.log('Mã số nhân viên hoặc mật khẩu không hợp lệ');
+            if(!staff){
+                return res.redirect('/login');
             }
+            bcrypt
+                .compare(password, staff.password)
+                .then(doMatch => {
+                    if(doMatch){
+                        req.session.isLoggedIn = true;
+                        req.session.user = staff;
+                        return req.session.save((err) => {
+                            //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
+                            console.log(err);
+                            res.redirect("/staffs");
+                        });
+                    }
+
+                    res.redirect('/login');
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.redirect('/login');
+                });
         })         
-        .then((result) => {
-        })
         .catch(err => console.log(err));
-    // req.session.isLoggedIn = true;
-    // req.session.isLoggedIn1 = false;
-    // res.redirect('/login');
 });
 
 exports.postUserLogout = (req, res, next) => {

@@ -19,6 +19,7 @@
     "start-server": "node app.js"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "connect-mongodb-session": "^3.1.1",
     "date-and-time": "^2.1.0",

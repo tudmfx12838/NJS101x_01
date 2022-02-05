@@ -1,4 +1,5 @@
 const express = require('express');
+const isAuth = require('../middleware/is_auth');
 
 //import staff controller
 const staffController = require('../controllers/staff');
@@ -7,36 +8,36 @@ const router = express.Router();
 
 
 //route to get staff information of view
-router.get('/staff-info', staffController.getStaffInfo);
+router.get('/staff-info', isAuth, staffController.getStaffInfo);
 
 //route to post staff information to database
-router.post('/staff-info', staffController.postStaffInfo);
+router.post('/staff-info', isAuth, staffController.postStaffInfo);
 
 //route to get health information
-router.get('/health-info', staffController.getHealthInfo);
+router.get('/health-info', isAuth, staffController.getHealthInfo);
 
 //route to post registried health information to database
-router.post('/health-registry', staffController.postHealthInfo);
+router.post('/health-registry', isAuth, staffController.postHealthInfo);
 
 //route to get staff's timesheet of view
-router.get('/', staffController.getStaffTimeSheet);
+router.get('/', isAuth, staffController.getStaffTimeSheet);
 
 
 // router.post('/update-timesheet', staffController.postStartTime);
 //route to post working time is begin
-router.post('/timesheet-starttime', staffController.postStartTime);
+router.post('/timesheet-starttime', isAuth, staffController.postStartTime);
 
 //route to post working time is end
-router.post('/timesheet-endtime', staffController.postEndTime);
+router.post('/timesheet-endtime', isAuth, staffController.postEndTime);
 
 //route to post taking a leave
-router.post('/timesheet-takeleave', staffController.postTakeLeave);
+router.post('/timesheet-takeleave', isAuth, staffController.postTakeLeave);
 
 //route to get staff's consultation of view
-router.get('/consultation', staffController.getConsultation);
+router.get('/consultation', isAuth, staffController.getConsultation);
 
 //route to post staff's consultation to database
-router.post('/consultation', staffController.postConsultarion);
+router.post('/consultation', isAuth, staffController.postConsultarion);
 
 
 module.exports = router;

@@ -1,4 +1,5 @@
 const Staff = require("../models/staff");
+const bcrypt = require('bcryptjs');
 
 /*
 # Method name: getStaffs
@@ -6,6 +7,9 @@ const Staff = require("../models/staff");
 # Description: show add staff feature
 */
 exports.getStaffs = (req, res, next) => {
+    if(!req.session.isLoggedIn){
+      return res.redirect('/login');
+    }
     res.render("admin/staff", {
       pageTitle: "Nhân Viên",
       path: "/staffs",
@@ -32,23 +36,34 @@ exports.getStaffs = (req, res, next) => {
     const department = req.body.department;
     const annualLeave = req.body.annualLeave;
     const image = req.body.image;
-    const staff = new Staff({
-      idNumber: idNumber,
-      password: password,
-      permission: permission,
-      name: name,
-      doB: doB,
-      salaryScale: salaryScale,
-      startDate: startDate,
-      department: department,
-      annualLeave: annualLeave,
-      image: image,
-    });
-    console.log(req.body);
-    staff
-      .save()
+
+    Staff
+      .findOne({idNumber: idNumber}) //checking exist in db or not
+      .then(staffDoc => {
+        if(staffDoc){
+          return res.redirect('/staffs');
+        }
+
+        return bcrypt.hash(password, 12)
+      })
+      .then(hashedPassword => {
+        const staff = new Staff({
+          idNumber: idNumber,
+          password: hashedPassword,
+          permission: permission,
+          name: name,
+          doB: doB,
+          salaryScale: salaryScale,
+          startDate: startDate,
+          department: department,
+          annualLeave: annualLeave,
+          image: image,
+        });
+
+        return staff.save();
+      })
       .then(() => {
-        res.redirect("/staffs");
+        res.redirect("/login");
       })
       .catch((err) => console.log(err));
   };
