@@ -6,7 +6,8 @@ exports.getUserLogin = ((req, res, next) => {
     res.render('auth/user-login', {
         pageTitle: "Login",
         path:'/login',
-        isAuthenticated: req.session.isLoggedIn
+        isAuthenticated: req.session.isLoggedIn,
+        csrfToken: req.csrfToken() //duoc cung cap boi goi csrfProtection trong middleware app.js
     })
 });
 

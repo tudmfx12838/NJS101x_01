@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require("express-session");
 const MongoDbStore = require("connect-mongodb-session")(session);
+const csrf = require('csurf');
 
 const Staff = require('./models/staff');
 
@@ -18,6 +19,8 @@ const store = new MongoDbStore({
   // expires  them vao de tu xoa sau het phien
 });
 
+const csrfProtection = csrf();
+
 //Templace Engine EJS
 //And point to views's folder
 app.set("view engine", "ejs");
@@ -28,6 +31,7 @@ app.set("views", "views");
 const staffRoutes = require('./routes/staff');
 const authRoutes = require('./routes/auth');
 const adminRouter = require('./routes/admin');
+const errorController = require("./controllers/error");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -39,19 +43,7 @@ app.use(session({
   store: store
 }));
 
-
-// //Registry a user
-// app.use((req, res, next) => {
-//   Staff.findById("61e26ea6b5b6fe5e5e979334")
-//     .then((user) => {
-//       // req.user = user; //user lay tu database
-//       // console.log(user);
-//       req.user = user; //user nay tra ve tu findById (ham cua mongoose) lay tu database
-//       next();
-//     })
-//     .catch((err) => console.log(err));
-//   //    next();
-// });
+app.use(csrfProtection);
 
 app.use((req, res, next) => {
   if(!req.session.user){
@@ -67,10 +59,18 @@ app.use((req, res, next) => {
   }
 });
 
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
 //Connect to Routers
 app.use(authRoutes);
 app.use(staffRoutes);
 app.use(adminRouter);
+
+app.use(errorController.getPageError);
 
 //Connect to db by mongoose
 mongoose

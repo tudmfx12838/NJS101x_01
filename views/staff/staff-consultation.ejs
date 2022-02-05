@@ -12,6 +12,8 @@
                 <div class="col-10 col-sm-4">
                     <form action="/consultation" method="POST">
                         <label class="form-label" for="monthSalary">Tra cứu thông tin theo tháng: </label>
+
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                         <input class="form-control mt-1" type="month" id="monthSalary" name="monthSalary">
                         <button class="btn btn-primary mt-1" type="submit">Xem</button>
                     </form>

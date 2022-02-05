@@ -8,6 +8,7 @@
       </button>
       <div class="collapse navbar-collapse" id="mynavbar">
         <ul class="navbar-nav me-auto">
+          <% if (isAuthenticated) { %>
             <li class="nav-item">
                 <a class="nav-link <%= path === '/' ? 'active' : '' %>" href="/">Chấm Công</a>
             </li>
@@ -23,6 +24,7 @@
             <li class="nav-item">
                 <a class="nav-link <%= path === '/staffs' ? 'active' : '' %>" href="/staffs">Nhân Viên</a>
             </li>
+          <% } %>
         </ul>
         <ul class="navbar-nav"> 
           <% if (!isAuthenticated) { %> 
@@ -32,6 +34,7 @@
           <% } else { %>     
             <li>
               <form class="nav-link" action="/logout" method="POST">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                   <button class="btn-dark" type="submit">Đăng Xuất</button>
               </form>
             </li>

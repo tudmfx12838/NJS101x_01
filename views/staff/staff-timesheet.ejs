@@ -46,6 +46,7 @@
                                     <div class="mb-3 mt-3">
                                         <div class="row">
                                             <div class="col">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                                 <button class="btn btn-primary" type="submit">Bắt đầu làm</button>
                                             </div>
                                             <div class="col">
@@ -63,6 +64,7 @@
 
             <div class="mt-3 col-sm-3">
                 <form class="staff-form" action="/timesheet-endtime" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button class="btn btn-primary" type="submit">Kết thúc làm</button>
                 </form>
             </div>
@@ -105,7 +107,8 @@
                                         <span>Ngày quy đổi: </span><span id="timeConvert"></span><span> ngày</span>
                                         <p>--Chú ý: Thời gian nghỉ phép 8h/ngày (trừ thứ bảy và chúa nhật)</p>
                                     </div>
-
+                                    
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button class="btn btn-primary" type="submit">Đăng Ký</button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
                                 </form>

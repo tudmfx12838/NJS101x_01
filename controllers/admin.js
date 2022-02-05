@@ -7,13 +7,11 @@ const bcrypt = require('bcryptjs');
 # Description: show add staff feature
 */
 exports.getStaffs = (req, res, next) => {
-    if(!req.session.isLoggedIn){
-      return res.redirect('/login');
-    }
     res.render("admin/staff", {
       pageTitle: "Nhân Viên",
       path: "/staffs",
-      isAuthenticated: req.session.isLoggedIn
+      isAuthenticated: req.session.isLoggedIn,
+      csrfToken: req.csrfToken() 
     });
   };
   

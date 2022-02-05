@@ -87,6 +87,8 @@
                                         <label class="form-label" for="image">Link Ảnh: </label>
                                         <input class="form-control" type="text" name="image" id="image" value="<%= staff.image %>">
                                     </div>
+
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button class="btn btn-primary" type="submit">Cập nhật</button>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy cập nhật</button>
                                 </form>

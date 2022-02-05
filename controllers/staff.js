@@ -36,7 +36,6 @@ exports.getStaffInfo = (req, res, next) => {
       res.render("staff/staff-info", {
         pageTitle: "Thông Tin Nhân Viên",
         path: "/staff-info",
-        isAuthenticated: req.session.isLoggedIn,
         staff: req.user,
       });
   }
@@ -72,38 +71,36 @@ exports.postStaffInfo = (req, res, next) => {
   list infomation after registied.
 */
 exports.getHealthInfo = (req, res, next) => {
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      Health.find({ staffId: staff.staffId._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-        .then((health) => {
-          if (health.length <= 0) {
-            //if user not exist, add new user.
-            const health = new Health({
-              staffId: staff.staffId._id,
-            });
-            health.save();
-          }
-        })
-        .catch((err) => console.log(err));
-      return staff;
-    })
-    .then((staff) => {
-      Health.find({ staffId: staff.staffId._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-        .then((health) => {
-          console.log(health);
-          res.render("staff/staff-health", {
-            pageTitle: "Thông Tin Sức Khỏe",
-            path: "/health-info",
-            vaccineStatus: health[0].vaccineInfo.vaccineStatus,
-            covidStatus: health[0].covidInfo.covidStatus,
-            bodyStatus: health[0].bodyInfo.bodyStatus,
+  const staff = req.user;
+
+    Health.find({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+      .then((health) => {
+        if (health.length <= 0) {
+          //if user not exist, add new user.
+          const health = new Health({
+            staffId: staff._id,
           });
-          // console.log(health);
-        })
-        .catch((err) => console.log(err));
-    })
-    .catch((err) => console.log(err));
+          return health.save();
+        }
+        return staff;
+      })            
+      .then((staff) => {
+        Health.find({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+          .then((health) => {
+            console.log(health);
+            res.render("staff/staff-health", {
+              pageTitle: "Thông Tin Sức Khỏe",
+              path: "/health-info",
+              vaccineStatus: health[0].vaccineInfo.vaccineStatus,
+              covidStatus: health[0].covidInfo.covidStatus,
+              bodyStatus: health[0].bodyInfo.bodyStatus,
+              // csrfToken: req.csrfToken() 
+            });
+            // console.log(health);
+          })
+          .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
 };
 
 /*
@@ -114,7 +111,9 @@ exports.getHealthInfo = (req, res, next) => {
 exports.postHealthInfo = (req, res, next) => {
   const healthInfo = req.body.healthInfo;
   let healthData = "";
-  Health.find({ staffId: req.user.staffId._id })
+  const staff = req.user;
+
+  Health.find({ staffId: staff._id })
     .then((health) => {
       console.log(health[0]);
       if (healthInfo == "tempCovid") {
@@ -154,37 +153,32 @@ exports.postHealthInfo = (req, res, next) => {
 # Description: show working status, start time working, end time working and take leave feature
 */
 exports.getStaffTimeSheet = (req, res, next) => {
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      TimeSheet.find({ staffId: staff.staffId._id })
-        .then((timesheet) => {
-          // console.log(timesheet);
-          if (timesheet.length <= 0) {
-            //if user not exist, add new user.
-            const timesheet = new TimeSheet({
-              staffId: staff.staffId._id,
-              workInfo: [],
-              timeTotal: [],
-              workStatus: false,
-            });
-            timesheet.save();
-            return res.redirect("/");
-          } else {
-            res.render("staff/staff-timesheet", {
-              pageTitle: "Chấm Công",
-              path: "/",
-              staff: staff.staffId,
-              timesheet: timesheet[0],
-              // covidStatus: health.covidInfo.covidStatus,
-              // bodyStatus: health.bodyInfo.bodyStatus,
-            });
-          }
-        })
-        .catch((err) => console.log(err));
-    })
-    .then((staff) => {
-      //
+  // console.log(req.user._id);
+  // console.log(req.user);
+  const staff = req.user;
+
+  TimeSheet.find({ staffId: staff._id })
+    .then((timesheet) => {
+      // console.log(timesheet);
+      if (timesheet.length <= 0) {
+        //if user not exist, add new user.
+        const timesheet = new TimeSheet({
+          staffId: staff._id,
+          workInfo: [],
+          timeTotal: [],
+          workStatus: false,
+        });
+        timesheet.save();
+        return res.redirect("/");
+      } else {
+        res.render("staff/staff-timesheet", {
+          pageTitle: "Chấm Công",
+          path: "/",
+          staff: staff,
+          timesheet: timesheet[0],
+          // csrfToken: req.csrfToken() 
+        });
+      }
     })
     .catch((err) => console.log(err));
 };
@@ -197,19 +191,18 @@ exports.getStaffTimeSheet = (req, res, next) => {
 exports.postStartTime = (req, res, next) => {
   // const timeNow = new Date().toLocaleString('en-US', { timeZone: 'Japan' });
   const timeNow = new Date();
-  // console.log(timeInfo);
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      TimeSheet.find({ staffId: req.user.staffId }).then((timesheet) => {
-        // console.log(timeNow.getHours());
-        timesheet[0]
-          .addStartTime({ location: req.body.location, startTime: timeNow })
-          .then((result) => {
-            res.redirect("/");
-          })
-          .catch((err) => console.log(err));
-      });
+  const staff = req.user;
+
+  TimeSheet
+    .find({ staffId: staff._id })
+    .then((timesheet) => {
+      // console.log(timeNow.getHours());
+      timesheet[0]
+        .addStartTime({ location: req.body.location, startTime: timeNow })
+        .then((result) => {
+          res.redirect("/");
+        })
+        .catch((err) => console.log(err));
     })
     .catch((err) => console.log(err));
 };
@@ -221,12 +214,11 @@ exports.postStartTime = (req, res, next) => {
 */
 exports.postEndTime = (req, res, next) => {
   const timeNow = new Date();
-  // console.log(timeInfo);
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      TimeSheet.find({ staffId: req.user.staffId }).then((timesheet) => {
+  const staff = req.user;
 
+    TimeSheet
+      .find({ staffId: staff._id })
+      .then((timesheet) => {
         //Before checking out, must check regsisted start time and working place are existing or not
         //If not, imform to user
         if (
@@ -243,9 +235,8 @@ exports.postEndTime = (req, res, next) => {
         } else {
           console.log('Chưa đăng ký thời gian và địa điểm làm việc');
         }
-      });
-    })
-    .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
 };
 
 /*
@@ -254,12 +245,11 @@ exports.postEndTime = (req, res, next) => {
 # Description: take leave feature
 */
 exports.postTakeLeave = (req, res, next) => {
-  const timeNow = new Date();
-  // console.log(timeInfo);
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      TimeSheet.find({ staffId: req.user.staffId }).then((timesheet) => {
+  const staff = req.user;
+
+    TimeSheet
+      .find({ staffId: staff._id })
+      .then((timesheet) => {
 
         //Get from input data from take leave input form
         const startDateTime = new Date(req.body.startDateTime);
@@ -267,7 +257,7 @@ exports.postTakeLeave = (req, res, next) => {
         const leaveTime = parseInt(req.body.leaveTime);
 
         //Get user annauleave info
-        const annualLeave = staff.staffId.annualLeave;
+        const annualLeave = staff.annualLeave;
 
         //Checking start time and end time are valid or not
         //Leave rule: start time is alway less than and equal to end time
@@ -312,8 +302,8 @@ exports.postTakeLeave = (req, res, next) => {
             if (checkExist.length <= 0) {
               if (sumTimeLeave <= annualLeave) {
                 timesheet[0].addTakeLeave(leaveTime_ar).then((result) => {
-                  staff.staffId.annualLeave = annualLeave - sumTimeLeave;
-                  staff.staffId
+                  staff.annualLeave = annualLeave - sumTimeLeave;
+                  staff
                     .save()
                     .then(() => {})
                     .catch((err) => console.log(err));
@@ -339,10 +329,8 @@ exports.postTakeLeave = (req, res, next) => {
         } else { //Leave rule: start time is alway less than and equal to end time
           console.log("Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày");
         }
-        
-      });
-    })
-    .catch((err) => console.log(err));
+      })
+      .catch((err) => console.log(err));
 };
 
 /*
@@ -351,28 +339,20 @@ exports.postTakeLeave = (req, res, next) => {
 # Description: show recored timesheet, can select date to view
 */
 exports.getConsultation = (req, res, next) => {
+  const staff = req.user;
 
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      // TimeSheet.find({ location: 'Côn*' })
-      // .then((timesheet) => {
-      //   console.log(timesheet);
-      // })
-      // .catch((err) => console.log(err));
-      //calSalary
-      TimeSheet.find({ staffId: staff.staffId._id })
-        .then((timesheet) => {
-          res.render("staff/staff-consultation", {
-            pageTitle: "Tra Cứu",
-            path: "/consultation",
-            timeResults: timesheet[0].timeResults,
-            timeSheetDatas: timesheet[0].timeSheetDatas,
-            takeLeaveInfo: timesheet[0].takeLeaveInfo,
-            monthSalary: timesheet[0].monthSalary,
-          });
-        })
-        .catch((err) => console.log(err));
+  TimeSheet
+    .find({ staffId: staff._id })
+    .then((timesheet) => {
+      res.render("staff/staff-consultation", {
+        pageTitle: "Tra Cứu",
+        path: "/consultation",
+        timeResults: timesheet[0].timeResults,
+        timeSheetDatas: timesheet[0].timeSheetDatas,
+        takeLeaveInfo: timesheet[0].takeLeaveInfo,
+        monthSalary: timesheet[0].monthSalary,
+        // csrfToken: req.csrfToken() 
+      })
     })
     .catch((err) => console.log(err));
 };
@@ -384,81 +364,38 @@ exports.getConsultation = (req, res, next) => {
 */
 exports.postConsultarion = (req, res, next) => {
   const monthSalary = req.body.monthSalary;
+  const staff = req.user;
 
-  req.user
-    .populate("staffId")
-    .then((staff) => {
-      TimeSheet.find({ staffId: staff.staffId._id })
-        .then((timesheet) => {
-          let calSalary = 0;
-          let countDate = 0;
-          let sumData = { overTime: 0, incompleteTime: 0 };
-          timesheet[0].timeSheetDatas.forEach((tsd) => {
-            if (tsd.date.substring(0, 7) == monthSalary) {
-              sumData.overTime += tsd.overTime;
-              sumData.incompleteTime += tsd.incompleteTime;
-              countDate += 1;
-            }
-          });
+  TimeSheet.find({ staffId: staff._id })
+    .then((timesheet) => {
+      let calSalary = 0;
+      let countDate = 0;
+      let sumData = { overTime: 0, incompleteTime: 0 };
+      timesheet[0].timeSheetDatas.forEach((tsd) => {
+        if (tsd.date.substring(0, 7) == monthSalary) {
+          sumData.overTime += tsd.overTime;
+          sumData.incompleteTime += tsd.incompleteTime;
+          countDate += 1;
+        }
+      });
 
-          console.log(countDate);
-          if (countDate > 0) {
-            calSalary =
-              300000 * staff.staffId.salaryScale +
-              (sumData.overTime - sumData.incompleteTime) * 200000;
-          } else {
-            calSalary = 0;
-            // res.redirect("/consultation");
-          }
+      console.log(countDate);
+      if (countDate > 0) {
+        calSalary =
+          300000 * staff.staffId.salaryScale +
+          (sumData.overTime - sumData.incompleteTime) * 200000;
+      } else {
+        calSalary = 0;
+        // res.redirect("/consultation");
+      }
 
-          timesheet[0].monthSalary.month = monthSalary;
-          timesheet[0].monthSalary.salary = calSalary;
-          return timesheet[0]
-            .save()
-            .then((result) => {
-              console.log(calSalary);
-              res.redirect("/consultation");
-            })
-            .catch((err) => console.log(err));
-
-          //   if (timesheet[0].monthSalaries.length <= 0) {
-          //     timesheet[0].monthSalaries.push({
-          //       month: monthSalary,
-          //       salary: calSalary,
-          //     });
-          //     return timesheet[0]
-          //       .save()
-          //       .then((result) => {
-          //         // res.redirect("/consultation");
-          //       })
-          //       .catch((err) => console.log(err));
-          //   } else {
-          //     const monthSalarieIndex = timesheet[0].monthSalaries.findIndex(
-          //       (monthSalarie) => {
-          //         return monthSalarie.month == monthSalary;
-          //       }
-          //     );
-          //     if (monthSalarieIndex < 0) {
-          //       timesheet[0].monthSalaries.push({
-          //         month: monthSalary,
-          //         salary: calSalary,
-          //       });
-          //       return timesheet[0]
-          //         .save()
-          //         .then((result) => {
-          //         //   res.redirect("/consultation");
-          //         })
-          //         .catch((err) => console.log(err));
-          //     } else {
-          //       timesheet[0].monthSalaries[monthSalarieIndex].salary = calSalary;
-          //       return timesheet[0]
-          //         .save()
-          //         .then((result) => {
-          //         //   res.redirect("/consultation");
-          //         })
-          //         .catch((err) => console.log(err));
-          //     }
-          //   }
+      timesheet[0].monthSalary.month = monthSalary;
+      timesheet[0].monthSalary.salary = calSalary;
+      return timesheet[0]
+        .save()
+        .then((result) => {
+          console.log(calSalary);
+          res.redirect("/consultation");
         })
         .catch((err) => console.log(err));
     })
