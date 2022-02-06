@@ -80,14 +80,20 @@ exports.getHealthInfo = (req, res, next) => {
           const health = new Health({
             staffId: staff._id,
           });
-          return health.save();
+          return health
+                  .save()
+                  .then(result => {
+                    res.redirect('/health-info');
+                  })
+                  .catch(err => console.log(err));
         }
         return staff;
       })            
       .then((staff) => {
-        Health.find({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+        if(staff){
+          Health.find({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
           .then((health) => {
-            console.log(health);
+            // console.log(health);
             res.render("staff/staff-health", {
               pageTitle: "Thông Tin Sức Khỏe",
               path: "/health-info",
@@ -99,6 +105,7 @@ exports.getHealthInfo = (req, res, next) => {
             // console.log(health);
           })
           .catch((err) => console.log(err));
+        }
       })
       .catch((err) => console.log(err));
 };
@@ -168,8 +175,13 @@ exports.getStaffTimeSheet = (req, res, next) => {
           timeTotal: [],
           workStatus: false,
         });
-        timesheet.save();
-        return res.redirect("/");
+        
+        return timesheet
+                    .save()
+                    .then(result => {
+                      res.redirect("/");
+                    })
+                    .catch(err => console.log(err))
       } else {
         res.render("staff/staff-timesheet", {
           pageTitle: "Chấm Công",
@@ -344,15 +356,32 @@ exports.getConsultation = (req, res, next) => {
   TimeSheet
     .find({ staffId: staff._id })
     .then((timesheet) => {
-      res.render("staff/staff-consultation", {
-        pageTitle: "Tra Cứu",
-        path: "/consultation",
-        timeResults: timesheet[0].timeResults,
-        timeSheetDatas: timesheet[0].timeSheetDatas,
-        takeLeaveInfo: timesheet[0].takeLeaveInfo,
-        monthSalary: timesheet[0].monthSalary,
-        // csrfToken: req.csrfToken() 
-      })
+      if (timesheet.length <= 0) {
+        //if user not exist, add new user.
+        const timesheet = new TimeSheet({
+          staffId: staff._id,
+          workInfo: [],
+          timeTotal: [],
+          workStatus: false,
+        });
+        return timesheet
+                    .save()
+                    .then(result => {
+                      res.redirect("/consultation");
+                    })
+                    .catch(err => console.log(err))
+      } else {
+
+        res.render("staff/staff-consultation", {
+          pageTitle: "Tra Cứu",
+          path: "/consultation",
+          timeResults: timesheet[0].c,
+          timeSheetDatas: timesheet[0].timeSheetDatas,
+          takeLeaveInfo: timesheet[0].takeLeaveInfo,
+          monthSalary: timesheet[0].monthSalary,
+          // csrfToken: req.csrfToken() 
+        })
+      }
     })
     .catch((err) => console.log(err));
 };

@@ -24,6 +24,8 @@ const staffSchema = new Schema({
     type: String,
     required: true,
   },
+  resetToken: String,
+  resetTokenExpiration: Date,
   permission: {
     type: String,
     required: true,
