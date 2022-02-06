@@ -1,5 +1,6 @@
 const Staff = require("../models/staff");
 const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
 
 /*
 # Method name: getStaffs
@@ -34,8 +35,9 @@ exports.getStaffs = (req, res, next) => {
     const startDate = req.body.startDate;
     const department = req.body.department;
     const annualLeave = req.body.annualLeave;
-    const image = req.body.image;
+    const image = req.file;
 
+    const imageUrl = image.path;
     Staff
       .findOne({idNumber: idNumber}) //checking exist in db or not
       .then(staffDoc => {
@@ -47,6 +49,7 @@ exports.getStaffs = (req, res, next) => {
       })
       .then(hashedPassword => {
         const staff = new Staff({
+          adminId: req.user._id,
           idNumber: idNumber,
           password: hashedPassword,
           permission: permission,
@@ -57,13 +60,13 @@ exports.getStaffs = (req, res, next) => {
           startDate: startDate,
           department: department,
           annualLeave: annualLeave,
-          image: image,
+          image: imageUrl,
         });
 
         return staff.save();
       })
       .then(() => {
-        res.redirect("/login");
+        res.redirect("/staffs");
       })
       .catch((err) => console.log(err));
   };

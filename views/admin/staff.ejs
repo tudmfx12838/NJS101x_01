@@ -18,7 +18,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <form class="staff-form" action="/add-staff" method="POST">
+                            <form class="staff-form" action="/add-staff" method="POST" enctype="multipart/form-data">
                                 <div class="mb-3 mt-3">
                                     <label class="form-label" for="idNumber">MSNV: </label>
                                     <input class="form-control" type="text" name="idNumber" id="idNumber" value="" placeholder="Nhập mã số nhân viên">
@@ -69,8 +69,12 @@
                                     <input class="form-control" type="number" name="annualLeave" id="annualLeave" value="">
                                 </div>
                                 <div class="mb-3 mt-3">
-                                    <label class="form-label" for="image">Link Ảnh: </label>
-                                    <input class="form-control" type="text" name="image" id="image" value="">
+                                    <label class="form-label" for="image">Ảnh: </label>
+                                    <input class="form-control"
+                                        type="file" 
+                                        name="image" 
+                                        id="image" 
+                                    >
                                 </div>
                                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                 <button class="btn btn-primary" type="submit">Thêm</button>

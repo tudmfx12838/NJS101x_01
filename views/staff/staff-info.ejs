@@ -52,7 +52,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <form action="/staff-info" method="POST">
+                                <form action="/staff-info" method="POST" enctype="multipart/form-data">
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="idNumber">MSNV: </label>
                                         <input class="form-control" type="text" name="idNumber" id="idNumber" value="<%= staff.idNumber %>" disabled>
@@ -84,8 +84,13 @@
                                         </select>
                                     </div>
                                     <div class="mb-3 mt-3">
-                                        <label class="form-label" for="image">Link Ảnh: </label>
-                                        <input class="form-control" type="text" name="image" id="image" value="<%= staff.image %>">
+                                        <label class="form-label" for="image">Ảnh: </label>
+                                        <input class="form-control"
+                                            type="file" 
+                                            name="image" 
+                                            id="image" 
+                                            value="<%= staff.image %>""
+                                        >
                                     </div>
 
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">

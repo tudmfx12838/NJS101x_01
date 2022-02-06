@@ -16,6 +16,10 @@ const Schema = mongoose.Schema;
 # - image: image url link
 */
 const staffSchema = new Schema({
+  adminId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+  },
   idNumber: {
     type: String,
     required: true,
