@@ -2,6 +2,7 @@ const Staff = require("../models/staff");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
+const { validationResult } = require('express-validator');
 
 exports.getUserLogin = (req, res, next) => {
   let message = req.flash("error");
@@ -26,6 +27,16 @@ exports.getUserLogin = (req, res, next) => {
 exports.postUserLogin = (req, res, next) => {
   const loginId = req.body.loginId;
   const password = req.body.password;
+
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/user-login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg
+    });
+  }
 
   Staff.findOne({ idNumber: loginId })
     .then((staff) => {
@@ -78,6 +89,17 @@ exports.getReset = (req, res, next) => {
 };
 
 exports.postReset = (req, res, next) => {
+
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/user-reset", {
+      path: "/reset",
+      pageTitle: "Reset Password",
+      errorMessage: errors.array()[0].msg
+    });
+  }
+
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -93,12 +115,16 @@ exports.postReset = (req, res, next) => {
         }
 
         user.resetToken = token;
-        user.resetTokenExpiration = Date.now() + 360000; //360000 milisecond = 1hour
-        return user.save();
+        user.resetTokenExpiration = Date.now() + 3600000; //3600000 milisecond = 1hour
+        return user
+                .save()
+                .then((result) => {
+                  req.flash("error", "Kiểm tra mail xác nhận trước khi thay đổi mật khẩu");
+                  res.redirect("/login");
+                });
       })
       .then((result) => {
-        req.flash("error", "Kiểm tra mail xác nhận trước khi thay đổi mật khẩu");
-        res.redirect("/login");
+        //
       })
       .catch((err) => {
         console.log(err);
@@ -111,6 +137,7 @@ exports.getNewPassword = (req, res, next) => {
     Staff
         .findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
         .then(user => {
+          console.log(user);
           let message = req.flash('error');
           if(message.length > 0){
             message = message[0];
@@ -130,10 +157,22 @@ exports.getNewPassword = (req, res, next) => {
 
   exports.postNewPassword = (req, res, next) => {
     const newPassword = req.body.password;
-    const pwConfirm = req.body.pwConfirm;
+    // const pwConfirm = req.body.pwConfirm;
     const userId = req.body.userId;
     const passwordToken = req.body.passwordToken;
     let resetUser;
+
+    const errors = validationResult(req);
+    console.log(errors.array());
+    if (!errors.isEmpty()) {
+      return res.status(422).render("auth/user-new-password", {
+        path: "/new-password",
+        pageTitle: "New Password",
+        errorMessage: errors.array()[0].msg,
+        userId: userId.toString(),
+        passwordToken: passwordToken
+      });
+    }
 
     Staff
         .findOne({resetToken: passwordToken, resetTokenExpiration:{$gt: Date.now()}, _id: userId})

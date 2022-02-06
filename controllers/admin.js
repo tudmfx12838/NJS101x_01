@@ -10,8 +10,8 @@ exports.getStaffs = (req, res, next) => {
     res.render("admin/staff", {
       pageTitle: "Nhân Viên",
       path: "/staffs",
-      isAuthenticated: req.session.isLoggedIn,
-      csrfToken: req.csrfToken() 
+      // isAuthenticated: req.session.isLoggedIn,
+      // csrfToken: req.csrfToken() 
     });
   };
   
@@ -28,6 +28,7 @@ exports.getStaffs = (req, res, next) => {
     const password = req.body.password;
     const permission = req.body.permission;
     const name = req.body.name;
+    const email = req.body.email;
     const doB = req.body.doB;
     const salaryScale = req.body.salaryScale;
     const startDate = req.body.startDate;
@@ -50,6 +51,7 @@ exports.getStaffs = (req, res, next) => {
           password: hashedPassword,
           permission: permission,
           name: name,
+          email: email,
           doB: doB,
           salaryScale: salaryScale,
           startDate: startDate,
