@@ -4,19 +4,31 @@ const router = express.Router();
 
 const { check, body } = require("express-validator");
 
+const Staff = require('../models/staff');
 const authController = require("../controllers/auth");
 
+const isAuth = require('../middleware/is_auth');
+
 //get user login
-router.get("/login", authController.getUserLogin);
+router.get("/login", isAuth.isNotLoggedIn , authController.getUserLogin);
 
 //post user login
 router.post(
-  "/login",
+  "/login", isAuth.isNotLoggedIn,
   [
     check("loginId")
       .isAlphanumeric()
-      .withMessage("Mã số nhân viên không hợp lệ"),
-
+      .withMessage("Mã số nhân viên không hợp lệ")
+      .custom((value, {req}) => {
+        return Staff.findOne({ idNumber: value }).then((staffDoc) => {
+          if (!staffDoc) {
+            return Promise.reject(
+              //them loi xac thuc khong dong bo
+              "Mã số nhân viên không tồn tại!"
+            );
+          }
+      });
+    })
     // body("password", "Mật khẩu có ít nhất 5 ký tự").isLength({ min: 5 }),
   ],
   authController.postUserLogin

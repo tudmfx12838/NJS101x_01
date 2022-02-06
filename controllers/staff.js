@@ -163,6 +163,7 @@ exports.getStaffTimeSheet = (req, res, next) => {
   // console.log(req.user._id);
   // console.log(req.user);
   const staff = req.user;
+  // const today = (new Date().toISOString().substring(0, 10));
 
   TimeSheet.find({ staffId: staff._id })
     .then((timesheet) => {
@@ -183,12 +184,33 @@ exports.getStaffTimeSheet = (req, res, next) => {
                     })
                     .catch(err => console.log(err))
       } else {
+        // console.log(timesheet[0].timeSheetDatas);
+        // console.log(new Date().toISOString().substring(0, 10));
+        const today = '2022-02-06';
+
+        const todayWorkingInfo = timesheet[0].timeSheetDatas.find(tsd => {
+          return tsd.date === today;
+        });
+
+        const todayTakeLeaveInfo = timesheet[0].takeLeaveInfo.find(tli => {
+          return tli.date === today;
+        });
+
+        console.log(todayWorkingInfo);
+        console.log(todayTakeLeaveInfo);
+
         res.render("staff/staff-timesheet", {
           pageTitle: "Chấm Công",
           path: "/",
           staff: staff,
           timesheet: timesheet[0],
-          // csrfToken: req.csrfToken() 
+          todayWorkingInfo: todayWorkingInfo,
+          todayTakeLeaveInfo: todayTakeLeaveInfo,
+          staff: staff
+          // timeResults: timesheet[0].timeResults,
+          // timeSheetDatas: timesheet[0].timeSheetDatas,
+          // takeLeaveInfo: timesheet[0].takeLeaveInfo,
+          // monthSalary: timesheet[0].monthSalary,
         });
       }
     })
@@ -375,7 +397,7 @@ exports.getConsultation = (req, res, next) => {
         res.render("staff/staff-consultation", {
           pageTitle: "Tra Cứu",
           path: "/consultation",
-          timeResults: timesheet[0].c,
+          timeResults: timesheet[0].timeResults,
           timeSheetDatas: timesheet[0].timeSheetDatas,
           takeLeaveInfo: timesheet[0].takeLeaveInfo,
           monthSalary: timesheet[0].monthSalary,
@@ -411,7 +433,7 @@ exports.postConsultarion = (req, res, next) => {
       console.log(countDate);
       if (countDate > 0) {
         calSalary =
-          300000 * staff.staffId.salaryScale +
+          300000 * staff.salaryScale +
           (sumData.overTime - sumData.incompleteTime) * 200000;
       } else {
         calSalary = 0;

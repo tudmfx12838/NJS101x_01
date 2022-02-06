@@ -19,6 +19,7 @@ exports.getUserLogin = (req, res, next) => {
     pageTitle: "Login",
     path: "/login",
     errorMessage: message,
+    oldInput: {loginId: ''}
     // isAuthenticated: req.session.isLoggedIn,
     // csrfToken: req.csrfToken() //duoc cung cap boi goi csrfProtection trong middleware app.js
   });
@@ -34,7 +35,8 @@ exports.postUserLogin = (req, res, next) => {
     return res.status(422).render("auth/user-login", {
       path: "/login",
       pageTitle: "Login",
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      oldInput: {loginId: loginId}
     });
   }
 
@@ -53,7 +55,7 @@ exports.postUserLogin = (req, res, next) => {
             return req.session.save((err) => {
               //Them save() y nghia la ngan cho res.redirect("/") hoat dong doc lap, vai page co the render truoc khi session duoc update
               console.log(err);
-              res.redirect("/staffs");
+              res.redirect("/");
             });
           }
           req.flash("error", "Mã số nhân viên hoặc mật khẩu không đúng !");

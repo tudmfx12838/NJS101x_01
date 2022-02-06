@@ -5,24 +5,25 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main class="container">
-        <div class="card mt-3">
-            <h4 class="card-title text-center">Trạng Thái Công Việc Hôm Nay</h4>
-            <article class="card ">
-                    <h5 class="card-text">
-                        <b>Tên Nhân Viên:</b>  <%= staff.name %>
-                    </h5>
-                    <p class="card-text">
-                        <b>Nơi làm việc:</b>  <%= timesheet.locations.length <= 0 ? 'Chưa đăng ký nơi làm việc' : timesheet.locations[timesheet.locations.length - 1].location%> 
-                    </p>
-                    <p class=card-text"">
-                        <b>Trạng Thái:</b>  <%= timesheet.workStatus == true ? 'Đang làm việc' : 'Không làm việc'%>
-                    </p>
-            </article>
+        <div class="row mt-3">
+            <div class="card">
+                <h4 class="card-title text-center">Trạng Thái Công Việc Hôm Nay</h4>
+                <article class="card ">
+                        <h5 class="card-text">
+                            <b>Tên Nhân Viên:</b>  <%= staff.name %>
+                        </h5>
+                        <p class="card-text">
+                            <b>Nơi làm việc:</b>  <%= timesheet.locations.length <= 0 ? 'Chưa đăng ký nơi làm việc' : timesheet.locations[timesheet.locations.length - 1].location%> 
+                        </p>
+                        <p class=card-text"">
+                            <b>Trạng Thái:</b>  <%= timesheet.workStatus == true ? 'Đang làm việc' : 'Không làm việc'%>
+                        </p>
+                </article>
+            </div>
         </div>
-        <br>
-        
-        <div class="row">
-            <div class="mt-3 col-sm-3">
+
+        <div class="row mt-3">
+            <div class="col-sm-3">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1">
                 Điểm danh
                 </button>
@@ -62,14 +63,14 @@
             </div>
             
 
-            <div class="mt-3 col-sm-3">
+            <div class="col-sm-3">
                 <form class="staff-form" action="/timesheet-endtime" method="POST">
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                     <button class="btn btn-primary" type="submit">Kết thúc làm</button>
                 </form>
             </div>
 
-            <div class="mt-3 col-sm-3">
+            <div class="col-sm-3">
                 <!-- Trigger/Open The Modal -->
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Nghỉ Phép</button>
                 <!-- The Modal -->
@@ -107,6 +108,13 @@
                                         <span>Ngày quy đổi: </span><span id="timeConvert"></span><span> ngày</span>
                                         <p>--Chú ý: Thời gian nghỉ phép 8h/ngày (trừ thứ bảy và chúa nhật)</p>
                                     </div>
+                                    <div class="mb-3 mt-3">
+                                        <p>Số giờ phép còn: <%= staff.annualLeave%> giờ</p>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="leaveReason">Lý do nghỉ: </label>
+                                        <textarea class="form-control" name="leaveReason" id="leaveReason" row="3"></textarea>
+                                    </div>
                                     
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <button class="btn btn-primary" type="submit">Đăng Ký</button>
@@ -120,6 +128,45 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="row card">
+                <ul class="list-group list-group-flush">
+                        <% if(todayWorkingInfo) { %>
+                            <li class="list-group-item">
+                            <h1>Ngày: <%= todayWorkingInfo.date %></h1>
+                                <% for (let timeResult of timesheet.timeResults) { %>
+                                    <% if(todayWorkingInfo.date == timeResult.startTimes[0].startTime.toISOString().substring(0, 10)) { %> 
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item">Địa điểm(giờ bắt đầu): 
+                                                <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
+                                                    <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
+                                                <% } %>
+                                            </li>
+                                            <li class="list-group-item">
+                                                Giờ kết thúc: <%= timeResult.endTime.toTimeString().substring(0, 8) %>
+                                            </li>
+                                        </ul>
+                                    <% } %>
+                                <% } %>
+
+                                <% var tlf_temp = 0 %>   
+                                <% if(todayTakeLeaveInfo) { %> 
+                                    <% tlf_temp = todayTakeLeaveInfo.leaveTime %>
+                                <% } %>
+
+
+                            <h5>Tổng thời gian đã làm: <%= (tlf_temp == 0) ? todayWorkingInfo.timeTotal : (todayWorkingInfo.timeTotal + tlf_temp*60)  %> phút</h5>
+                            <h5>Thời  gian làm thiếu giờ: <%= (tlf_temp == 0) ? todayWorkingInfo.incompleteTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? 0 : todayWorkingInfo.incompleteTime - (todayWorkingInfo.timeTotal + tlf_temp*60)  %> phút</h5>
+                            <h5>Thời gian làm thêm giờ: <%= (tlf_temp == 0) ? todayWorkingInfo.overTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? (todayWorkingInfo.timeTotal + tlf_temp*60) - 480 : 0 %> phút</h5>
+                            <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
+                            </li>
+                        <% } else { %>
+                            <h1>Hôm nay chưa đăng ký làm việc</h1>
+                        <% } %>
+                </ul>
             </div>
         </div>
     </main>
