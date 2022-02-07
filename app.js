@@ -104,9 +104,11 @@ app.use((req, res, next) => {
 
 
 //Connect to Routers
-app.use(authRoutes);
-app.use(staffRoutes);
 app.use(adminRouter);
+app.use(staffRoutes);
+app.use(authRoutes);
+
+
 
 app.use(errorController.getPageError);
 

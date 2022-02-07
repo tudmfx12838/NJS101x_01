@@ -1,65 +1,83 @@
 <%- include('../includes/head.ejs') %>
-    <!-- <link rel="stylesheet" href="/css/forms.css">
-    <link rel="stylesheet" href="/css/modal.css"> -->
+
 </head>
 
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main>
-        <div class="container mt-3" >
-            <div class="row">
-                <!-- Trigger/Open The Modal -->
-                <div class="col-4 justify-content-start">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Thêm Nhân Viên</button>
+        <div class="container">
+            <div class="row mt-3">
+                <div class="col-12 col-sm-12 col-lg-5">
+                    <img class="card-img-top img-fluid" src="/<%= staff.image %>" alt="<%= staff.name %>" style="height:max-height;">
                 </div>
-                    <!-- The Modal -->
+                <div class="col-12 col-sm-12 col-lg-7">
+                    <div class="card">
+                        <div class="card-body">
+                        <h4 class="card-title"><%= staff.name %></h4>
+                        <p class="card-text">Mã số: <%= staff.idNumber %></p>
+                        <p class="card-text">Tên nhân viên: <%= staff.name %></p>
+                        <p class="card-text">Ngày sinh: <%= staff.doB.toISOString().substring(0, 10) %></p>
+                        <p class="card-text">Ngày vào công ty: <%= staff.startDate.toISOString().substring(0, 10) %></p>
+                        <p class="card-text">Phòng ban: <%= staff.department %></p>
+                        <p class="card-text">Hệ số lương: <%= staff.salaryScale %></p>
+                        <p class="card-text">Số giờ nghỉ phép còn: <%= staff.annualLeave %> giờ</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" >
+                <!-- Trigger/Open The Modal -->
+                <div class="col-sm-3">
+		            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Chỉnh sửa</button>
+                </div>
+                <!-- The Modal -->
+            </div>
+            <div>
                 <div id="myModal" class="modal">
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">Thêm Nhân Viên Mới</h4>
+                                <h4 class="modal-title">Chỉnh sửa thông tin Nhân Viên</h4>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <form class="staff-form" action="/add-staff" method="POST" enctype="multipart/form-data">
+                                <form action="/staff-info" method="POST" enctype="multipart/form-data">
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="idNumber">MSNV: </label>
-                                        <input class="form-control" type="text" name="idNumber" id="idNumber" value="" placeholder="Nhập mã số nhân viên">
+                                        <input class="form-control" type="text" name="idNumber" id="idNumber" value="<%= staff.idNumber %>">
                                     </div>
                                     <div class="mb-3 mt-3">
-                                        <label class="form-label" for="password">Mật khẩu: </label>
+                                        <label class="form-label" for="password">Đổi mật khẩu: </label>
                                         <input class="form-control" type="password" name="password" id="password">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="permission">Quyền truy cập: </label>
-                                        <select class="form-select" name="permission" id="permission" value="user">
+                                        <select class="form-select" name="permission" id="permission" value="<%= staff.permission %>">
                                             <option value="user">user</option>
                                             <option value="admin">admin</option>
                                         </select>
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="name">Tên Nhân Viên: </label>
-                                        <input class="form-control" type="text" name="name" id="name" value="">
-                                    </div>
-                                    <div class="mb-3 mt-3">
-                                        <label class="form-label" for="email">Email: </label>
-                                        <input class="form-control" type="email" name="email" id="email" value="">
+                                        <input class="form-control" type="text" name="name" id="name" value="<%= staff.name %>">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="doB">Ngày sinh: </label>
-                                        <input class="form-control" type="date" name="doB" id="doB" value="">
+                                        <input class="form-control" type="date" name="doB" id="doB" value="<%= staff.doB.toISOString().substring(0, 10) %>">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="startDate">Ngày vào công ty: </label>
-                                        <input class="form-control" type="date" name="startDate" id="startDate" value="">
+                                        <input class="form-control" type="date" name="startDate" id="startDate" value="<%= staff.startDate.toISOString().substring(0, 10) %>">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="salaryScale">Hệ số lương: </label>
-                                        <input class="form-control" type="number" name="salaryScale" id="salaryScale" value="">
+                                        <input class="form-control" type="number" name="salaryScale" id="salaryScale" value="<%= staff.salaryScale %>">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="department">Phòng ban: </label>
-                                        <select class="form-select" name="department" id="department">
+                                        <select class="form-select" name="department" id="department" placeholder="<%= staff.department %>">
+                                            <option value="" selected>Chọn phòng ban</option>
                                             <option value="IT">IT</option>
                                             <option value="HR">HR</option>
                                             <option value="Sale">Sale</option>
@@ -69,7 +87,7 @@
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="annualLeave">Ngày phép còn: </label>
-                                        <input class="form-control" type="number" name="annualLeave" id="annualLeave" value="">
+                                        <input class="form-control" type="number" name="annualLeave" id="annualLeave" value="<%= staff.annualLeave %>">
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="image">Ảnh: </label>
@@ -77,51 +95,20 @@
                                             type="file" 
                                             name="image" 
                                             id="image" 
+                                            value="<%= staff.image %>""
                                         >
                                     </div>
+
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                    <button class="btn btn-primary" type="submit">Thêm</button>
+                                    <button class="btn btn-primary" type="submit">Cập nhật</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy cập nhật</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="row mt-3">
-                <hr>
-            </div>
-            
-            <% if (staffs.lenght <= 0) {%>
-                <div class="row mt-3">
-                    <h1>Chưa cập nhật danh sách nhân viên</h1>
-                </div>
-            <%} else {%>
-                <div class="row">
-                    <%  for (let staff of staffs) {%>
-                        <div class="col-sm-4 mt-3">
-                            <div class="card">
-                                <img class="card-img-top img-fluid" src="/<%= staff.image%>" alt="<%= staff.idNumber + '-' + staff.name%>">
-                                <div class="card-body">
-                                    <h5 class="card-title mb-3"><%=staff.name%></h5>
-                                    <p class="card-text">MSNV: <%=staff.idNumber%></p>
-                                    <p class="card-text">Truy cập: <%=staff.permission%></p>
-                                    <p class="card-text">Trạng thái giờ làm: </p>
-                                    <a role="button" href="/staffs/staff-detail/<%= staff._id %>?manage=true" class="btn btn-primary mt-2 ml-1">Thông tin</a>
-                                </div>
-                                <div class="card-footer">
-                                    <a role="button" href="/staffs/manage-timesheet/<%= staff._id %>?manage=true" class="btn btn-primary mt-2 ml-1">Kiểm tra giờ làm</a>
-                                    <a role="button" href="/staffs/manage-health/<%= staff._id %>?manage=true" class="btn btn-primary mt-2 ml-1">Kiểm tra sức khỏe</a>
-                                </div>
-                            </div>
-                        </div>
-                    <% } %>
-                </div>
-            <% } %>
-                
-
         </div>
-        
     </main>
 
 <%- include('../includes/end.ejs') %>

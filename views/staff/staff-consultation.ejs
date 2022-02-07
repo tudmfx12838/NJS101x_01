@@ -37,7 +37,13 @@
                         <li class="list-group-item">
                         <h1>Ngày: <%= timeSheetData.date %></h1>
                             <% for (let timeResult of timeResults) { %>
-                                <% if(timeSheetData.date == timeResult.startTimes[0].startTime.toISOString().substring(0, 10)) { %> 
+                                <% const timeNow = timeResult.startTimes[0].startTime %>
+                                <% const year = timeNow.getFullYear() %>
+                                <% const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1) %>
+                                <% const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate() %>
+                                <% const startTimeThisDate = `${year}-${month}-${date}` %>
+
+                                <% if(timeSheetData.date == startTimeThisDate) { %> 
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">Địa điểm(giờ bắt đầu): 
                                             <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
@@ -58,8 +64,8 @@
                                 <% } %>
                             <% } %>
                         <h5>Tổng thời gian đã làm: <%= (tlf_temp == 0) ? timeSheetData.timeTotal : (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
-                        <h5>Thời  gian làm thiếu giờ: <%= timeSheetData.incompleteTime %> phút</h5>
-                        <h5>Thời gian làm thêm giờ: <%= timeSheetData.overTime %> phút</h5>
+                        <h5>Thời  gian làm thiếu giờ: <%= (tlf_temp == 0) ? timeSheetData.incompleteTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? 0 : timeSheetData.incompleteTime - (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
+                        <h5>Thời gian làm thêm giờ: <%= (tlf_temp == 0) ? timeSheetData.overTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? (timeSheetData.timeTotal + tlf_temp*60) - 480 : 0 %> phút</h5>
                         <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
                         </li>
                         <% } %>

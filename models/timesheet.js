@@ -91,6 +91,11 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   const startTimes = [...this.startTimes];
   const endTime = workInfoData;
 
+  const year = endTime.getFullYear();
+  const month = (endTime.getMonth()+1) < 10 ? ('0' + (endTime.getMonth()+1)) : (endTime.getMonth()+1);
+  const date = endTime.getDate() < 10 ? ('0' + endTime.getDate()) : endTime.getDate();
+  const today = `${year}-${month}-${date}`;
+
   //Implement udapte timeResults
   const timeTotal =
     endTime.getHours() * 60 +
@@ -112,7 +117,8 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
   //Check timeSheetDatas are exsisting or not, if not create new
   if (this.timeSheetDatas.length <= 0) {
     //get data form endTime's data
-    const date = endTime.toISOString().substring(0, 10);
+    // const date = endTime.toISOString().substring(0, 10);
+    const date = today;
     const Total = timeTotal;
     const incompleteTime =  (Total < WORKINGTIMEONDAY) ? (WORKINGTIMEONDAY - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0
     const overTime = Total > WORKINGTIMEONDAY ? Total - WORKINGTIMEONDAY : 0;
@@ -126,14 +132,16 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
     //update timeSheetData endTime.toISOString().substring(0, 10)
     const getCurentDateIndex = this.timeSheetDatas.findIndex((tsd) => {
       //Test case: return tsd.date == '2022-01-21';
-      return tsd.date == endTime.toISOString().substring(0, 10);
+      // return tsd.date == endTime.toISOString().substring(0, 10);
+      return tsd.date == today;
     });
     // console.log(getCurentDateIndex);
 
     //findIndex = -1 is not found, create new time sheet data
     if (getCurentDateIndex < 0) {
       //Check existing array data of this date
-      const date = endTime.toISOString().substring(0, 10);
+      // const date = endTime.toISOString().substring(0, 10);
+      const date = today;
       //Test case: const date = '2022-01-21';
       const Total = timeTotal;
       const incompleteTime =  (Total < WORKINGTIMEONDAY) ? (WORKINGTIMEONDAY - Total) : 0; //neu lam chua du gio thi lay 8h - so gio lam, nguoc lai bang 0

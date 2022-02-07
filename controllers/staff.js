@@ -162,8 +162,15 @@ exports.getStaffTimeSheet = (req, res, next) => {
   // console.log(req.user._id);
   // console.log(req.user);
   const staff = req.user;
-  const today = new Date().toISOString().substring(0, 10);
+  const timeNow = new Date();
+  const year = timeNow.getFullYear();
+  const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1);
+  const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate();
 
+  const today = `${year}-${month}-${date}`;
+
+  // console.log('today is' + today);
+  
   TimeSheet.find({ staffId: staff._id })
     .then((timesheet) => {
       // console.log(timesheet);
@@ -185,7 +192,7 @@ exports.getStaffTimeSheet = (req, res, next) => {
       } else {
         // console.log(timesheet[0].timeSheetDatas);
         // console.log(new Date().toISOString().substring(0, 10));
-        // const today = '2022-02-06';
+   
 
         const todayWorkingInfo = timesheet[0].timeSheetDatas.find((tsd) => {
           return tsd.date === today;
@@ -195,8 +202,9 @@ exports.getStaffTimeSheet = (req, res, next) => {
           return tli.date === today;
         });
 
-        // console.log(todayWorkingInfo);
-        // console.log(todayTakeLeaveInfo);
+    
+        console.log(todayWorkingInfo);
+        console.log(todayTakeLeaveInfo);
 
         res.render("staff/staff-timesheet", {
           pageTitle: "Chấm Công",

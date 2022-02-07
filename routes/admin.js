@@ -11,4 +11,7 @@ router.get('/staffs', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaf
 //route to post added new staff data to database
 router.post('/add-staff', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postAddStaff);
 
+//route to get add staff feature
+router.get('/staffs/staff-detail/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffDetail);
+
 module.exports = router;
