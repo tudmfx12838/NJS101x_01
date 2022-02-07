@@ -1,0 +1,107 @@
+<%- include('../includes/head.ejs') %>
+
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+    <main class="container">
+        <div class="row mt-3">
+            <div>
+                <h4 class="card-title"><%= staff.name %></h4>
+                <p class="card-text">Mã số: <%= staff.idNumber %></p>
+                <p class="card-text">Tên nhân viên: <%= staff.name %></p>
+                <p class="card-text">Ngày sinh: <%= staff.doB.toISOString().substring(0, 10) %></p>
+                <p class="card-text">Phòng ban: <%= staff.department %></p>
+                <a role="button" class="btn btn-success" href="/staffs/manage-health/download/<%= staff._id %>?download=true">Tải xuống</a>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row mt-3">
+            <h2>Thông Tin Thân Nhiệt</h2>
+            <% if (bodyStatus) { %>
+                <% if (bodyStatus.length > 0) { %>
+                    <div class="grid">
+                        <% for (let bst of bodyStatus) { %>
+                            <article class="card product-item">
+                                <div class="card__content">
+                                    <h2 class="product__price">
+                                        <b>Nhiệt độ cơ thể:</b> <%= bst.temp %> độ C
+                                    </h2>
+                                    <p class="product__description">
+                                        <b>Ngày đo:</b> <%= bst.date.toISOString().substring(0, 10) %>
+                                    </p>
+                                </div>
+                            </article>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <p>Chưa cập nhật thông tin thân nhiệt</p>
+                <% } %>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin thân nhiệt</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div class="row mt-3">
+            <h2>Thông Tin Tiêm Vaccine</h2>
+            <% if (vaccineStatus) { %>
+                <% if (vaccineStatus.length > 0) { %>
+                    <div class="grid">
+                        <% for (let vcs of vaccineStatus) { %>
+                            <article class="card product-item">
+                                <div class="card__content">
+                                    <h2 class="product__price">
+                                        <b>Mũi thứ:</b> <%= vcs.time %>
+                                    </h2>
+                                    <p class="product__description">
+                                        <b>Ngày tiêm:</b> <%= vcs.date.toISOString().substring(0, 10) %>
+                                    </p>
+                                </div>
+                            </article>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <p>Chưa cập nhật thông tin tiêm Vaccine</p>
+                <% } %>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin tiêm Vaccine</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+        <div class="row mt-3">
+            <h2>Thông Tin Nhiễm Covid</h2>
+            <% if (covidStatus) { %>
+                <% if (covidStatus.length > 0) { %>
+                    <div class="grid">
+                        <% for (let cds of covidStatus) { %>
+                            <article class="card product-item">
+                                <div class="card__content">
+                                    <h2 class="product__price">
+                                        <b>Kết quả:</b> <%= cds.infect == true ? 'Dương Tính' : 'Âm Tính' %> 
+                                    </h2>
+                                    <p class="product__description">
+                                        <b>Ngày nhiễm:</b> <%= cds.date.toISOString().substring(0, 10) %>
+                                    </p>
+                                </div>
+                            </article>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <p>Chưa cập nhật thông tin nhiễm Covid</p>
+                <% } %>
+            <% } else { %>
+                <p>Chưa cập nhật thông tin nhiễm Covid</p>
+            <% } %>
+        </div>
+
+        <hr>
+
+    </main>
+
+<%- include('../includes/end.ejs') %>

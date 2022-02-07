@@ -16,4 +16,14 @@ router.get('/staffs/staff-detail/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, a
 
 router.post('/staffs/staff-detail/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffDetail);
 
+router.get('/staffs/manage-health/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffHealthDetail);
+
+router.get('/staffs/manage-health/download/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getDownloadStaffHealthDetail);
+
+router.get('/staffs/manage-timesheet/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffTimeSheetDetail);
+
+router.post('/staffs/manage-timesheet/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffTimeSheetDetail);
+
+
+
 module.exports = router;
