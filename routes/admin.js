@@ -14,4 +14,6 @@ router.post('/add-staff', isAuth.isAdmin, isAuth.isLoggedIn, adminController.pos
 //route to get add staff feature
 router.get('/staffs/staff-detail/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffDetail);
 
+router.post('/staffs/staff-detail/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffDetail);
+
 module.exports = router;

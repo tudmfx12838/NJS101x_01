@@ -87,13 +87,81 @@ exports.getStaffDetail = (req, res, next) => {
   Staff
     .findOne({_id:staffId })
     .then((staff) => {
-      console.log(staff);
+      // console.log(staff);
       
       res.render("admin/staff-detail", {
         pageTitle: "Thông Tin Nhân Viên",
         path: "/staff-detail",
         staff: staff,
       });
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postStaffDetail = (req, res, next) => {
+  const staffId = req.params.staffId;
+  const edit = req.query.edit;
+
+  const admin = req.user;
+
+  // console.log(staffId);
+  // console.log(edit);
+  // console.log(manage);
+
+  const idNumber = req.body.idNumber;
+  const password = req.body.password;
+  const permission = req.body.permission;
+  const name = req.body.name;
+  const email = req.body.email;
+  const doB = req.body.doB;
+  const salaryScale = req.body.salaryScale;
+  const startDate = req.body.startDate;
+  const department = req.body.department;
+  const annualLeave = req.body.annualLeave;
+
+  let staff;
+  const image = req.file;
+  let imageUrl = null;
+  if(image) {
+   imageUrl = image.path;
+  } 
+
+  if(!edit){
+    return res.redirect('/staffs');
+  }
+
+  Staff
+    .findOne({_id: staffId })
+    .then((staffDoc) => {
+      if(!staffDoc){
+        return res.redirect('/staffs');
+      }
+
+      staff = staffDoc;
+      if (password) {
+        return bcrypt.hash(password, 12);
+      }
+      return password
+    })
+    .then((hashedPassword) => {
+
+      staff.password = hashedPassword === '' ? staff.password : hashedPassword;
+
+      staff.idNumber = staff.idNumber === idNumber ? staff.idNumber : idNumber;
+      staff.permission = staff.permission === permission ? staff.permission : permission;
+      staff.name = staff.name === name ? staff.name : name;
+      staff.email = staff.email === email ? staff.email : email;
+      staff.doB = staff.doB === doB ? staff.doB : doB;
+      staff.salaryScale = staff.salaryScale === salaryScale ? staff.salaryScale : salaryScale;
+      staff.startDate = staff.startDate === startDate ? staff.startDate : startDate;
+      staff.annualLeave = staff.annualLeave === annualLeave ? staff.annualLeave : annualLeave;
+      staff.image = imageUrl === null ? staff.image : imageUrl;
+      staff.department = department === '' ? staff.department : department;
+
+      return staff.save();
+    })
+    .then(() => {
+      res.redirect(`/staffs/staff-detail/${staffId}?manage=true`);
     })
     .catch((err) => console.log(err));
 };
