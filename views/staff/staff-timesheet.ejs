@@ -23,52 +23,56 @@
         </div>
 
         <div class="row mt-3">
-            <div class="col-sm-3">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1">
-                Điểm danh
-                </button>
-                <div id="myModal1" class="modal fade">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h4 class="modal-title">Đăng ký thông tin làm việc</h4>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body">
-                                <form action="/timesheet-starttime" method="POST">
-                                    <div class="mb-3 mt-3">
-                                        <label for="location" class="form-label">Nơi làm việc: </label>
-                                        <select class="form-select" name="location" id="location" value="company">
-                                            <option value="Công Ty">Công Ty</option>
-                                            <option value="Khách Hàng">Khách Hàng</option>
-                                            <option value="Nhà">Nhà</option>
-                                        </select>
+            
+                <% if(!todayWorkingInfo.approveStatus) { %>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal1">
+                        Điểm danh
+                        </button>
+                        <div id="myModal1" class="modal fade">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Đăng ký thông tin làm việc</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <div class="mb-3 mt-3">
-                                        <div class="row">
-                                            <div class="col">
-                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                                <button class="btn btn-primary" type="submit">Bắt đầu làm</button>
+                                    <div class="modal-body">
+                                        <form action="/timesheet-starttime" method="POST">
+                                            <div class="mb-3 mt-3">
+                                                <label for="location" class="form-label">Nơi làm việc: </label>
+                                                <select class="form-select" name="location" id="location" value="company">
+                                                    <option value="Công Ty">Công Ty</option>
+                                                    <option value="Khách Hàng">Khách Hàng</option>
+                                                    <option value="Nhà">Nhà</option>
+                                                </select>
                                             </div>
-                                            <div class="col">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy đăng ký</button>
+                                            <div class="mb-3 mt-3">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                        <button class="btn btn-primary" type="submit">Bắt đầu làm</button>
+                                                    </div>
+                                                    <div class="col">
+                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy đăng ký</button>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            
+                    
 
-            <div class="col-sm-3">
-                <form class="staff-form" action="/timesheet-endtime" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                    <button class="btn btn-primary" type="submit">Kết thúc làm</button>
-                </form>
-            </div>
+                    <div class="col-sm-3">
+                        <form class="staff-form" action="/timesheet-endtime" method="POST">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <button class="btn btn-primary" type="submit">Kết thúc làm</button>
+                        </form>
+                    </div>
+                <% } %>
+    
 
             <div class="col-sm-3">
                 <!-- Trigger/Open The Modal -->

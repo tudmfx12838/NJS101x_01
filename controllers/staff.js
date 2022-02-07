@@ -193,7 +193,6 @@ exports.getStaffTimeSheet = (req, res, next) => {
         // console.log(timesheet[0].timeSheetDatas);
         // console.log(new Date().toISOString().substring(0, 10));
    
-
         const todayWorkingInfo = timesheet[0].timeSheetDatas.find((tsd) => {
           return tsd.date === today;
         });
@@ -201,7 +200,6 @@ exports.getStaffTimeSheet = (req, res, next) => {
         const todayTakeLeaveInfo = timesheet[0].takeLeaveInfo.find((tli) => {
           return tli.date === today;
         });
-
     
         console.log(todayWorkingInfo);
         console.log(todayTakeLeaveInfo);
@@ -211,7 +209,7 @@ exports.getStaffTimeSheet = (req, res, next) => {
           path: "/",
           staff: staff,
           timesheet: timesheet[0],
-          todayWorkingInfo: todayWorkingInfo,
+          todayWorkingInfo: todayWorkingInfo == undefined ? false : todayWorkingInfo,
           todayTakeLeaveInfo: todayTakeLeaveInfo,
         });
       }
