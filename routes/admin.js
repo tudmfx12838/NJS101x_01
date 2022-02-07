@@ -22,8 +22,11 @@ router.get('/staffs/manage-health/download/:staffId', isAuth.isAdmin, isAuth.isL
 
 router.get('/staffs/manage-timesheet/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffTimeSheetDetail);
 
-router.post('/staffs/manage-timesheet/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffTimeSheetDetail);
+router.post('/staffs/manage-timesheet/add-timesheet/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postAddStaffTimeSheetDetail);
 
+router.post('/staffs/manage-timesheet/approve/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffTimeSheetDetailApprove);
+
+router.post('/staffs/manage-timesheet/delete/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffTimeSheetDetailDelete);
 
 
 module.exports = router;

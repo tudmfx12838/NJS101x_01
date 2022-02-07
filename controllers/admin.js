@@ -149,8 +149,7 @@ exports.postStaffDetail = (req, res, next) => {
       staff.password = hashedPassword === "" ? staff.password : hashedPassword;
 
       staff.idNumber = staff.idNumber === idNumber ? staff.idNumber : idNumber;
-      staff.permission =
-        permission === "" ? staff.permission : permission;
+      staff.permission = permission === "" ? staff.permission : permission;
       staff.name = staff.name === name ? staff.name : name;
       staff.email = staff.email === email ? staff.email : email;
       staff.doB = staff.doB === doB ? staff.doB : doB;
@@ -198,11 +197,14 @@ exports.getStaffHealthDetail = (req, res, next) => {
             pageTitle: "Sức Khỏe Nhân Viên",
             path: "/staff-health-detail",
             staff: staff,
-            vaccineStatus: health.length <= 0 ? false : health[0].vaccineInfo.vaccineStatus,
-            covidStatus: health.length <= 0 ? false : health[0].vaccineInfo.covidStatus,
-            bodyStatus: health.length <= 0 ? false : health[0].vaccineInfo.bodyStatus,
+            vaccineStatus:
+              health.length <= 0 ? false : health[0].vaccineInfo.vaccineStatus,
+            covidStatus:
+              health.length <= 0 ? false : health[0].vaccineInfo.covidStatus,
+            bodyStatus:
+              health.length <= 0 ? false : health[0].vaccineInfo.bodyStatus,
           });
-        })
+        });
     })
     .catch((err) => console.log(err));
 };
@@ -219,7 +221,9 @@ exports.getDownloadStaffHealthDetail = (req, res, next) => {
       Health.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
         .then((health) => {
           if (!health) {
-            return res.redirect(`/staffs/manage-health/${staff._id}?manage=true`);
+            return res.redirect(
+              `/staffs/manage-health/${staff._id}?manage=true`
+            );
           }
           const vaccineStatus = health.vaccineInfo.vaccineStatus;
           const covidStatus = health.covidInfo.covidStatus;
@@ -296,11 +300,10 @@ exports.getDownloadStaffHealthDetail = (req, res, next) => {
               pdfDoc
                 .fontSize(15)
                 .text(
-                  "Ket qua: " + (cst.infect === false
-                    ? "Am tinh"
-                    : "Duong tinh") +
-                        " - Ngay test: " +
-                        cst.date.toISOString().substring(0, 10)
+                  "Ket qua: " +
+                    (cst.infect === false ? "Am tinh" : "Duong tinh") +
+                    " - Ngay test: " +
+                    cst.date.toISOString().substring(0, 10)
                 );
             }
           } else {
@@ -312,7 +315,6 @@ exports.getDownloadStaffHealthDetail = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
-
 
 exports.getStaffTimeSheetDetail = (req, res, next) => {
   const staffId = req.params.staffId;
@@ -337,13 +339,152 @@ exports.getStaffTimeSheetDetail = (req, res, next) => {
             pageTitle: "Tra Cứu",
             path: "/consultation",
             timesheet: timesheet === null ? null : timesheet,
-            staff: staff
+            staff: staff,
           });
-        })
+        });
     })
     .catch((err) => console.log(err));
 };
 
-exports.postStaffTimeSheetDetail = (req, res, next) => {
+exports.postAddStaffTimeSheetDetail = (req, res, next) => {
+  const staffId = req.params.staffId;
+  const add = req.query.add;
 
+  const WORKINGTIMEONDAY = 480; //8hour = 480 minute
+  const location = req.body.location;
+  const startTime = new Date(req.body.startTime);
+  const endTime = new Date(req.body.endTime);
+  const leaveTime = parseInt(req.body.leaveTime);
+
+  console.log(req.body.leaveTime);
+
+  const year = startTime.getFullYear();
+  const month =
+    startTime.getMonth() + 1 < 10
+      ? "0" + (startTime.getMonth() + 1)
+      : startTime.getMonth() + 1;
+  const date =
+    startTime.getDate() < 10 ? "0" + startTime.getDate() : startTime.getDate();
+  const today = `${year}-${month}-${date}`;
+
+  //Implement udapte timeResults
+  const timeTotal =
+    endTime.getHours() * 60 +
+    endTime.getMinutes() -
+    (startTime.getHours() * 60 + startTime.getMinutes()) +
+    leaveTime * 60;
+
+  const incompleteTime =
+    timeTotal < WORKINGTIMEONDAY ? WORKINGTIMEONDAY - timeTotal : 0;
+  const overTime =
+    timeTotal > WORKINGTIMEONDAY ? timeTotal - WORKINGTIMEONDAY : 0;
+  const approveStatus = false;
+
+  const addtimeResult = {
+    locations: [{ location: location }],
+    startTimes: [{ startTime: startTime }],
+    endTime: endTime,
+    timeTotal: timeTotal,
+  };
+
+  const addtimeSheetData = {
+    date: today,
+    timeTotal: timeTotal,
+    incompleteTime: incompleteTime,
+    overTime: overTime,
+    approveStatus: approveStatus,
+  };
+
+  // console.log(leaveTime);
+
+  const takeLeaveInfo = {
+    date: today,
+    leaveTime: leaveTime,
+  };
+
+  Staff.findOne({ _id: staffId })
+    .then((staffDoc) => {
+      if (!staffDoc) {
+        return res.redirect("/staffs");
+      }
+      // console.log(staffDoc);
+      return staffDoc;
+    })
+    .then((staff) => {
+      Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+        .then((timesheet) => {
+          timesheet.timeResults.push(addtimeResult);
+          timesheet.timeSheetDatas.push(addtimeSheetData);
+          if (leaveTime > 0) {
+            timesheet.takeLeaveInfo.push(takeLeaveInfo);
+          }
+          return timesheet.save();
+        });
+    })
+    .then((result) => {
+      res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.postStaffTimeSheetDetailApprove = (req, res, next) => {
+  const staffId = req.params.staffId;
+  const approve = req.query.approve;
+  const admin = req.user;
+
+  const thisDate = req.body.thisDate;
+
+  Staff.findOne({ _id: staffId })
+  .then((staffDoc) => {
+    if (!staffDoc) {
+      return res.redirect("/staffs");
+    }
+    // console.log(staffDoc);
+    return staffDoc;
+  })
+  .then((staff) => {
+    Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+      .then((timesheet) => {
+        const index = timesheet.timeSheetDatas.findIndex(tsd => {
+          return tsd.date === thisDate;
+        });
+        timesheet.timeSheetDatas[index].approveStatus = true;
+        return timesheet.save();
+      });
+  })
+  .then((result) => {
+    res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+  })
+  .catch((err) => console.log(err));
+};
+
+exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
+  const staffId = req.params.staffId;
+  const deleteQuery = req.query.delete;
+  const admin = req.user;
+
+  const thisDate = req.body.thisDate;
+
+  Staff.findOne({ _id: staffId })
+  .then((staffDoc) => {
+    if (!staffDoc) {
+      return res.redirect("/staffs");
+    }
+    // console.log(staffDoc);
+    return staffDoc;
+  })
+  .then((staff) => {
+    Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+      .then((timesheet) => {
+        const index = timesheet.timeSheetDatas.findIndex(tsd => {
+          return tsd.date === thisDate;
+        });
+        timesheet.timeSheetDatas.splice(index, 1);
+        return timesheet.save();
+      });
+  })
+  .then((result) => {
+    res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+  })
+  .catch((err) => console.log(err));
 };

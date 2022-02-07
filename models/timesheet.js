@@ -45,6 +45,7 @@ const timesheetSchema = new Schema({
       timeTotal: { type: Number, required: false },
       incompleteTime: { type: Number, required: false },
       overTime: { type: Number, required: false },
+      approveStatus: { type: Boolean, required: false },
     },
   ],
   workStatus: { type: Boolean, required: true },
@@ -127,6 +128,7 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
       timeTotal: Total,
       incompleteTime: incompleteTime,
       overTime: overTime,
+      approveStatus: false
     });
   } else if (this.timeSheetDatas.length > 0) {
     //update timeSheetData endTime.toISOString().substring(0, 10)
@@ -151,6 +153,7 @@ timesheetSchema.methods.addEndTime = function (workInfoData) {
         timeTotal: Total,
         incompleteTime: incompleteTime,
         overTime: overTime,
+        approveStatus: false
       });
     } else { //if has existing data, update data by got index above
       const timeSheetData = this.timeSheetDatas[getCurentDateIndex];

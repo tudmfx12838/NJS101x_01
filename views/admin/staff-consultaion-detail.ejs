@@ -11,11 +11,59 @@
                 <p class="card-text">Mã số: <%= staff.idNumber %></p>
                 <p class="card-text">Tên nhân viên: <%= staff.name %></p>
                 <p class="card-text">Phòng ban: <%= staff.department %></p>
+
+                <button type="button" class="btn btn-primary mt-2 ml-1" data-bs-toggle="modal" data-bs-target="#myModal1">
+                    Thêm giờ làm
+                </button>
+                <div id="myModal1" class="modal fade">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Đăng ký thông tin làm việc</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form action="/staffs/manage-timesheet/add-timesheet/<%= staff._id %>?add=true" method="POST">
+                                    <div class="mb-3 mt-3">
+                                        <label for="location" class="form-label">Nơi làm việc: </label>
+                                        <select class="form-select" name="location" id="location" value="company">
+                                            <option value="Công Ty">Công Ty</option>
+                                            <option value="Khách Hàng">Khách Hàng</option>
+                                            <option value="Nhà">Nhà</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="startTime">Thời bắt đầu: </label>
+                                        <input class="form-control" type="datetime-local" name="startTime" id="startTime" value="">
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="endTime">Thời kết thúc: </label>
+                                        <input class="form-control" type="datetime-local" name="endTime" id="endTime" value="">
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <label class="form-label" for="leaveTime">Giờ nghỉ phép: </label>
+                                        <input class="form-control" type="number" name="leaveTime" id="leaveTime" value="0">
+                                    </div>
+                                    <div class="mb-3 mt-3">
+                                        <div class="row">
+                                            <div class="col">
+                                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                                <button class="btn btn-primary" type="submit">Thêm</button>
+                                            </div>
+                                            <div class="col">
+                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <hr>
-
 
         <div class="row card">
             <ul class="list-group list-group-flush">
@@ -54,6 +102,21 @@
                         <h5>Thời  gian làm thiếu giờ: <%= (tlf_temp == 0) ? timeSheetData.incompleteTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? 0 : timeSheetData.incompleteTime - (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
                         <h5>Thời gian làm thêm giờ: <%= (tlf_temp == 0) ? timeSheetData.overTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? (timeSheetData.timeTotal + tlf_temp*60) - 480 : 0 %> phút</h5>
                         <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
+                        <h5>Trạng thái xác nhận: <%= timeSheetData.approveStatus === false ? 'Chưa Xác Nhận' : 'Đã Xác Nhận'%></h5>
+                        
+                        <% if (!timeSheetData.approveStatus) { %>
+                            <form action="/staffs/manage-timesheet/approve/<%= staff._id %>?approve=true" method="POST">
+                                <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button class="btn btn-primary mt-2 ml-1" type="submit">Xác nhận giờ làm</button>
+                            </form>
+    
+                            <form action="/staffs/manage-timesheet/delete/<%= staff._id %>?delete=true" method="POST" >
+                                <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
+                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                <button class="btn btn-danger mt-2 ml-1" type="submit">Xóa giờ làm</button>
+                            </form>
+                        <% } %>
                         </li>
                         <% } %>
                 <% } else { %>
