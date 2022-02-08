@@ -5,6 +5,17 @@
 <body>
    <%- include('../includes/navigation.ejs') %>
     <main class="container">
+            <div class="row mt-3">
+                <div class="col-12 col-sm-7 col-lg-9"></div>
+                <div class="col-12 col-sm-5 col-lg-3">
+                    <form action="/staffs/search" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input class="form-control" type="text" id="search" name="search" placeholder="Nhập dữ liệu cần tìm">
+                        <button class="btn btn-primary" type="submit">Tìm</button>
+                    </form>
+                </div>
+            </div>
+
             <div class="row mt-3" >
                 <div class="col-1 col-sm-4">
 

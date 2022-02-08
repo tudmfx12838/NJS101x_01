@@ -517,3 +517,47 @@ exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
+
+exports.getStaffConsultaionSearch = (req, res, next) => {
+  const search = req.query.search;
+  const staffId = req.params.staffId;
+
+  Staff.findOne({ idNumber: search })
+  .then((staffDoc) => {
+    if (!staffDoc) {
+      return res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+    }
+    // console.log(staffDoc);
+    return staffDoc;
+  })
+  .then((staff) => {
+    res.redirect(`/staffs/manage-timesheet/${staff.id}?manage=true`);
+  })
+  .then((result) => {
+    
+  })
+  .catch((err) => console.log(err));
+
+}
+
+exports.getStaffHealthSearch = (req, res, next) => {
+  const search = req.query.search;
+  const staffId = req.params.staffId;
+
+  Staff.findOne({ idNumber: search })
+  .then((staffDoc) => {
+    if (!staffDoc) {
+      return res.redirect(`/staffs/manage-health/${staffId}?manage=true`);
+    }
+    // console.log(staffDoc);
+    return staffDoc;
+  })
+  .then((staff) => {
+    res.redirect(`/staffs/manage-health/${staff.id}?manage=true`);
+  })
+  .then((result) => {
+    
+  })
+  .catch((err) => console.log(err));
+
+}
