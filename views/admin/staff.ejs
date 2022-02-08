@@ -1,6 +1,7 @@
 <%- include('../includes/head.ejs') %>
     <!-- <link rel="stylesheet" href="/css/forms.css">
     <link rel="stylesheet" href="/css/modal.css"> -->
+    <link rel="stylesheet" href="/css/pagination.css">
 </head>
 
 <body>
@@ -99,7 +100,7 @@
             <%} else {%>
                 <div class="row">
                     <%  for (let staff of staffs) {%>
-                        <div class="col-sm-4 mt-3">
+                        <div class="col-12 col-md-6 col-lg-4 mt-3">
                             <div class="card">
                                 <img class="card-img-top img-fluid" src="/<%= staff.image%>" alt="<%= staff.idNumber + '-' + staff.name%>">
                                 <div class="card-body">
@@ -119,7 +120,13 @@
                 </div>
             <% } %>
                 
-
+            <div class="row mt-3 mb-3">
+                <div class="col-lg-4"></div>
+                <div class="col-lg-4">
+                    <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, previousPage: previousPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPreviousPage: hasPreviousPage}) %>
+                </div>
+                <div class="col-lg-4"></div>
+            </div>
         </div>
         
     </main>

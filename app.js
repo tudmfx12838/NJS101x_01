@@ -109,7 +109,6 @@ app.use(staffRoutes);
 app.use(authRoutes);
 
 
-
 app.use(errorController.getPageError);
 
 //Connect to db by mongoose
@@ -122,6 +121,6 @@ mongoose
     console.log(err);
   });
 
-// app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-//   console.log('Server is running');
-// })
+app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+  console.log('Server is running');
+})
