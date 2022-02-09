@@ -28,5 +28,8 @@ router.post('/staffs/manage-timesheet/approve/:staffId', isAuth.isAdmin, isAuth.
 
 router.post('/staffs/manage-timesheet/delete/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.postStaffTimeSheetDetailDelete);
 
+router.get('/staffs/manage-timesheet/search/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffConsultaionSearch);
+
+router.get('/staffs/manage-health/search/:staffId', isAuth.isAdmin, isAuth.isLoggedIn, adminController.getStaffHealthSearch);
 
 module.exports = router;

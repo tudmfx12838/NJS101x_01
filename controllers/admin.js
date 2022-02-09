@@ -8,23 +8,52 @@ const Timesheet = require("../models/timesheet");
 const bcrypt = require("bcryptjs");
 const mongoose = require("mongoose");
 
+const ITEMS_PER_PAGE = 3;
+
 /*
 # Method name: getStaffs
 # Implementation: render staff management page
 # Description: show add staff feature
 */
 exports.getStaffs = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+
   const admin = req.user;
 
   Staff.find({ adminId: admin._id })
+    .countDocuments()
+    .then((numStaffs) => {
+      totalItems = numStaffs;
+      return Staff.find({ adminId: admin._id })
+        .skip((page - 1) * ITEMS_PER_PAGE)
+        .limit(ITEMS_PER_PAGE);
+    })
     .then((staffs) => {
       res.render("admin/staff", {
         pageTitle: "Nhân Viên",
         path: "/staffs",
         staffs: staffs,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / ITEMS_PER_PAGE)
       });
+
     })
     .catch((err) => console.log(err));
+
+  // Staff.find({ adminId: admin._id })
+  //   .then((staffs) => {
+  //     res.render("admin/staff", {
+  //       pageTitle: "Nhân Viên",
+  //       path: "/staffs",
+  //       staffs: staffs,
+  //     });
+  //   })
+  //   .catch((err) => console.log(err));
 };
 
 /*
@@ -435,27 +464,27 @@ exports.postStaffTimeSheetDetailApprove = (req, res, next) => {
   const thisDate = req.body.thisDate;
 
   Staff.findOne({ _id: staffId })
-  .then((staffDoc) => {
-    if (!staffDoc) {
-      return res.redirect("/staffs");
-    }
-    // console.log(staffDoc);
-    return staffDoc;
-  })
-  .then((staff) => {
-    Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-      .then((timesheet) => {
-        const index = timesheet.timeSheetDatas.findIndex(tsd => {
-          return tsd.date === thisDate;
+    .then((staffDoc) => {
+      if (!staffDoc) {
+        return res.redirect("/staffs");
+      }
+      // console.log(staffDoc);
+      return staffDoc;
+    })
+    .then((staff) => {
+      Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+        .then((timesheet) => {
+          const index = timesheet.timeSheetDatas.findIndex((tsd) => {
+            return tsd.date === thisDate;
+          });
+          timesheet.timeSheetDatas[index].approveStatus = true;
+          return timesheet.save();
         });
-        timesheet.timeSheetDatas[index].approveStatus = true;
-        return timesheet.save();
-      });
-  })
-  .then((result) => {
-    res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
-  })
-  .catch((err) => console.log(err));
+    })
+    .then((result) => {
+      res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
@@ -466,25 +495,69 @@ exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
   const thisDate = req.body.thisDate;
 
   Staff.findOne({ _id: staffId })
+    .then((staffDoc) => {
+      if (!staffDoc) {
+        return res.redirect("/staffs");
+      }
+      // console.log(staffDoc);
+      return staffDoc;
+    })
+    .then((staff) => {
+      Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
+        .then((timesheet) => {
+          const index = timesheet.timeSheetDatas.findIndex((tsd) => {
+            return tsd.date === thisDate;
+          });
+          timesheet.timeSheetDatas.splice(index, 1);
+          return timesheet.save();
+        });
+    })
+    .then((result) => {
+      res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+    })
+    .catch((err) => console.log(err));
+};
+
+exports.getStaffConsultaionSearch = (req, res, next) => {
+  const search = req.query.search;
+  const staffId = req.params.staffId;
+
+  Staff.findOne({ idNumber: search })
   .then((staffDoc) => {
     if (!staffDoc) {
-      return res.redirect("/staffs");
+      return res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
     }
     // console.log(staffDoc);
     return staffDoc;
   })
   .then((staff) => {
-    Timesheet.findOne({ staffId: staff._id }) //findOne cua mongoose luon tra ve 1 user dau tien trong collection users
-      .then((timesheet) => {
-        const index = timesheet.timeSheetDatas.findIndex(tsd => {
-          return tsd.date === thisDate;
-        });
-        timesheet.timeSheetDatas.splice(index, 1);
-        return timesheet.save();
-      });
+    res.redirect(`/staffs/manage-timesheet/${staff.id}?manage=true`);
   })
   .then((result) => {
-    res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
+    
   })
   .catch((err) => console.log(err));
-};
+
+}
+
+exports.getStaffHealthSearch = (req, res, next) => {
+  const search = req.query.search;
+  const staffId = req.params.staffId;
+
+  Staff.findOne({ idNumber: search })
+  .then((staffDoc) => {
+    if (!staffDoc) {
+      return res.redirect(`/staffs/manage-health/${staffId}?manage=true`);
+    }
+    // console.log(staffDoc);
+    return staffDoc;
+  })
+  .then((staff) => {
+    res.redirect(`/staffs/manage-health/${staff.id}?manage=true`);
+  })
+  .then((result) => {
+    
+  })
+  .catch((err) => console.log(err));
+
+}
