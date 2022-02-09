@@ -49,7 +49,17 @@ router.post(
   [
     body("idNumber")
       .isAlphanumeric()
-      .withMessage("Mã số nhân viên không hợp lệ"),
+      .withMessage("Mã số nhân viên không hợp lệ")
+      .custom((value, {req}) => {
+        return Staff.findOne({ idNumber: value }).then((staffDoc) => {
+          if (!staffDoc) {
+            return Promise.reject(
+              //them loi xac thuc khong dong bo
+              "Mã số nhân viên không tồn tại!"
+            );
+          }
+      });
+    }),
   ],
   authController.postReset
 );

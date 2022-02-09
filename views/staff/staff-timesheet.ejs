@@ -40,7 +40,7 @@
                                         <form action="/timesheet-starttime" method="POST">
                                             <div class="mb-3 mt-3">
                                                 <label for="location" class="form-label">Nơi làm việc: </label>
-                                                <select class="form-select" name="location" id="location" value="company">
+                                                <select class="form-select" name="location" id="location" value="company" required>
                                                     <option value="Công Ty">Công Ty</option>
                                                     <option value="Khách Hàng">Khách Hàng</option>
                                                     <option value="Nhà">Nhà</option>
@@ -90,16 +90,16 @@
                                 <form action="/timesheet-takeleave" method="POST">
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="startDateTime">Nghỉ từ ngày: </label>
-                                        <input class="form-control" type="date" name="startDateTime" id="startDateTime" value="">
+                                        <input class="form-control" type="date" name="startDateTime" id="startDateTime" value="" required>
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="endDateTime">Đến hết ngày: </label>
-                                        <input class="form-control" type="date" name="endDateTime" id="endDateTime" value="">
+                                        <input class="form-control" type="date" name="endDateTime" id="endDateTime" value="" required> 
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="leaveTime">Số giờ nghỉ/ngày: </label>
                                         <!-- <input type="number" name="leaveTime" id="leaveTime" default=0> -->
-                                        <select class="form-select" name="leaveTime" id="leaveTime">
+                                        <select class="form-select" name="leaveTime" id="leaveTime" required>
                                             <option value="1">1h</option>
                                             <option value="2">2h</option>
                                             <option value="3">3h</option>
@@ -117,7 +117,7 @@
                                     </div>
                                     <div class="mb-3 mt-3">
                                         <label class="form-label" for="leaveReason">Lý do nghỉ: </label>
-                                        <textarea class="form-control" name="leaveReason" id="leaveReason" row="3"></textarea>
+                                        <textarea class="form-control" name="leaveReason" id="leaveReason" row="3" required></textarea>
                                     </div>
                                     
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">

@@ -108,8 +108,18 @@ app.use(adminRouter);
 app.use(staffRoutes);
 app.use(authRoutes);
 
-
+app.use('/500', errorController.get500);
 app.use(errorController.getPageError);
+
+app.use((error, req, res, next) => {
+  // console.log('Hello');
+  // res.redirect('/500');
+  res.status(500).render('500', {
+    pageTitle: "Error!",
+    path: '/500',
+    // isAuthenticated: req.session.isLoggedIn
+  });
+});
 
 //Connect to db by mongoose
 mongoose
@@ -121,6 +131,6 @@ mongoose
     console.log(err);
   });
 
-app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
-  console.log('Server is running');
-})
+// app.listen(process.env.PORT || 8080, '0.0.0.0', () => {
+//   console.log('Server is running');
+// })

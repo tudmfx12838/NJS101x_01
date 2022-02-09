@@ -43,17 +43,11 @@ exports.getStaffs = (req, res, next) => {
       });
 
     })
-    .catch((err) => console.log(err));
-
-  // Staff.find({ adminId: admin._id })
-  //   .then((staffs) => {
-  //     res.render("admin/staff", {
-  //       pageTitle: "Nhân Viên",
-  //       path: "/staffs",
-  //       staffs: staffs,
-  //     });
-  //   })
-  //   .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -107,7 +101,11 @@ exports.postAddStaff = (req, res, next) => {
     .then(() => {
       res.redirect("/staffs");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getStaffDetail = (req, res, next) => {
@@ -127,7 +125,11 @@ exports.getStaffDetail = (req, res, next) => {
         staff: staff,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postStaffDetail = (req, res, next) => {
@@ -198,7 +200,11 @@ exports.postStaffDetail = (req, res, next) => {
     .then(() => {
       res.redirect(`/staffs/staff-detail/${staffId}?manage=true`);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getStaffHealthDetail = (req, res, next) => {
@@ -235,7 +241,11 @@ exports.getStaffHealthDetail = (req, res, next) => {
           });
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getDownloadStaffHealthDetail = (req, res, next) => {
@@ -342,7 +352,11 @@ exports.getDownloadStaffHealthDetail = (req, res, next) => {
           return pdfDoc.end();
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getStaffTimeSheetDetail = (req, res, next) => {
@@ -372,7 +386,11 @@ exports.getStaffTimeSheetDetail = (req, res, next) => {
           });
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postAddStaffTimeSheetDetail = (req, res, next) => {
@@ -453,7 +471,11 @@ exports.postAddStaffTimeSheetDetail = (req, res, next) => {
     .then((result) => {
       res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postStaffTimeSheetDetailApprove = (req, res, next) => {
@@ -484,7 +506,11 @@ exports.postStaffTimeSheetDetailApprove = (req, res, next) => {
     .then((result) => {
       res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
@@ -515,7 +541,11 @@ exports.postStaffTimeSheetDetailDelete = (req, res, next) => {
     .then((result) => {
       res.redirect(`/staffs/manage-timesheet/${staffId}?manage=true`);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.getStaffConsultaionSearch = (req, res, next) => {
@@ -536,7 +566,11 @@ exports.getStaffConsultaionSearch = (req, res, next) => {
   .then((result) => {
     
   })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  });
 
 }
 
@@ -555,9 +589,10 @@ exports.getStaffHealthSearch = (req, res, next) => {
   .then((staff) => {
     res.redirect(`/staffs/manage-health/${staff.id}?manage=true`);
   })
-  .then((result) => {
-    
-  })
-  .catch((err) => console.log(err));
+  .catch((err) => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  });
 
 }

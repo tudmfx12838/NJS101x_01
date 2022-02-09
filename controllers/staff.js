@@ -60,7 +60,11 @@ exports.postStaffInfo = (req, res, next) => {
     .then((result) => {
       res.redirect("/staff-info");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -106,7 +110,11 @@ exports.getHealthInfo = (req, res, next) => {
           .catch((err) => console.log(err));
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -150,7 +158,11 @@ exports.postHealthInfo = (req, res, next) => {
     .then((result) => {
       res.redirect("/health-info");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -214,7 +226,11 @@ exports.getStaffTimeSheet = (req, res, next) => {
         });
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -237,7 +253,11 @@ exports.postStartTime = (req, res, next) => {
         })
         .catch((err) => console.log(err));
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -268,7 +288,11 @@ exports.postEndTime = (req, res, next) => {
         console.log("Chưa đăng ký thời gian và địa điểm làm việc");
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -285,6 +309,7 @@ exports.postTakeLeave = (req, res, next) => {
       const startDateTime = new Date(req.body.startDateTime);
       const endDateTime = new Date(req.body.endDateTime);
       const leaveTime = parseInt(req.body.leaveTime);
+      const leaveReason = req.body.leaveReason;
 
       //Get user annauleave info
       const annualLeave = staff.annualLeave;
@@ -305,6 +330,7 @@ exports.postTakeLeave = (req, res, next) => {
             leaveTime_ar.push({
               date: curDate.toISOString().substring(0, 10),
               leaveTime: leaveTime,
+              leaveReason: leaveReason
             });
           }
           curDate.setDate(curDate.getDate() + 1);
@@ -361,7 +387,11 @@ exports.postTakeLeave = (req, res, next) => {
         console.log("Vui lòng chọn ngày bắt đầu nghỉ <= nghỉ đến ngày");
       }
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -406,7 +436,11 @@ exports.getConsultation = (req, res, next) => {
         }
       })
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 /*
@@ -449,7 +483,10 @@ exports.postConsultarion = (req, res, next) => {
           console.log(calSalary);
           res.redirect("/consultation");
         })
-        .catch((err) => console.log(err));
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };

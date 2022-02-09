@@ -2,7 +2,7 @@ const Staff = require("../models/staff");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const crypto = require("crypto");
-const { validationResult } = require('express-validator');
+const { validationResult } = require("express-validator");
 
 exports.getUserLogin = (req, res, next) => {
   let message = req.flash("error");
@@ -19,8 +19,8 @@ exports.getUserLogin = (req, res, next) => {
     pageTitle: "Login",
     path: "/login",
     errorMessage: message,
-    oldInput: {loginId: ''},
-    validationErrors: []
+    oldInput: { loginId: "" },
+    validationErrors: [],
     // isAuthenticated: req.session.isLoggedIn,
     // csrfToken: req.csrfToken() //duoc cung cap boi goi csrfProtection trong middleware app.js
   });
@@ -37,7 +37,7 @@ exports.postUserLogin = (req, res, next) => {
       path: "/login",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
-      oldInput: {loginId: loginId},
+      oldInput: { loginId: loginId },
       validationErrors: errors.array(),
     });
   }
@@ -49,8 +49,8 @@ exports.postUserLogin = (req, res, next) => {
         return res.status(422).render("auth/user-login", {
           path: "/login",
           pageTitle: "Login",
-          errorMessage: errors.array()[0].msg ,
-          oldInput: {loginId: loginId},
+          errorMessage: errors.array()[0].msg,
+          oldInput: { loginId: loginId },
           validationErrors: [],
         });
       }
@@ -71,9 +71,9 @@ exports.postUserLogin = (req, res, next) => {
           return res.status(422).render("auth/user-login", {
             path: "/login",
             pageTitle: "Login",
-            errorMessage: 'Mật khẩu không đúng !',
-            oldInput: {loginId: loginId},
-            validationErrors: [{param: 'password'}],
+            errorMessage: "Mật khẩu không đúng !",
+            oldInput: { loginId: loginId },
+            validationErrors: [{ param: "password" }],
           });
         })
         .catch((err) => {
@@ -81,7 +81,11 @@ exports.postUserLogin = (req, res, next) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 exports.postUserLogout = (req, res, next) => {
@@ -102,18 +106,19 @@ exports.getReset = (req, res, next) => {
     path: "/reset",
     pageTitle: "Reset Password",
     errorMessage: message,
+    validationErrors: [],
   });
 };
 
 exports.postReset = (req, res, next) => {
-
   const errors = validationResult(req);
   console.log(errors.array());
   if (!errors.isEmpty()) {
     return res.status(422).render("auth/user-reset", {
       path: "/reset",
       pageTitle: "Reset Password",
-      errorMessage: errors.array()[0].msg
+      errorMessage: errors.array()[0].msg,
+      validationErrors: errors.array(),
     });
   }
 
@@ -127,84 +132,106 @@ exports.postReset = (req, res, next) => {
     Staff.findOne({ idNumber: req.body.idNumber })
       .then((user) => {
         if (!user) {
-          req.flash("error", "Mã số nhân viên không tồn tại !");
-          return res.redirect("/reset");
+          // req.flash("error", "Mã số nhân viên không tồn tại !");
+          return res.status(422).render("auth/user-reset", {
+            path: "/reset",
+            pageTitle: "Reset Password",
+            errorMessage: errors.array()[0].msg,
+            validationErrors: errors.array(),
+          });
         }
 
         user.resetToken = token;
         user.resetTokenExpiration = Date.now() + 3600000; //3600000 milisecond = 1hour
-        return user
-                .save()
-                .then((result) => {
-                  req.flash("error", "Kiểm tra mail xác nhận trước khi thay đổi mật khẩu");
-                  res.redirect("/login");
-                });
+        return user.save().then((result) => {
+          req.flash(
+            "error",
+            "Kiểm tra mail xác nhận trước khi thay đổi mật khẩu"
+          );
+        });
       })
       .then((result) => {
-        //
+        res.redirect("/login");
       })
       .catch((err) => {
-        console.log(err);
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        return next(error);
       });
   });
 };
 
 exports.getNewPassword = (req, res, next) => {
-    const token = req.params.token;
-    Staff
-        .findOne({resetToken: token, resetTokenExpiration: {$gt: Date.now()}})
-        .then(user => {
-          console.log(user);
-          let message = req.flash('error');
-          if(message.length > 0){
-            message = message[0];
-          } else {
-            message = null;
-          }
-          res.render("auth/user-new-password", {
-            path: "/new-password",
-            pageTitle: "New Password",
-            errorMessage: message,
-            userId: user._id.toString(),
-            passwordToken: token
-          });
-        })
-        .catch(err => console.log(err));
-  };
-
-  exports.postNewPassword = (req, res, next) => {
-    const newPassword = req.body.password;
-    // const pwConfirm = req.body.pwConfirm;
-    const userId = req.body.userId;
-    const passwordToken = req.body.passwordToken;
-    let resetUser;
-
-    const errors = validationResult(req);
-    console.log(errors.array());
-    if (!errors.isEmpty()) {
-      return res.status(422).render("auth/user-new-password", {
+  const token = req.params.token;
+  Staff.findOne({
+    resetToken: token,
+    resetTokenExpiration: { $gt: Date.now() },
+  })
+    .then((user) => {
+      console.log(user);
+      let message = req.flash("error");
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+      res.render("auth/user-new-password", {
         path: "/new-password",
         pageTitle: "New Password",
-        errorMessage: errors.array()[0].msg,
-        userId: userId.toString(),
-        passwordToken: passwordToken
+        errorMessage: message,
+        userId: user._id.toString(),
+        passwordToken: token,
+        validationErrors: [],
       });
-    }
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
 
-    Staff
-        .findOne({resetToken: passwordToken, resetTokenExpiration:{$gt: Date.now()}, _id: userId})
-        .then(user => {
-          resetUser = user;
-          return bcrypt.hash(newPassword, 12)
-        })
-        .then(hashedPassword => {
-          resetUser.password = hashedPassword;
-          resetUser.resetToken = undefined;
-          resetUser.resetTokenExpiration = undefined;
-          return resetUser.save();
-        })
-        .then(result => {
-          res.redirect('/login');
-        })
-        .catch(err => console.log(err));
-  }; 
+exports.postNewPassword = (req, res, next) => {
+  const newPassword = req.body.password;
+  // const pwConfirm = req.body.pwConfirm;
+  const userId = req.body.userId;
+  const passwordToken = req.body.passwordToken;
+  let resetUser;
+
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/user-new-password", {
+      path: "/new-password",
+      pageTitle: "New Password",
+      errorMessage: errors.array()[0].msg,
+      userId: userId.toString(),
+      passwordToken: passwordToken,
+      validationErrors: errors.array(),
+    });
+  }
+
+  Staff.findOne({
+    resetToken: passwordToken,
+    resetTokenExpiration: { $gt: Date.now() },
+    _id: userId,
+  })
+    .then((user) => {
+      resetUser = user;
+      return bcrypt.hash(newPassword, 12);
+    })
+    .then((hashedPassword) => {
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+      return resetUser.save();
+    })
+    .then((result) => {
+      res.redirect("/login");
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};

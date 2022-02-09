@@ -52,7 +52,8 @@ const timesheetSchema = new Schema({
   takeLeaveInfo: [
     {
       date: { type: String, required: false },
-      leaveTime: { type: String, required: false }
+      leaveTime: { type: String, required: false },
+      leaveReason:{ type: String, required: false } 
     },
   ],
   monthSalary:

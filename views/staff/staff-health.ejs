@@ -11,11 +11,11 @@
                 <form action="/health-registry" method="POST">
                     <div class="mb-3 mt-3">
                         <label class="form-label" for="tempInfo">Thân nhiệt: </label>
-                        <input class="form-control" type="number" name="tempInfo" id="tempInfo">
+                        <input class="form-control" type="number" name="tempInfo" id="tempInfo" required>
                     </div>
                     <div class="mb-3 mt-3">
                         <label class="form-label" for="checkedDateTime">Thời gian đo: </label>
-                        <input class="form-control" type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="">
+                        <input class="form-control" type="datetime-local" name="checkedDateTime" id="checkedDateTime" value="" required>
                     </div>
 
                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -31,11 +31,11 @@
             <form action="/health-registry" method="POST">
                 <div class="mb-3 mt-3">
                     <label class="form-label" for="vaccineInfo">Mũi thứ: </label>
-                    <input class="form-control" type="number" name="vaccineInfo" id="vaccineInfo">
+                    <input class="form-control" type="number" name="vaccineInfo" id="vaccineInfo" required>
                 </div>
                 <div class="mb-3 mt-3">
                     <label class="form-label" for="vaccineDate">Ngày tiêm: </label>
-                    <input class="form-control" type="date" name="vaccineDate" id="vaccineDate">
+                    <input class="form-control" type="date" name="vaccineDate" id="vaccineDate" required>
                 </div>
 
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -51,7 +51,7 @@
             <form action="/health-registry" method="POST">
                 <div class="mb-3 mt-3">
                     <label class="form-label" for="infectCovid">Kết quả:</label>
-                    <select class="form-select" name="infectCovid" id="infectCovid">
+                    <select class="form-select" name="infectCovid" id="infectCovid" required>
                         <option value="false">Âm Tính</option>
                         <option value="true">Dương Tính</option>
                     </select>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="mb-3 mt-3">
                     <label class="form-label" for="infectedDate">Ngày nhiễm: </label>
-                    <input class="form-control" type="date" name="infectedDate" id="infectedDate">
+                    <input class="form-control" type="date" name="infectedDate" id="infectedDate" required>
                 </div>
 
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">

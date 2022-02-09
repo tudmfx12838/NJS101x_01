@@ -25,7 +25,7 @@
                     <form action="/reset" method="POST">
                         <div class="mt-3 mb-3">
                             <label class="form-label" for="idNumber">MSNV</label>
-                            <input class="form-control" type="text" name="idNumber" id="idNumber">
+                            <input class="form-control <%= validationErrors.find(e => e.param === 'idNumber') ? 'border border-danger' : '' %>" type="text" name="idNumber" id="idNumber">
                         </div>
                         <div class="text-center mt-3">
                             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
