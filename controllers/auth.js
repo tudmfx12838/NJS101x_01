@@ -19,7 +19,8 @@ exports.getUserLogin = (req, res, next) => {
     pageTitle: "Login",
     path: "/login",
     errorMessage: message,
-    oldInput: {loginId: ''}
+    oldInput: {loginId: ''},
+    validationErrors: []
     // isAuthenticated: req.session.isLoggedIn,
     // csrfToken: req.csrfToken() //duoc cung cap boi goi csrfProtection trong middleware app.js
   });
@@ -36,15 +37,22 @@ exports.postUserLogin = (req, res, next) => {
       path: "/login",
       pageTitle: "Login",
       errorMessage: errors.array()[0].msg,
-      oldInput: {loginId: loginId}
+      oldInput: {loginId: loginId},
+      validationErrors: errors.array(),
     });
   }
 
   Staff.findOne({ idNumber: loginId })
     .then((staff) => {
       if (!staff) {
-        req.flash("error", "Mã số nhân viên hoặc mật khẩu không đúng !");
-        return res.redirect("/login");
+        // req.flash("error", "Mã số nhân viên hoặc mật khẩu không đúng !");
+        return res.status(422).render("auth/user-login", {
+          path: "/login",
+          pageTitle: "Login",
+          errorMessage: errors.array()[0].msg ,
+          oldInput: {loginId: loginId},
+          validationErrors: [],
+        });
       }
       bcrypt
         .compare(password, staff.password)
@@ -58,12 +66,19 @@ exports.postUserLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Mã số nhân viên hoặc mật khẩu không đúng !");
-          return res.redirect("/login");
+          // req.flash("error", "Mã số nhân viên hoặc mật khẩu không đúng !");
+          // console.log(errors);
+          return res.status(422).render("auth/user-login", {
+            path: "/login",
+            pageTitle: "Login",
+            errorMessage: 'Mật khẩu không đúng !',
+            oldInput: {loginId: loginId},
+            validationErrors: [{param: 'password'}],
+          });
         })
         .catch((err) => {
           console.log(err);
-        //   res.redirect("/login");
+          res.redirect("/login");
         });
     })
     .catch((err) => console.log(err));

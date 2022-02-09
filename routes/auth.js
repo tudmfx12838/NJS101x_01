@@ -24,11 +24,14 @@ router.post(
           if (!staffDoc) {
             return Promise.reject(
               //them loi xac thuc khong dong bo
-              "Mã số nhân viên không tồn tại!"
+              "Mã số nhân viên không tồn tại!11"
             );
           }
       });
-    })
+    }),
+    // body("password")
+    //   .isLength({min: 5})
+    //   .withMessage("Mật khẩu có ít nhất 5 ký tự")
     // body("password", "Mật khẩu có ít nhất 5 ký tự").isLength({ min: 5 }),
   ],
   authController.postUserLogin
