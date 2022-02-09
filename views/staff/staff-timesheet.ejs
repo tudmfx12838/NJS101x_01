@@ -136,48 +136,61 @@
         </div>
 
         <div class="row mt-5">
-            <div class="row card">
-                <ul class="list-group list-group-flush">
-                        <% if(todayWorkingInfo) { %>
-                            <li class="list-group-item">
-                            <h1>Ngày: <%= todayWorkingInfo.date %></h1>
-                                <% for (let timeResult of timesheet.timeResults) { %>
-                                    <% const timeNow = timeResult.startTimes[0].startTime %>
-                                    <% const year = timeNow.getFullYear() %>
-                                    <% const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1) %>
-                                    <% const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate() %>
-                                    <% const startTimeToday = `${year}-${month}-${date}` %>
+            <% if(todayWorkingInfo) { %>
+                <table class="table table-striped border">
+                    <tr>
+                        <th><h1>Ngày:</h1></th>
+                        <td><h1> <%= todayWorkingInfo.date %></h1></td>
+                    </tr>
+                    
+                        <% for (let timeResult of timesheet.timeResults) { %>
+                            <% const timeNow = timeResult.startTimes[0].startTime %>
+                            <% const year = timeNow.getFullYear() %>
+                            <% const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1) %>
+                            <% const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate() %>
+                            <% const startTimeToday = `${year}-${month}-${date}` %>
 
-                                    <% if(todayWorkingInfo.date == startTimeToday) { %> 
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item">Địa điểm(giờ bắt đầu): 
-                                                <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
-                                                    <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
-                                                <% } %>
-                                            </li>
-                                            <li class="list-group-item">
-                                                Giờ kết thúc: <%= timeResult.endTime.toTimeString().substring(0, 8) %>
-                                            </li>
-                                        </ul>
-                                    <% } %>
-                                <% } %>
-
-                                <% var tlf_temp = 0 %>   
-                                <% if(todayTakeLeaveInfo) { %> 
-                                    <% tlf_temp = todayTakeLeaveInfo.leaveTime %>
-                                <% } %>
-
-
-                            <h5>Tổng thời gian đã làm: <%= (tlf_temp == 0) ? todayWorkingInfo.timeTotal : (todayWorkingInfo.timeTotal + tlf_temp*60)  %> phút</h5>
-                            <h5>Thời  gian làm thiếu giờ: <%= (tlf_temp == 0) ? todayWorkingInfo.incompleteTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? 0 : todayWorkingInfo.incompleteTime - (todayWorkingInfo.timeTotal + tlf_temp*60)  %> phút</h5>
-                            <h5>Thời gian làm thêm giờ: <%= (tlf_temp == 0) ? todayWorkingInfo.overTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? (todayWorkingInfo.timeTotal + tlf_temp*60) - 480 : 0 %> phút</h5>
-                            <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
-                            </li>
-                        <% } else { %>
-                            <h1>Hôm nay chưa đăng ký làm việc</h1>
+                            <% if(todayWorkingInfo.date == startTimeToday) { %> 
+                                <tr> 
+                                    <th>Địa điểm(giờ bắt đầu): </th>
+                                    <td>
+                                        <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
+                                            <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th> Giờ kết thúc:</th> 
+                                    <td><%= timeResult.endTime.toTimeString().substring(0, 8)%></td>
+                                </tr>
+                            <% } %>
                         <% } %>
-                </ul>
-            </div>
+
+                        <% var tlf_temp = 0 %>   
+                        <% if(todayTakeLeaveInfo) { %> 
+                            <% tlf_temp = todayTakeLeaveInfo.leaveTime %>
+                        <% } %>
+
+                    <tr>
+                        <th>Tổng thời gian đã làm:</th>
+                        <td><%= (tlf_temp == 0) ? todayWorkingInfo.timeTotal : (todayWorkingInfo.timeTotal + tlf_temp*60) %> phút</td>
+                    </tr>
+                    <tr>
+                        <th>Thời  gian làm thiếu giờ:</th>
+                        <td><%= (tlf_temp == 0) ? todayWorkingInfo.incompleteTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? 0 : todayWorkingInfo.incompleteTime - (todayWorkingInfo.timeTotal + tlf_temp*60)  %> phút</td>
+                    </tr>
+                    <tr>
+                        <th>Thời gian làm thêm giờ:</th>
+                        <td> <%= (tlf_temp == 0) ? todayWorkingInfo.overTime : (todayWorkingInfo.timeTotal + tlf_temp*60) > 480 ? (todayWorkingInfo.timeTotal + tlf_temp*60) - 480 : 0 %> phút</td>
+                    </tr>
+                    <tr>
+                        <th>Số giờ nghỉ phép:</th>
+                        <td><%= tlf_temp %> giờ</td>
+                    </tr>
+                </table>
+            <% } else { %>
+                <h1>Hôm nay chưa đăng ký làm việc</h1>
+            <% } %>
         </div>
     </main>
 
