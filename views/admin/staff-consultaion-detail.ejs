@@ -76,65 +76,90 @@
 
         <hr>
 
-        <div class="row card">
-            <ul class="list-group list-group-flush">
+        <div class="row table-responsive-md">
+            <table class="table table-bordered table-hover border">
                 <% if (timesheet) { %>
                     <% for (let timeSheetData of timesheet.timeSheetDatas) { %>
-                        <li class="list-group-item">
-                        <h1>Ngày: <%= timeSheetData.date %></h1>
-                            <% for (let timeResult of timesheet.timeResults) { %>
-                                <% const timeNow = timeResult.startTimes[0].startTime %>
-                                <% const year = timeNow.getFullYear() %>
-                                <% const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1) %>
-                                <% const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate() %>
-                                <% const startTimeThisDate = `${year}-${month}-${date}` %>
+                        <tr>
+                            <th><h1>Ngày:</h1></th>
+                            <td><h1> <%= timeSheetData.date %></h1></td>
+                        </tr>
 
-                                <% if(timeSheetData.date == startTimeThisDate) { %> 
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">Địa điểm(giờ bắt đầu): 
-                                            <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
-                                                <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
-                                            <% } %>
-                                        </li>
-                                        <li class="list-group-item">
-                                            Giờ kết thúc: <%= timeResult.endTime.toTimeString().substring(0, 8) %>
-                                        </li>
-                                    </ul>
-                                <% } %>
-                            <% } %>
+                        <% for (let timeResult of timesheet.timeResults) { %>
+                            <% const timeNow = timeResult.startTimes[0].startTime %>
+                            <% const year = timeNow.getFullYear() %>
+                            <% const month = (timeNow.getMonth()+1) < 10 ? ('0' + (timeNow.getMonth()+1)) : (timeNow.getMonth()+1) %>
+                            <% const date = timeNow.getDate() < 10 ? ('0' + timeNow.getDate()) : timeNow.getDate() %>
+                            <% const startTimeThisDate = `${year}-${month}-${date}` %>
 
-                            <% var tlf_temp = 0 %>
-                            <% for (let tlf of timesheet.takeLeaveInfo) { %>
-                                <% if(timeSheetData.date == tlf.date) { %> 
-                                    <% tlf_temp = tlf.leaveTime %>
-                                <% } %>
+                            <% if(timeSheetData.date == startTimeThisDate) { %> 
+                                <tr> 
+                                    <th>Địa điểm(giờ bắt đầu): </th>
+                                    <td>
+                                        <% for (let i = 0; i < timeResult.startTimes.length; i++) { %>
+                                            <%=  timeResult.locations[i].location + '('+ timeResult.startTimes[i].startTime.toTimeString().substring(0, 8) + '), ' %>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th> Giờ kết thúc:</th> 
+                                    <td><%= timeResult.endTime.toTimeString().substring(0, 8)%></td>
+                                </tr>
                             <% } %>
-                        <h5>Tổng thời gian đã làm: <%= (tlf_temp == 0) ? timeSheetData.timeTotal : (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
-                        <h5>Thời  gian làm thiếu giờ: <%= (tlf_temp == 0) ? timeSheetData.incompleteTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? 0 : timeSheetData.incompleteTime - (timeSheetData.timeTotal + tlf_temp*60)  %> phút</h5>
-                        <h5>Thời gian làm thêm giờ: <%= (tlf_temp == 0) ? timeSheetData.overTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? (timeSheetData.timeTotal + tlf_temp*60) - 480 : 0 %> phút</h5>
-                        <h5>Số giờ nghỉ phép: <%= tlf_temp %> giờ</h5>
-                        <h5>Trạng thái xác nhận: <%= timeSheetData.approveStatus === false ? 'Chưa Xác Nhận' : 'Đã Xác Nhận'%></h5>
+                        <% } %>
+
+                        <% var tlf_temp = 0 %>
+                        <% for (let tlf of timesheet.takeLeaveInfo) { %>
+                            <% if(timeSheetData.date == tlf.date) { %> 
+                                <% tlf_temp = tlf.leaveTime %>
+                            <% } %>
+                        <% } %>
+               
+                        <tr>
+                            <th>Tổng thời gian đã làm:</th>
+                            <td><%= (tlf_temp == 0) ? timeSheetData.timeTotal : (timeSheetData.timeTotal + tlf_temp*60) %> phút</td>
+                        </tr>
+                        <tr>
+                            <th>Thời  gian làm thiếu giờ:</th>
+                            <td><%= (tlf_temp == 0) ? timeSheetData.incompleteTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? 0 : timeSheetData.incompleteTime - (timeSheetData.timeTotal + tlf_temp*60)  %> phút</td>
+                        </tr>
+                        <tr>
+                            <th>Thời gian làm thêm giờ:</th>
+                            <td><%= (tlf_temp == 0) ? timeSheetData.overTime : (timeSheetData.timeTotal + tlf_temp*60) > 480 ? (timeSheetData.timeTotal + tlf_temp*60) - 480 : 0 %> phút</td>
+                        </tr>
+                        <tr>
+                            <th>Số giờ nghỉ phép:</th>
+                            <td><%= tlf_temp %> giờ</td>
+                        </tr>
+                        <tr>
+                            <th>Trạng thái xác nhận:</th>
+                            <td><%= timeSheetData.approveStatus === false ? 'Chưa Xác Nhận' : 'Đã Xác Nhận'%></td>
+                        </tr>
                         
-                        <% if (!timeSheetData.approveStatus) { %>
-                            <form action="/staffs/manage-timesheet/approve/<%= staff._id %>?approve=true" method="POST">
-                                <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button class="btn btn-primary mt-2 ml-1" type="submit">Xác nhận giờ làm</button>
-                            </form>
-    
-                            <form action="/staffs/manage-timesheet/delete/<%= staff._id %>?delete=true" method="POST" >
-                                <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
-                                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                                <button class="btn btn-danger mt-2 ml-1" type="submit">Xóa giờ làm</button>
-                            </form>
-                        <% } %>
-                        </li>
-                        <% } %>
+                        <tr>
+                            <% if (!timeSheetData.approveStatus) { %>
+                                <td>
+                                    <form action="/staffs/manage-timesheet/approve/<%= staff._id %>?approve=true" method="POST">
+                                        <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button class="btn btn-primary mt-2 ml-1" type="submit">Xác nhận giờ làm</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="/staffs/manage-timesheet/delete/<%= staff._id %>?delete=true" method="POST" >
+                                        <input type="hidden" name="thisDate" value="<%= timeSheetData.date %>">
+                                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                                        <button class="btn btn-danger mt-2 ml-1" type="submit">Xóa giờ làm</button>
+                                    </form>
+                                </td>
+                            <% } %>
+                        </tr>
+                    <% } %>
                 <% } else { %>
                     <h1>Chưa cập nhật thời gian làm việc</h1>
                 <% } %>    
                 
-            </ul>
+            </table>
         </div>
         <br>
     </main>
