@@ -1,0 +1,43 @@
+1) Event loop là gì? cơ chế hoạt động
+JS hoạt động đơn luồng chỉ một nhiệm vụ được thực thi trong 1 lúc. Nó sẽ không là vấn đề gì nhưng thử tưởng tượng 1 task chạy 30 giây, và bạn có đến 30 task cứ phải chờ như vậy là một vấn đề cực lớn trong chương trình.
+Khi một hàm được gọi trong JS, hàm đó được thêm vào 1 vùng nhớ được gọi là call stack. Call stack là một phần của JS Engine không phải của Browser nhé mọi người.
+Nói về Stack chắc mọi người cũng hiểu cơ chế FILO (first in last out). Sau khi hàm đã được đẩy vào call stack, nó trả về giá trị thực thi sau đó được lấy ra khỏi stack để đẩy hàm tiếp theo vào.
+hàm callback đã được đẩy vào quêu vậy khi nào nó được gọi nếu như đầu bài chúng ta đã nói hàm chỉ thực hiện trong vùng Call Stack? Đây là lúc Event Loop hoạt động, Event Loop có một nhiệm vụ duy nhất là đồng bộ Queue với Call Stack. Nếu Call Stack trống thì chúng ta gọi hàm trong Queue, Queue hoạt động theo cơ chế FIFO nên hàm nào nằm trong hàng đợi trước thì được gọi thực thi trong Call Stack trước. Mọi người lưu ý lúc này Call Stack trống thì các hàm trong Queue mới được Event Loop lấy lên và đẩy vào Call Stack để thực thi nhé.
+
+giúp chúng ta tạo nên các tác vụ chạy bất đồng bộ, non-blocking
+
+function => call stack => call back => web api => call queue => call stack
+https://viblo.asia/p/hieu-ve-co-che-xu-ly-su-kien-event-loop-trong-javascript-07LKXjX2lV4
+
+2) Request và Response
+
+Request: 9 loại request, get và post là 2 loại thông dụng được sử dụng nhiều. Request yêu cầu từ client gửi tới server
+GET: được sử dụng để lấy thông tin từ sever theo URI đã cung cấp.
+POST: gửi thông tin tới sever thông qua các biểu mẫu http( đăng kí chả hạn..)
+https://viblo.asia/p/http-request-methods-su-khac-nhau-co-ban-giua-get-method-va-post-method-L4x5xpEr5BM
+
+3) Đặc điểm của nodeJS: 
+-giúp chúng ta tạo nên các tác vụ chạy bất đồng bộ, non-blocking
+-nhanh: nhân V8, viết bằng C++
+-Đơn giản và hiệu quả cao nhờ ứng dụng mô hình single thread và các sự kiện lặp
+-Không đệm: Nền tảng Node.js không có vùng đệm, tức không cung cấp khả năng lưu trữ dữ liệu buffer
+
+4)Express JS
+Là framework chạy trên nền Node.JS, hỗ trợ tạo ra một ứng dụng server đầy đủ (có thể tạo ra ứng dụng bao gồm/không bao gồm render giao diện front-end). 
+
+5)Express.js hỗ trợ gì cho chúng ta so với việc sử dụng Node.js thông thường? 
+Middleware giúp việc quản lý, xử lý dòng chảy hoạt động dễ dàng, trực quan hơn.
+Hỗ trợ sẵn Router giúp điều hướng, chuyển trang thuận tiện.
+Chỉ cần tập trung vào xử lý logic của dự án, không cần quan tâm nhiều về kiến trúc và những cài đặt khác.
+
+5)Ý nghĩa sử dụng của Model trong mô hình MVC là gì ?
+Chịu trách nhiệm làm những công việc liên quan đến data, giúp những xử lý liên quan đến data tách biệt khỏi xử lý logic nghiệp vụ.
+Là đại diện của dữ liệu trong code, giúp cho các hàm xử lý dữ liệu ngăn nắp, thống nhất, dễ hiểu và chỉnh sửa hơn nhờ việc tạo ra các hàm gắn liền với đối tượng (ví dụ sản phẩm, người dùng...).
+
+6)Vai trò của Views trong mô hình MVC là gì ?
+Chịu trách nhiệm hiển thị, tương tác với người dùng.
+Giúp phần giao diện tách biệt khỏi code logic.
+
+7)Vai trò của Controller trong mô hình MVC là gì ? 
+Vai trò đứng giữa và kết nối Model - Views.
+Xử lý những logic nghiệp vụ của phần mềm.
