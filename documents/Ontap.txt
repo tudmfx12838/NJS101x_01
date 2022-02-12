@@ -41,3 +41,25 @@ Giúp phần giao diện tách biệt khỏi code logic.
 7)Vai trò của Controller trong mô hình MVC là gì ? 
 Vai trò đứng giữa và kết nối Model - Views.
 Xử lý những logic nghiệp vụ của phần mềm.
+
+8) Phân biệt được Relational SQL và NoSQL.
+SQL: là các table có trường cột(fiel) và hàng (record), có sự quan hệ giữa các bảng với nhau-co-ban-giua-get-method-va-post-method-L4x5xpEr5BM.
+Có shema( lược đồ) và relation(quan hệ), mở rộng quy mô theo chiều ngang cần nhiều máy chủ hợp lại (Horizotal)
+
+noSQL: không gọi là table nhưng  được gọi là các collection, vì có thể lưu bất kỳ tài liệu có cấu trúc khác nhau trong 1 collection(giữ liệu hỗn hợp). Sử dụng JS Object để định nghĩa cho các thành phần bên trong của 1 collection. Không có sự quan hệ giữa các bảng giữ liệu với nhau nhưng có theer tìm dữ liệu trùng lặp
+Không có shema( lược đồ) và relation(quan hệ),làm việc với các collection, mở rộng quy mô theo chiều ngang dễ hơn với noSQL
+
+9) Sequelize là gì?
+là một thư viện ánh xạ mã SQL thành Object JS, giúp chúng ta không cần phải viết SQL, Viết 1 đối tượng bằng JS và thông qua Sequelize sẽ ánh xạ thành SQL table
+
+10)Horizotal vs Vertical Scaling
+là 2 cách mà ta có thể sử dụng để tiếp cận cơ sở dữ liệu
+
+11) Vì sao không sử dụng file để lưu trữ dữ liệu mà cần cài đặt cơ sở dữ liệu cồng kềnh và phức tạp?
+Vì sao không sử dụng file để lưu trữ dữ liệu mà cần cài đặt cơ sở dữ liệu cồng kềnh và phức tạp?
+Hệ cơ sở dữ liệu giúp việc tra cứu, thêm, sửa, xoá dữ liệu nhanh hơn nếu hệ thống lớn vì nếu lưu vào file thì cần phải đọc toàn bộ nội dung của file còn hệ cơ sở dữ liệu thì không.
+Hệ cơ sở dữ liệu giúp việc tra cứu, thêm, sửa, xoá dữ liệu nhanh hơn nếu hệ thống lớn vì nếu lưu vào file thì cần phải đọc toàn bộ nội dung của file còn hệ cơ sở dữ liệu thì không.
+
+12) Ở hệ cơ sở dữ liệu dạng quan hệ, thì có các dạng quan hệ cơ bản nào?
+1-1, 1-n, n-n 
+
